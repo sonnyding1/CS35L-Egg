@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const LoginForm = ({ isSignUpPage }) => {
   const [email, setEmail] = useState("");
@@ -6,11 +6,14 @@ const LoginForm = ({ isSignUpPage }) => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordsMatch, setPasswordsMatch] = useState(true);
 
+  useEffect(() => {
+    setPasswordsMatch(password === confirmPassword);
+  }, [password, confirmPassword]);
+
   const handleSubmit = (event) => {
     event.preventDefault();
     if (isSignUpPage) {
-      if (password != confirmPassword) {
-        setPasswordsMatch(false);
+      if (!passwordsMatch) {
         return;
       }
       // Call a backend API for signing up authentication
@@ -48,13 +51,13 @@ const LoginForm = ({ isSignUpPage }) => {
         Password
       </label>
       <input
-        className={`mt-1 block w-full px-3 py-2 border ${!passwordsMatch ? " border-red-500" : "border-input"} rounded-md shadow-sm placeholder-muted-foreground focus:outline-none focus:ring-primary focus:border-primary sm:text-sm`}
+        className={`mt-1 block w-full px-3 py-2 border ${!passwordsMatch ? " border-red-500" : "border-input focus:border-primary"} rounded-md shadow-sm placeholder-muted-foreground focus:outline-none focus:ring-primary sm:text-sm`}
         id="password"
         name="password"
         type="password"
         autoComplete="current-password"
         value={password}
-        onChange={(event) => { setPassword(event.target.value); setPasswordsMatch(true) }}
+        onChange={(event) => { setPassword(event.target.value); }}
         required
       />
       {isSignUpPage && (
@@ -67,22 +70,22 @@ const LoginForm = ({ isSignUpPage }) => {
             Confirm Password
           </label>
           <input
-            className={`mt-1 block w-full px-3 py-2 border ${!passwordsMatch ? " border-red-500" : "border-input"} rounded-md shadow-sm placeholder-muted-foreground focus:outline-none focus:ring-primary focus:border-primary sm:text-sm`}
+            className={`mt-1 block w-full px-3 py-2 border ${!passwordsMatch ? " border-red-500" : "border-input focus:border-primary"} rounded-md shadow-sm placeholder-muted-foreground focus:outline-none focus:ring-primary sm:text-sm`}
             id="confirmPassword"
             name="confirmPassword"
             type="password"
             autoComplete="new-password"
             value={confirmPassword}
-            onChange={(event) => { setConfirmPassword(event.target.value); setPasswordsMatch(true) }}
+            onChange={(event) => { setConfirmPassword(event.target.value); }}
             required
           />
-          {!passwordsMatch && (
-            <p className="mt-2 text-sm text-red-500">Passwords do not match.</p>
-          )}
+          <p className={`mt-1 mb-4 text-sm ${!passwordsMatch ? "text-red-500" : "text-muted-foreground"}`}>
+            {passwordsMatch ? "Passwords match" : "Passwords do not match"}
+          </p>
         </>
       )}
       <button
-        className="mt-6 w-full bg-primary hover:bg-slate-700 text-primary-foreground font-medium py-2 px-4 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+        className="mt-4 w-full bg-primary hover:bg-slate-700 text-primary-foreground font-medium py-2 px-4 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
         type="submit"
       >
         {isSignUpPage ? "Sign Up" : "Log In"}
