@@ -1,75 +1,94 @@
-// Import necessary modules
 import React, { useState } from "react";
 
-// Define the LoginForm
-const LoginForm = () => {
-  // State for storing user inputs
+const LoginForm = ({ isSignUpPage }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordsMatch, setPasswordsMatch] = useState(true);
 
-  // Function to handle form submission
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Process login logic here. For example:
-    console.log("Logging in with:", email, password);
-    // You would typically call a backend API here for authentication
+    if (isSignUpPage) {
+      if (password != confirmPassword) {
+        setPasswordsMatch(false);
+        return;
+      }
+      // Call a backend API for signing up authentication
+      console.log("User signed up with: ", email, password, confirmPassword)
+    } else {
+      console.log("Logging in with:", email, password);
+      // Call a backend API here for authentication
+    }
+
   };
 
-  const handleEmail = (event) => {
-    setEmail(event.target.value);
-  };
-  const handlePassword = (event) => {
-    setPassword(event.target.value);
-  };
-
-  // Render the login form
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <form className="mx-auto p-4 max-w-lg" onSubmit={handleSubmit}>
-        <label
-          className="block text-sm font-medium text-gray-700"
-          htmlFor="email"
-        >
-          Email address
-        </label>
-        <input
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          id="email"
-          name="email"
-          type="email"
-          autoComplete="email"
-          value={email}
-          onChange={handleEmail}
-          required
-        />
-        <br />
-        <label
-          className="block text-sm font-medium text-gray-700"
-          htmlFor="password"
-        >
-          Password
-        </label>
-        <input
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          id="password"
-          name="password"
-          type="password"
-          autoComplete="current-password"
-          value={password}
-          onChange={handlePassword}
-          required
-        />
-
-        <button
-          className="mt-6 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          type="submit"
-        >
-          Sign In
-        </button>
-      </form>
-    </div>
+    <form onSubmit={handleSubmit}>
+      <label
+        className="block text-sm font-medium text-foreground"
+        htmlFor="email"
+      >
+        Email address
+      </label>
+      <input
+        className="mt-1 block w-full px-3 py-2 border border-input rounded-md shadow-sm placeholder-muted-foreground focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+        id="email"
+        name="email"
+        type="email"
+        autoComplete="email"
+        value={email}
+        onChange={(event) => setEmail(event.target.value)}
+        required
+      />
+      <br />
+      <label
+        className="block text-sm font-medium text-foreground"
+        htmlFor="password"
+      >
+        Password
+      </label>
+      <input
+        className={`mt-1 block w-full px-3 py-2 border ${!passwordsMatch ? " border-red-500" : "border-input"} rounded-md shadow-sm placeholder-muted-foreground focus:outline-none focus:ring-primary focus:border-primary sm:text-sm`}
+        id="password"
+        name="password"
+        type="password"
+        autoComplete="current-password"
+        value={password}
+        onChange={(event) => { setPassword(event.target.value); setPasswordsMatch(true) }}
+        required
+      />
+      {isSignUpPage && (
+        <>
+          <br />
+          <label
+            className="block text-sm font-medium text-foreground"
+            htmlFor="confirmPassword"
+          >
+            Confirm Password
+          </label>
+          <input
+            className={`mt-1 block w-full px-3 py-2 border ${!passwordsMatch ? " border-red-500" : "border-input"} rounded-md shadow-sm placeholder-muted-foreground focus:outline-none focus:ring-primary focus:border-primary sm:text-sm`}
+            id="confirmPassword"
+            name="confirmPassword"
+            type="password"
+            autoComplete="new-password"
+            value={confirmPassword}
+            onChange={(event) => { setConfirmPassword(event.target.value); setPasswordsMatch(true) }}
+            required
+          />
+          {!passwordsMatch && (
+            <p className="mt-2 text-sm text-red-500">Passwords do not match.</p>
+          )}
+        </>
+      )}
+      <button
+        className="mt-6 w-full bg-primary hover:bg-slate-700 text-primary-foreground font-medium py-2 px-4 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+        type="submit"
+      >
+        {isSignUpPage ? "Sign Up" : "Log In"}
+      </button>
+    </form>
   );
 };
 
-// Export the component
 export default LoginForm;
