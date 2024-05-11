@@ -19,12 +19,10 @@
   margin-bottom: 1rem;
 }
 
-/* Paragraphs */
 .markdown p {
   margin-bottom: 1rem;
 }
 
-/* Links */
 .markdown a {
   color: #0366d6;
   text-decoration: none;
@@ -34,7 +32,6 @@
   text-decoration: underline;
 }
 
-/* Lists */
 .markdown ul {
   padding-left: 2rem;
   list-style-type: disc;
@@ -45,7 +42,6 @@
   list-style-type: decimal;
 }
 
-/* Code Blocks */
 .markdown pre {
   background-color: #f6f8fa;
   padding: 1rem;
@@ -58,7 +54,6 @@
   font-size: 1rem;
 }
 
-/* Blockquotes */
 .markdown blockquote {
   border-left: 4px solid #dfe2e5;
   color: #6a737d;
@@ -66,7 +61,6 @@
   margin-bottom: 1rem;
 }
 
-/* Images */
 .markdown img {
   max-width: 100%;
   height: auto;

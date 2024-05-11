@@ -1,9 +1,27 @@
 import React, { useState } from 'react';
+import { useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import '../markdown.css';
 
 function Edit() {
   const [content, setContent] = useState('');
+
+  useEffect(() => {
+    const loadContent = async () => {
+      try {
+        // from some file on the server backend
+        const response = await fetch('./content.txt');
+        if (response.ok) {
+          const text = await response.text();
+          setContent(text);
+        }
+      } catch (error) {
+        console.error('Error loading content:', error);
+      }
+    };
+
+    loadContent();
+  }, []);
 
   const handleChange = (e) => {
     setContent(e.target.value);
