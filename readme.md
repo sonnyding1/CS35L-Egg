@@ -46,6 +46,7 @@ For the backend:
 GOOGLE_CLIENT_ID=[your Google client ID from Google Cloud Platform]
 GOOGLE_CLIENT_SECRET=[your Google client secret from Google Cloud Platform]
 SESSION_SECRET=[your session secret]
+MONGO_URI=[your MongoDB URI]
 ```
 
 ### Run the project
