@@ -46,22 +46,38 @@ app.get("/", (req, res) => {
 /*
 Implementing user functionality 
 */
+/*
+food for thought, I change the implementation to be using 
+the res functions more so that the errors are returned as status
+that allows the function to end when it hits an error 
+~~ might make things better for us down the line?
+*/
 
-///This should be running properly, still need to test it with a number of users
-// display all  users
+// functions for the users route...what should post have?
 app.get("/users", async (req, res) => {
   res.json(await User.find({}).exec());
 }); 
 
-//// Function is not running properly...I'm not sure what is going on?
-// something to do with the database ---> I have a 2 scripts to showcase it on postman
-// run them and you'll see there's some initial value in the database...could be a port issue?
-//sign up/log in function
-app.post("/users", async (req, res) => {
-  const user = new User();
-  const found = await user.checkSave(req.body);
-  res.json(found);
+// search for user by username or name
+app.get("/user", async (req,res) =>{
+  res.json(await User.find({$or: [{ name: req.body.name }, 
+                                  { username: req.body.username }]}).exec());
 });
+
+app.post("/user/login", async (req,res) =>{
+  res.json( await User.login(req.body));
+});
+
+app.post("/user/signup", async (req,res) => {
+  res.json(await User.signup(req.body));
+}); 
+
+// delete by username, will be adjusting to be more restrictive 
+// but for now this is for testing purposes
+app.post("/user/delete", async (req,res) =>{
+  res.json (await User.findOneAndDelete(req.body));
+});
+
 
 // start the server
 app.listen(port, () => {
