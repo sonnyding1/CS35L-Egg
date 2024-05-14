@@ -5,6 +5,8 @@ import { createBrowserRouter, Router, RouterProvider } from "react-router-dom";
 import Home from "./pages/Home.jsx";
 import Community from "./pages/Community.jsx";
 import Edit from "./pages/Edit.jsx";
+import Login from "./pages/Login.jsx";
+import SignUp from "./pages/SignUp";
 
 const router = createBrowserRouter([
   {
@@ -19,6 +21,14 @@ const router = createBrowserRouter([
     path: "/edit",
     element: <Edit />,
   },
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/signup",
+    element: <SignUp />,
+  }
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
