@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import  Navigation from "@/components/ui/navigation";
 
 function Home() {
   const handleSubmit = (e) => {
@@ -9,10 +9,9 @@ function Home() {
 
   return (
     <div>
-      <Link to=""><p>Home</p></Link>
-      <Link to="/community"><p>Community</p></Link>
-      <Link to="/edit"><p>Edit</p></Link>
-      <Link to="/login"><p>Login</p></Link>
+      <Navigation />
+      <p className="text-red-500 text-3xl">Home</p>
+      <Button>Click me</Button>
     </div>
   );
 }

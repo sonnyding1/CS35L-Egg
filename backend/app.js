@@ -7,6 +7,8 @@ const mongoose = require("mongoose");
 const User = require("./models/User");
 require("dotenv").config();
 const bodyParser = require('body-parser');
+const swaggerJsdoc = require("swagger-jsdoc");
+const swaggerUi = require("swagger-ui-express");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -28,6 +30,29 @@ mongoose
   .catch((err) => {
     console.error("Error connecting to MongoDB:", err);
   });
+
+// Swagger
+const swaggerDefinition = {
+  openapi: "3.0.0",
+  info: {
+    title: "Egg API",
+    version: "1.0.0",
+    description: "This is the backend API for the Egg application.",
+  },
+  servers: [
+    {
+      url: "http://localhost:3000",
+      description: "Development server",
+    },
+  ],
+};
+const options = {
+  swaggerDefinition,
+  // include relative paths to files containing OpenAPI definitions
+  apis: ["./app.js", "./models/*.js"],
+};
+const swaggerSpec = swaggerJsdoc(options);
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // middlewares
 app.use(cors({ origin: "http://localhost:5173", credentials: true }));
@@ -55,10 +80,29 @@ app.get("/", (req, res) => {
 Implementing user functionality 
 */
 
+
+/**
+ * @swagger
+ * /users:
+ *   get:
+ *     summary: Retrieve a list of users
+ *     description: Retrieve a list of users from the database.
+ *     responses:
+ *       200:
+ *         description: A list of users.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/User'
+ */
+
 // functions for the users route...what should post have?
 app.get("/users", async (req, res) => {
   res.json(await User.find({}).exec());
 }); 
+
 
 // search for user by username or name
 app.get("/user", async (req,res) =>{
