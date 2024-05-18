@@ -96,7 +96,11 @@ app.post("/user/signup", async (req, res) => {
 // delete by username, will be adjusting to be more restrictive 
 // but for now this is for testing purposes
 app.post("/user/delete", async (req,res) =>{
-  res.json (await User.findOneAndDelete(req.body));
+  const user = await User.findOneAndDelete(req.body);
+  if (user == null) {
+    return res.status(StatusCodes.USER_NOT_FOUND).json({error: "User not found!"});
+  }
+  return res.json(user);
 });
 
 
