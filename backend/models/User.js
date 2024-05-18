@@ -9,21 +9,31 @@ const mongoose = require("mongoose");
  *       required:
  *         - name
  *         - email
+ *         - password
  *       properties:
- *         name:
- *           type: string
- *           description: The user's name.
- *         email:
- *           type: string
- *           description: The user's email.
+ *          name:
+ *            type: string
+ *            description: The user's name.
+ *          email:
+ *            type: string
+ *            description: The user's email.
+ *          username: 
+ *            type: string
+ *            description: The user's username, default is the email
+ *          password:
+ *            type: string
+ *            description: The user's hashed password
  *       example:
  *         name: John Doe
  *         email: john.doe@example.com
+ *         username: john.doe
+ *         password: ...
  */
 const UserSchema = new mongoose.Schema({
-  username: {type:String, unique:true, required:true},
-  password: {type:String, required:true},
   name: {type:String, required:true},
+  email: {type:String, unique:true, require:true},
+  username: {type:String, unique:true},
+  password: {type:String, required:true},
 });
 
 
