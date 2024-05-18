@@ -11,6 +11,14 @@ const bodyParser = require('body-parser');
 const app = express();
 const port = process.env.PORT || 3000;
 
+const StatusCodes ={
+  SUCCESS: 200,
+  USER_NOT_FOUND: 401,
+  WRONG_PASSWORD: 402,
+  USERNAME_TAKEN: 403,
+  PASSWORD_FAULT: 404,
+}
+
 // connect to mongodb
 mongoose
   .connect(process.env.MONGO_URI)
@@ -46,12 +54,6 @@ app.get("/", (req, res) => {
 /*
 Implementing user functionality 
 */
-/*
-food for thought, I change the implementation to be using 
-the res functions more so that the errors are returned as status
-that allows the function to end when it hits an error 
-~~ might make things better for us down the line?
-*/
 
 // functions for the users route...what should post have?
 app.get("/users", async (req, res) => {
@@ -65,12 +67,31 @@ app.get("/user", async (req,res) =>{
 });
 
 app.post("/user/login", async (req,res) =>{
-  res.json( await User.login(req.body));
+  const existingUser = await User.findOne({ username: req.body.username });
+  if (existingUser && await bcrypt.compare(req.body.password, existingUser.password)) {
+    return res.json(existingUser);
+  }
+  else if (existingUser){
+    return res.status(StatusCodes.WRONG_PASSWORD).json({ error: "Wrong Password!" });
+  }
+  return res.status(StatusCodes.USER_NOT_FOUND).json({error: "User not found!"});
 });
 
-app.post("/user/signup", async (req,res) => {
-  res.json(await User.signup(req.body));
-}); 
+app.post("/user/signup", async (req, res) => {
+  try {
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    const newUser = new User({ ...req.body, password: hashedPassword });
+    await newUser.save();
+    return res.json(newUser);
+
+  } catch (error) {
+    if (error.code === 11000) { // 11000 is the error code for duplicate key in MongoDB
+      return res.status(StatusCodes.USERNAME_TAKEN).json({ error: "Username Taken!" });
+    }
+    // For other errors, return a generic error response
+    return res.status(StatusCodes.PASSWORD_FAULT).json({ error: "Password Fault, Encryption Failed!" });
+  }
+});
 
 // delete by username, will be adjusting to be more restrictive 
 // but for now this is for testing purposes
