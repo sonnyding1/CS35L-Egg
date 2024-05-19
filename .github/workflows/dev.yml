@@ -1,31 +1,17 @@
 name: dev
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+  workflow_run:
+    workflows: ["pre-dev"]
+    types:
+      - completed
 
 jobs:
   lint-backend:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: 20
-
-      - name: Install dependencies for backend
-        run: |
-          cd backend
-          npm ci
-
       - name: Lint backend
         run: |
           cd backend
@@ -33,21 +19,9 @@ jobs:
 
   lint-frontend:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: 20
-
-      - name: Install dependencies for frontend
-        run: |
-          cd frontend
-          npm ci
-
       - name: Lint frontend
         run: |
           cd frontend
@@ -55,21 +29,9 @@ jobs:
 
   test-backend:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: 20
-
-      - name: Install dependencies for backend
-        run: |
-          cd backend
-          npm ci
-
       - name: Run dev server for backend
         run: |
           cd backend
@@ -77,22 +39,9 @@ jobs:
 
   test-frontend:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: 20
-
-      - name: Install dependencies for frontend
-        run: |
-          cd frontend
-          rm -f package-lock.json
-          npm i
-
       - name: Run dev server for frontend
         run: |
           cd frontend
