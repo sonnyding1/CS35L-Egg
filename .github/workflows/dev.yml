@@ -74,7 +74,7 @@ jobs:
           npm run lint
 
   test-backend:
-    needs: [lint-backend]
+    needs: [setup-backend]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -85,7 +85,7 @@ jobs:
           npm run dev & sleep 10; kill $!
 
   test-frontend:
-    needs: [lint-frontend]
+    needs: [setup-frontend]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
