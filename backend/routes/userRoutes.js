@@ -82,19 +82,8 @@ router.get("/users", async (req, res) => {
  * /user:
  *   get:
  *     tags: [User]
- *     summary: Search for a user by username or name
- *     description: Search for a user by either their username or name. This endpoint is intended for user search functionality and should be protected to prevent unauthorized access.
- *     parameters:
- *       - in: body
- *         name: name
- *         schema:
- *           type: string
- *         description: The name of the user.
- *       - in: body
- *         name: username
- *         schema:
- *           type: string
- *         description: The username of the user.
+ *     summary: Retrieve the current logged in user
+ *     description: Retrieve the current logged in user from the session. This endpoint is intended for retrieving user information based on the session and should be protected to prevent unauthorized access. **Try it out does not work on this, because Swagger doesn't allow testing with sessions.**
  *     responses:
  *       200:
  *         description: A user.
@@ -124,7 +113,7 @@ router.get("/users", async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     const user = await User.find({
-      $or: [{ name: req.body.name }, { username: req.body.username }],
+      username: req.session.username,
     }).exec();
     if (user.length === 0) {
       return res
@@ -199,6 +188,7 @@ router.post("/login", async (req, res) => {
     existingUser &&
     (await bcrypt.compare(req.body.password, existingUser.password))
   ) {
+    req.session.username = existingUser.username;
     return res.json(existingUser);
   } else if (existingUser) {
     return res
@@ -286,6 +276,7 @@ router.post("/signup", async (req, res) => {
       username: finalUsername,
     });
     await newUser.save();
+    req.session.username = newUser.username;
     return res.json(newUser);
   } catch (error) {
     console.error(error);
