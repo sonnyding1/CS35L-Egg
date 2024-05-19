@@ -18,17 +18,15 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 20
-      - name: Cache npm dependencies
-        uses: actions/cache@v2
-        with:
-          path: backend/node_modules
-          key: backend-${{ runner.os }}-${{ hashFiles('backend/package-lock.json') }}
-          restore-keys: |
-            backend-${{ runner.os }}-
       - name: Install dependencies for backend
         run: |
           cd backend
           npm ci
+      - name: Upload node_modules as artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: backend-node_modules
+          path: backend/node_modules
 
   setup-frontend:
     runs-on: ubuntu-latest
@@ -39,17 +37,15 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 20
-      - name: Cache npm dependencies
-        uses: actions/cache@v2
-        with:
-          path: frontend/node_modules
-          key: frontend-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}
-          restore-keys: |
-            frontend-${{ runner.os }}-
       - name: Install dependencies for frontend
         run: |
           cd frontend
           npm ci
+      - name: Upload node_modules as artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: frontend-node_modules
+          path: frontend/node_modules
 
   lint-backend:
     needs: [setup-backend]
@@ -57,6 +53,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Download node_modules artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: backend-node_modules
+          path: backend
       - name: Lint backend
         run: |
           cd backend
@@ -68,28 +69,43 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Download node_modules artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: frontend-node_modules
+          path: frontend
       - name: Lint frontend
         run: |
           cd frontend
           npm run lint
 
   test-backend:
-    needs: [setup-backend]
+    needs: [lint-backend]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Download node_modules artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: backend-node_modules
+          path: backend
       - name: Run dev server for backend
         run: |
           cd backend
           npm run dev & sleep 10; kill $!
 
   test-frontend:
-    needs: [setup-frontend]
+    needs: [lint-frontend]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Download node_modules artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: frontend-node_modules
+          path: frontend
       - name: Run dev server for frontend
         run: |
           cd frontend
