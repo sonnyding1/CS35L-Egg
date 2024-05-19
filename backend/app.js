@@ -9,6 +9,8 @@ require("dotenv").config();
 const bodyParser = require("body-parser");
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
+const bcrypt = require("bcryptjs");
+
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -67,6 +69,7 @@ app.use("/user", userRoutes);
 app.get("/", (req, res) => {
   res.send("Hello, World!");
 });
+
 
 // start the server
 app.listen(port, () => {

@@ -11,6 +11,7 @@ const mongoose = require("mongoose");
  *         - password
  *         - name
  *         - email
+ *         - password
  *       properties:
  *         username:
  *           type: string
