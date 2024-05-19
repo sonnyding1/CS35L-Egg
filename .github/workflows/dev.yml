@@ -22,6 +22,11 @@ jobs:
         run: |
           cd backend
           npm ci
+        env:
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+          MONGO_URI: ${{ secrets.MONGO_URI }}
       - name: Lint backend
         run: |
           cd backend
