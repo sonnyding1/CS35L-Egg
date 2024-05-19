@@ -1,13 +1,58 @@
 name: dev
 
 on:
-  workflow_run:
-    workflows: ["pre-dev"]
-    types:
-      - completed
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
+  setup-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 20
+      - name: Cache npm dependencies
+        uses: actions/cache@v2
+        with:
+          path: backend/node_modules
+          key: backend-${{ runner.os }}-${{ hashFiles('backend/package-lock.json') }}
+          restore-keys: |
+            backend-${{ runner.os }}-
+      - name: Install dependencies for backend
+        run: |
+          cd backend
+          npm ci
+
+  setup-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 20
+      - name: Cache npm dependencies
+        uses: actions/cache@v2
+        with:
+          path: frontend/node_modules
+          key: frontend-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}
+          restore-keys: |
+            frontend-${{ runner.os }}-
+      - name: Install dependencies for frontend
+        run: |
+          cd frontend
+          npm ci
+
   lint-backend:
+    needs: [setup-backend]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -18,6 +63,7 @@ jobs:
           npm run lint
 
   lint-frontend:
+    needs: [setup-frontend]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -28,6 +74,7 @@ jobs:
           npm run lint
 
   test-backend:
+    needs: [lint-backend]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -38,6 +85,7 @@ jobs:
           npm run dev & sleep 10; kill $!
 
   test-frontend:
+    needs: [lint-frontend]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
