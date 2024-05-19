@@ -10,6 +10,7 @@ const mongoose = require("mongoose");
  *         - username
  *         - password
  *         - name
+ *         - email
  *       properties:
  *         username:
  *           type: string
@@ -20,15 +21,20 @@ const mongoose = require("mongoose");
  *         name:
  *           type: string
  *           description: The user's name.
+ *         email:
+ *           type: string
+ *           description: The user's unique email.
  *       example:
  *         username: johndoe
  *         password: password123
  *         name: John Doe
+ *         email: johndoe@example.com
  */
 const UserSchema = new mongoose.Schema({
-  username: { type: String, unique: true, required: true },
-  password: { type: String, required: true },
   name: { type: String, required: true },
+  email: { type: String, unique: true, require: true },
+  username: { type: String, unique: true },
+  password: { type: String, required: true },
 });
 
 const User = mongoose.model("User", UserSchema);
