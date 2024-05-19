@@ -1,21 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import ReactMarkdown from 'react-markdown';
-import '../markdown.css';
+import { useState, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
+import "../markdown.css";
 
 function Edit() {
-  const [content, setContent] = useState('');
+  const [content, setContent] = useState("");
 
   useEffect(() => {
     const loadContent = async () => {
       try {
         // from some file on the server backend
-        const response = await fetch('./content.txt');
+        const response = await fetch("./content.txt");
         if (response.ok) {
           const text = await response.text();
           setContent(text);
         }
       } catch (error) {
-        console.error('Error loading content:', error);
+        console.error("Error loading content:", error);
       }
     };
 
@@ -27,11 +27,11 @@ function Edit() {
   };
 
   const handleSave = () => {
-    const blob = new Blob([content], { type: 'text/plain' });
+    const blob = new Blob([content], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
-    link.download = 'content.txt';
+    link.download = "content.txt";
     link.click();
     URL.revokeObjectURL(url);
   };

@@ -1,0 +1,78 @@
+name: dev
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 20
+      - name: Cache node modules
+        uses: actions/cache@v2
+        with:
+          path: backend/node_modules
+          key: ${{ runner.OS }}-backend-node-${{ hashFiles('backend/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-backend-node-
+      - name: Install dependencies for backend
+        run: |
+          cd backend
+          npm ci
+      - name: Lint backend
+        run: |
+          cd backend
+          npm run lint
+      - name: Run dev server for backend
+        run: |
+          cd backend
+          npm run dev & sleep 10; kill $!
+        env:
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+          MONGO_URI: ${{ secrets.MONGO_URI }}
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 20
+      - name: Cache node modules
+        uses: actions/cache@v2
+        with:
+          path: frontend/node_modules
+          key: ${{ runner.OS }}-frontend-node-${{ hashFiles('frontend/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-frontend-node-
+      - name: Clear node_modules and package-lock.json
+        run: |
+          cd frontend
+          rm -rf node_modules
+          rm package-lock.json
+      - name: Install dependencies for frontend
+        run: |
+          cd frontend
+          npm install
+      - name: Lint frontend
+        run: |
+          cd frontend
+          npm run lint
+      - name: Run dev server for frontend
+        run: |
+          cd frontend
+          npm run dev & sleep 10; kill $!
