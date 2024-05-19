@@ -1,11 +1,11 @@
 import { Button } from "@/components/ui/button";
-import  Navigation from "@/components/ui/navigation";
+import Navigation from "@/components/ui/navigation";
 
 function Home() {
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(e);
-  };
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   console.log(e);
+  // };
 
   return (
     <div>
