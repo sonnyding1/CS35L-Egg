@@ -18,6 +18,13 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 20
+      - name: Cache node modules
+        uses: actions/cache@v2
+        with:
+          path: backend/node_modules
+          key: ${{ runner.OS }}-backend-node-${{ hashFiles('backend/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-backend-node-
       - name: Install dependencies for backend
         run: |
           cd backend
@@ -45,6 +52,18 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 20
+      - name: Cache node modules
+        uses: actions/cache@v2
+        with:
+          path: frontend/node_modules
+          key: ${{ runner.OS }}-frontend-node-${{ hashFiles('frontend/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-frontend-node-
+      - name: Clear node_modules and package-lock.json
+        run: |
+          cd frontend
+          rm -rf node_modules
+          rm package-lock.json
       - name: Install dependencies for frontend
         run: |
           cd frontend
