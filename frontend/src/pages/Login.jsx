@@ -5,8 +5,8 @@ function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="flex flex-col items-center">
-        <LoginForm isSignupPage={false} />
-        <div className="mt-4 text-center">
+        <LoginForm isSignUpPage={false} />
+        {/* <div className="mt-4 text-center">
           <span className="text-muted-foreground text-sm">
             Don&apos;t have an account yet?{" "}
             <Link
@@ -16,7 +16,7 @@ function Login() {
               Sign up
             </Link>
           </span>
-        </div>
+        </div> */}
       </div>
     </div>
   );
