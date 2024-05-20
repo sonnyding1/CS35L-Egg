@@ -209,7 +209,7 @@ const LoginForm = ({ isSignUpPage }) => {
             </>
           ) : (
             <>
-              Don't have an account?{" "}
+              Don&apos;t have an account?{" "}
               <Link to="/signup" className="text-primary hover:underline">
                 Sign up
               </Link>
