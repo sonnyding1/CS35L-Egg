@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "node app.js",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "format": "prettier --write ."
   },
   "keywords": [],
   "author": "",
@@ -23,6 +24,7 @@
     "mongoose": "^8.3.4",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
+    "prettier": "^3.2.5",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0"
   },
