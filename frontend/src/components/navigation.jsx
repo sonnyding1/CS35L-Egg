@@ -1,7 +1,7 @@
 // Navigation.js
 
 import { NavLink } from "react-router-dom"; // Using React Router
-import { Button } from "./button";
+import { Button } from "./ui/button";
 
 export default function Navigation() {
   return (
