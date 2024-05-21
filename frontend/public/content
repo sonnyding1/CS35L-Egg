@@ -1,0 +1,24 @@
+# Testing Markdown
+## Heading 2
+### Heading 3
+#### Heading 4
+
+**bold**
+*italics*
+
+[a link](google.com)
+
+ - Bullet points
+ - Another one
+
+ 1. ordered lists
+ 2. another
+
+ > Block quotes
+
+ `int main()`
+ 
+---
+ Lorem ipsum dolor sit amet consectetur adipisicing elit. Quaerat assumenda laudantium perspiciatis mollitia aspernatur fugit ab quia corporis labore, provident similique pariatur ratione rerum consectetur optio dolorem culpa nam voluptas doloremque repellat vitae, facilis perferendis nisi aliquam. Aliquid esse neque itaque eos ratione quod hic ut! Libero similique incidunt quae.
+
+ ![logo](vite.svg)

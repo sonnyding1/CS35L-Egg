@@ -26,7 +26,7 @@ import {
 
 import "../markdown.css";
 
-const FILENAMEGLOBAL = "./content.txt";
+const FILENAMEGLOBAL = "content";
 
 function Edit() {
   const [content, setContent] = useState("");
@@ -128,8 +128,6 @@ function Edit() {
   const handleNumberedList = () => {
     handleLinePrefix('1. ');
   };
-
-  
 
   const handleRename = () => {
     // Some backend to rename file.
