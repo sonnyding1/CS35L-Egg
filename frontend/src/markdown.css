@@ -19,12 +19,18 @@
   margin-bottom: 1rem;
 }
 
+.markdown h4 {
+  font-size: 1.15rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
 .markdown p {
   margin-bottom: 1rem;
 }
 
 .markdown a {
-  color: #0366d6;
+  color: #3b82f6;
   text-decoration: none;
 }
 
@@ -55,8 +61,8 @@
 }
 
 .markdown blockquote {
-  border-left: 4px solid #dfe2e5;
-  color: #6a737d;
+  border-left: 4px solid #d1d5db;
+  color: #6b7280;
   padding-left: 1rem;
   margin: 1rem;
 }
@@ -65,4 +71,11 @@
   max-width: 100%;
   height: auto;
   margin-bottom: 1rem;
+}
+
+.markdown hr {
+  border: none;
+  height: 1px;
+  background-color: #ccc;
+  margin: 20px 0;
 }
