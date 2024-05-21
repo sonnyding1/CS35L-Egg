@@ -1,15 +1,40 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  Menubar,
+  MenubarContent,
+  MenubarItem,
+  MenubarMenu,
+  MenubarShortcut,
+  MenubarTrigger,
+} from "@/components/ui/menubar";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+
 import "../markdown.css";
+import EditMenuBar from "@/components/editmenubar";
+
+const FILENAMEGLOBAL = "content";
 
 function Edit() {
   const [content, setContent] = useState("");
+  const textareaRef = useRef(null);
+  const [isFileNameDialogOpen, setFileNameDialogOpen] = useState(false);
+  const [fileName, setFileName] = useState("");
 
   useEffect(() => {
+    setFileName(FILENAMEGLOBAL);
     const loadContent = async () => {
       try {
-        // from some file on the server backend
-        const response = await fetch("./content.txt");
+        const response = await fetch(FILENAMEGLOBAL);
         if (response.ok) {
           const text = await response.text();
           setContent(text);
@@ -18,7 +43,6 @@ function Edit() {
         console.error("Error loading content:", error);
       }
     };
-
     loadContent();
   }, []);
 
@@ -31,38 +55,76 @@ function Edit() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = "content.txt";
+    link.download = fileName;
     link.click();
     URL.revokeObjectURL(url);
   };
 
+  const handleRename = () => {
+    // Some backend to rename file.
+    setFileNameDialogOpen(false);
+  };
+
+  const handleOpenFile = () => {
+    // Some backend to load file.
+  };
+
   return (
-    <div className="container mx-auto px-4 py-8  h-screen flex flex-col">
-      {/* Flex container for header and button */}
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-4xl font-bold">Edit</h1>
-        <button
-          onClick={handleSave}
-          className="bg-primary hover:bg-slate-700 text-primary-foreground font-medium py-2 px-4 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-        >
-          Save
-        </button>
-      </div>
-      <div className="flex-grow flex">
-        {/* Use flex-grow to ensure the editor and preview sections take up the remaining space */}
-        <div className="w-1/2 pr-4 flex flex-col">
-          <textarea
+    <div className="container mx-auto px-4 py-8 h-screen flex flex-col">
+      <Menubar className="mb-2">
+        <MenubarMenu>
+          <MenubarTrigger>File</MenubarTrigger>
+          <MenubarContent>
+          <MenubarItem onSelect={handleOpenFile}>
+              Open <MenubarShortcut>⌘O</MenubarShortcut>
+            </MenubarItem>
+            <MenubarItem onSelect={handleSave}>
+              Save <MenubarShortcut>⌘S</MenubarShortcut>
+            </MenubarItem>
+            <MenubarItem onSelect={() => setFileNameDialogOpen(true)}>
+              Rename
+            </MenubarItem>
+          </MenubarContent>
+        </MenubarMenu>
+        <EditMenuBar content={content}textareaRef={textareaRef}onContentChange={setContent}/>
+      </Menubar>
+
+      <Dialog open={isFileNameDialogOpen} onOpenChange={setFileNameDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Rename file to: {fileName}</DialogTitle>
+          </DialogHeader>
+          <div className="flex w-full max-w-sm items-center space-x-2">
+            <Input
+              type="text"
+              value={fileName}
+              onChange={(e) => setFileName(e.target.value)}
+              placeholder="Enter new file name"
+            />
+            <Button type="submit" onClick={handleRename}>
+              Rename
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <div className="flex-grow flex mt-2">
+        <div className="w-1/2 pr-2">
+          <Textarea
+            ref={textareaRef}
             value={content}
             onChange={handleChange}
-            className="flex-grow w-full p-2 border border-input rounded-md focus:outline-none focus:ring-primary focus:border-primary"
+            className="w-full h-full"
           />
         </div>
-        <div className="w-1/2 pl-4 flex flex-col">
-          <div className="flex-grow w-full p-4 border rounded-md shadow overflow-y-auto">
-            <div className="markdown">
-              <ReactMarkdown>{content}</ReactMarkdown>
-            </div>
-          </div>
+        <div className="w-1/2 pl-2">
+          <Card className="h-full">
+            <CardContent className="h-full pt-2 overflow-y-auto">
+              <div className="markdown">
+                <ReactMarkdown>{content}</ReactMarkdown>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
