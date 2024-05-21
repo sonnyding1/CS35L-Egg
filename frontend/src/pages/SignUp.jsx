@@ -2,7 +2,10 @@ import LoginForm from "../components/loginform";
 
 function SignUp() {
   return (
-    <div className="min-h-screen flex items-center justify-center">
+    <div
+      className="flex items-center justify-center"
+      style={{ minHeight: "100vh" }}
+    >
       <LoginForm isSignUpPage={true} />
     </div>
   );
