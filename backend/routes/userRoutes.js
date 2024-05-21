@@ -7,12 +7,24 @@ const router = express.Router();
 const StatusCodes = {
   SUCCESS: 200,
   USER_NOT_FOUND: 404,
+  FILES_NOT_FOUND: 404,
   WRONG_PASSWORD: 409,
   USERNAME_TAKEN: 409,
   EMAIL_TAKEN: 409,
   USER_CREATION_FAILED: 500,
   INTERNAL_ERROR: 500,
 };
+/**
+ * DISCLAIMER:
+ * THE FILE SYSTEM HAS NOT BEEN SET UP FULLY YET 
+ * SO THE FILES ARE SIMPLY STRING NAMES FOR NOW 
+ * I HAVE AN IDEA OF HOW TO UPLOAD FILES
+ * BUT HAVE NOT YET WORKED ON IT
+ * 
+ * THE WAY I HAVE IMPLEMENTED THE GET SO FAR IS TO FIND THE USER
+ * THEN FIND THE FILE/S, NOT SURE ABOUT THE SESSION TOPIC 
+ */
+
 
 /*
 Implementing user functionality 
@@ -300,6 +312,7 @@ router.post("/signup", async (req, res) => {
   }
 });
 
+
 /**
  * @swagger
  * /user/delete:
@@ -332,6 +345,76 @@ router.post("/delete", async (req, res) => {
       .json({ error: "User not found!" });
   }
   return res.json(user);
+});
+
+
+// get user files
+router.get("/files", async (req, res) => {
+  try {
+    const user = await User.find({
+      username: req.session.username,
+    }).exec();
+    if (user.length === 0) {
+      return res
+        .status(StatusCodes.USER_NOT_FOUND)
+        .json({ error: "User not found!" });
+    }
+    if (user.files.length === 0){
+      return res
+        .status(FILES_NOT_FOUND)
+        .json({error: "User has no files!"})
+    }
+    return res.json(user.files);
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(StatusCodes.INTERNAL_ERROR)
+      .json({ error: "Internal Server Error" });
+  }
+});
+
+// get all files in db
+router.get("/users/files", async (req, res) => {
+  try {
+    const files = await File.find({}).exec();
+    if (files.length === 0) {
+      return res
+        .status(StatusCodes.FILES_NOT_FOUND)
+        .json({ error: "No files found!" });
+    }
+    return res.json(files);
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(StatusCodes.INTERNAL_ERROR)
+      .json({ error: "Internal Server Error" });
+  }
+});
+
+// get a certain file from a user 
+router.get("/file", async(req, res) => {
+  try {
+    const user = await User.find({
+      username: req.session.username,
+    }).exec();
+    if (user.length === 0) {
+      return res
+        .status(StatusCodes.USER_NOT_FOUND)
+        .json({ error: "User not found!" });
+    }
+    const file = await User.find({ files: req.session.filename }).exec();
+    if (file.length === 0) {
+      return res
+        .status(StatusCodes.FILES_NOT_FOUND)
+        .json({ error: "File not found!" });
+    }
+    return res.json(file);
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(StatusCodes.INTERNAL_ERROR)
+      .json({ error: "Internal Server Error" });
+  }
 });
 
 module.exports = router;

@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const File = require("./File");
+const uniqueArrayPlugin = require('mongoose-unique-array');
 
 /**
  * @swagger
@@ -36,7 +38,9 @@ const UserSchema = new mongoose.Schema({
   email: { type: String, unique: true, require: true },
   username: { type: String, unique: true },
   password: { type: String, required: true },
+  files: [{type:mongoose.Schema.Types.ObjectId, ref:"File", unique:true}]
 });
 
+UserSchema.plugin(uniqueArrayPlugin);
 const User = mongoose.model("User", UserSchema);
 module.exports = User;

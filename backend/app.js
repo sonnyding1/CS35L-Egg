@@ -64,6 +64,7 @@ app.use(bodyParser.json());
 // routes
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
+app.use("/file", fileRoutes);
 app.get("/", (req, res) => {
   res.send("Hello, World!");
 });
