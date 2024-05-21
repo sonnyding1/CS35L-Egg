@@ -9,22 +9,18 @@ import {
   MenubarContent,
   MenubarItem,
   MenubarMenu,
-  MenubarSeparator,
   MenubarShortcut,
   MenubarTrigger,
 } from "@/components/ui/menubar";
 import {
   Dialog,
   DialogContent,
-  DialogClose,
-  DialogDescription,
   DialogHeader,
-  DialogFooter,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 
 import "../markdown.css";
+import EditMenuBar from "@/components/editmenubar";
 
 const FILENAMEGLOBAL = "content";
 
@@ -64,71 +60,6 @@ function Edit() {
     URL.revokeObjectURL(url);
   };
 
-  // TODO: Implement keyboard shortcuts.
-  const handleFormatting = (formatter) => {
-    const textarea = textareaRef.current;
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selectedText = content.slice(start, end);
-    const formattedText = formatter(selectedText);
-    const newContent = `${content.slice(0, start)}${formattedText}${content.slice(end)}`;
-    
-    setContent(newContent);
-    setTimeout(() => {
-      textarea.focus();
-      textarea.setSelectionRange(start, end);
-    }, 0);
-  };
-  
-  const handleBold = () => {
-    handleFormatting((text) => `**${text}**`);
-  };
-  
-  const handleItalics = () => {
-    handleFormatting((text) => `*${text}*`);
-  };
-
-  const handleInlineCodeBlock = () => {
-    handleFormatting((text) => `\`${text}\``);
-  };
-
-  const handleBlockQuote = () => {
-    handleLinePrefix('> ');
-  };
-  
-  const handleLinePrefix = (prefix) => {
-    const textarea = textareaRef.current;
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const value = textarea.value;
-    const startOfLine = value.lastIndexOf('\n', start - 1) + 1;
-    const endOfLine = value.indexOf('\n', end);
-    const currentLine = value.slice(startOfLine, endOfLine !== -1 ? endOfLine : value.length);
-    const newContent = value.slice(0, startOfLine) + prefix + currentLine + value.slice(endOfLine !== -1 ? endOfLine : value.length);
-    
-    setContent(newContent);
-    setTimeout(() => {
-      textarea.focus();
-      textarea.setSelectionRange(start + prefix.length, end + prefix.length);
-    }, 0);
-  };
-  
-  const handleHeadingOne = () => {
-    handleLinePrefix('# ');
-  };
-  
-  const handleHeadingTwo = () => {
-    handleLinePrefix('## ');
-  };
-  
-  const handleBulletPoint = () => {
-    handleLinePrefix('- ');
-  };
-  
-  const handleNumberedList = () => {
-    handleLinePrefix('1. ');
-  };
-
   const handleRename = () => {
     // Some backend to rename file.
     setFileNameDialogOpen(false);
@@ -155,36 +86,13 @@ function Edit() {
             </MenubarItem>
           </MenubarContent>
         </MenubarMenu>
-        <MenubarMenu>
-          <MenubarTrigger>Edit</MenubarTrigger>
-          <MenubarContent>
-            <MenubarItem onSelect={handleBold}>
-              Bold <MenubarShortcut>⌘B</MenubarShortcut>
-            </MenubarItem>
-            <MenubarItem onSelect={handleItalics}>
-              Italics <MenubarShortcut>⌘I</MenubarShortcut>
-            </MenubarItem>
-            <MenubarItem onSelect={handleInlineCodeBlock}>
-              Code <MenubarShortcut>⌘+Shift+C</MenubarShortcut>
-            </MenubarItem>
-            <MenubarItem onSelect={handleBlockQuote}>
-              Blockquote
-            </MenubarItem>
-            <MenubarSeparator />
-            <MenubarItem onSelect={handleHeadingOne}>
-              Heading 1 <MenubarShortcut>⌘H1</MenubarShortcut>
-            </MenubarItem>
-            <MenubarItem onSelect={handleHeadingTwo}>
-              Heading 2 <MenubarShortcut>⌘H2</MenubarShortcut>
-            </MenubarItem>
-          </MenubarContent>
-        </MenubarMenu>
+        <EditMenuBar content={content}textareaRef={textareaRef}onContentChange={setContent}/>
       </Menubar>
 
       <Dialog open={isFileNameDialogOpen} onOpenChange={setFileNameDialogOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Rename file to: {fileName}</DialogTitle> {/* Use fileName state */}
+            <DialogTitle>Rename file to: {fileName}</DialogTitle>
           </DialogHeader>
           <div className="flex w-full max-w-sm items-center space-x-2">
             <Input
