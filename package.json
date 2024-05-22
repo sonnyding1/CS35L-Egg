@@ -5,6 +5,10 @@
   "scripts": {
     "prepare": "husky",
     "frontend-format": "npm run --prefix frontend format",
-    "backend-format": "npm run --prefix backend format"
+    "backend-format": "npm run --prefix backend format",
+    "frontend-lint": "npm run --prefix frontend lint",
+    "backend-lint": "npm run --prefix backend lint",
+    "frontend-dev": "npm run --prefix frontend dev",
+    "backend-dev": "npm run --prefix backend dev"
   }
 }
