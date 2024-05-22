@@ -46,6 +46,7 @@ For the backend:
 GOOGLE_CLIENT_ID=[your Google client ID from Google Cloud Platform]
 GOOGLE_CLIENT_SECRET=[your Google client secret from Google Cloud Platform]
 SESSION_SECRET=[your session secret]
+MONGO_URI=[your MongoDB URI]
 ```
 
 ### Run the project
@@ -61,3 +62,7 @@ For the frontend:
 ```bash
 npm run dev
 ```
+
+## Documentation
+
+Backend documentation is available at [http://localhost:3000/docs](http://localhost:3000/docs). Do note that Swagger is only served as documentation, it doesn't work very well as a testing tool, because our web app relies on sessions and Swagger doesn't support that.

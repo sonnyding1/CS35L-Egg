@@ -1,0 +1,81 @@
+/* markdown.css */
+
+/* Headings */
+.markdown h1 {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.markdown h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.markdown h3 {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.markdown h4 {
+  font-size: 1.15rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.markdown p {
+  margin-bottom: 1rem;
+}
+
+.markdown a {
+  color: #3b82f6;
+  text-decoration: none;
+}
+
+.markdown a:hover {
+  text-decoration: underline;
+}
+
+.markdown ul {
+  padding-left: 2rem;
+  list-style-type: disc;
+}
+
+.markdown ol {
+  padding-left: 2rem;
+  list-style-type: decimal;
+}
+
+.markdown pre {
+  background-color: #f6f8fa;
+  padding: 1rem;
+  overflow-x: auto;
+  border-radius: 4px;
+}
+
+.markdown code {
+  font-family: monospace;
+  font-size: 1rem;
+}
+
+.markdown blockquote {
+  border-left: 4px solid #d1d5db;
+  color: #6b7280;
+  padding-left: 1rem;
+  margin: 1rem;
+}
+
+.markdown img {
+  max-width: 100%;
+  height: auto;
+  margin-bottom: 1rem;
+}
+
+.markdown hr {
+  border: none;
+  height: 1px;
+  background-color: #ccc;
+  margin: 20px 0;
+}
