@@ -8,9 +8,10 @@ Currently, two official plugins are available:
 - [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
 
-Implementation of layout.jsx
+# Implementation of layout.jsx
 
 *In Apple-event-announcer's voice: Today, I'm excited to announce layout.jsx. layout.jsx has four brand new div-like classes: MainLayout, SideBar, MainBar and Box. To start with, let's use an example:
+'''
 <MainLayout>
     <SideBar>
         ...
@@ -21,6 +22,7 @@ Implementation of layout.jsx
         <Box>... </Box>
     </MainBar>
 <MainLayout>
+
 
 MainLayout: amends the SideBar and MainBar.
 SideBar: Holds necessary buttons that stays transfixed on the page.

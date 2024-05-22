@@ -4,11 +4,11 @@ import { cn } from "@/lib/utils"
 
 
 // MainLayout: The fundamental layout housing the two columns (side bar and contents)
-// Colspan size is 5 so that sidebar:content ratio would be 1:4
+// Colspan size is 5 so that sidebar:content ratio would be 1:6
 const MainLayout = React.forwardRef(({className, ...props}, ref) => (
     <div 
         ref={ref}
-        className={cn("h-screen container mx-auto grid grid-cols-5")}
+        className={cn("w-full h-screen container mx-auto grid grid-cols-7")}
         //grid-rows-[auto,1fr,auto]
         {...props}
     />
@@ -21,7 +21,7 @@ MainLayout.displayName = "MainLayout"
 const SideBar = React.forwardRef(({className, ...props}, ref) => (
     <div 
         ref={ref}
-        className={cn("bg-slate-700")}
+        className={cn("bg-slate-700 grid-rows-[repeat(auto-fill,minmax(500px,1fr))")}
         {...props}
     />
 
@@ -32,7 +32,7 @@ SideBar.displayName = "SideBar"
 const MainBar = React.forwardRef(({className, ...props}, ref) => (
     <div 
         ref={ref}
-        className={cn("rounded-lg border shadow-lg col-span-4 grid-rows-[repeat(auto-fill,minmax(100px,1fr))]")}
+        className={cn(" rounded-lg border shadow-lg col-span-6 grid-rows-[repeat(auto-fill,minmax(500px,1fr))] space-y-8")}
         {...props}
     />
 
@@ -43,7 +43,7 @@ MainBar.displayName = "MainBar"
 const Box = React.forwardRef(({className, ...props}, ref) => (
     <div 
         ref={ref}
-        className={cn("rounded-lg border shadow-lg ")}
+        className={cn("rounded-lg border shadow-lg p-4 margin-8")}
         {...props}
     />
 

@@ -8,11 +8,11 @@ function Community() {
       <Navigation />
       <MainLayout>
         <SideBar>
-          <Button variant="navButton">
+          <Button variant="sideButton">
             Create New
           </Button>
-          <Button variant="navButton">
-            Groups
+          <Button variant="sideButton">
+            Groups 
           </Button>
           <Button variant="navButton">
             Folders
