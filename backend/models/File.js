@@ -24,12 +24,14 @@ const FileSchema = new mongoose.Schema({
   dateCreated: Date,
   lastModified: Date,
   lastModifiedBy: User,
-  comments: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Comment'
-  }],
+  comments: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
   folder: String,
-  ownerName: String
+  ownerName: String,
 });
 
 module.exports = mongoose.model("File", FileSchema);

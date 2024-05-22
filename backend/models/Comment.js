@@ -15,7 +15,7 @@ const File = require("./File");
 // comment system, mdo file, folder
 const CommentSchema = new mongoose.Schema({
   file: File,
-  content: String
+  content: String,
 });
 
 module.exports = mongoose.model("Comment", CommentSchema);
