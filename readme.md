@@ -62,3 +62,7 @@ For the frontend:
 ```bash
 npm run dev
 ```
+
+## Documentation
+
+Backend documentation is available at [http://localhost:3000/docs](http://localhost:3000/docs). Do note that Swagger is only served as documentation, it doesn't work very well as a testing tool, because our web app relies on sessions and Swagger doesn't support that.
