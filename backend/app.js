@@ -4,6 +4,7 @@ const cors = require("cors");
 const passport = require("passport");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
+const fileRoutes = require("./routes/fileRoutes");
 const mongoose = require("mongoose");
 require("dotenv").config();
 const bodyParser = require("body-parser");
