@@ -1,0 +1,10 @@
+{
+  "devDependencies": {
+    "husky": "^9.0.11"
+  },
+  "scripts": {
+    "prepare": "husky",
+    "frontend-format": "npm run --prefix frontend format",
+    "backend-format": "npm run --prefix backend format"
+  }
+}

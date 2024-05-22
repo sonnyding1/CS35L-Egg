@@ -1,0 +1,3 @@
+npm run frontend-format &
+npm run backend-format &
+wait
