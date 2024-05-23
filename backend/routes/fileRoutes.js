@@ -41,7 +41,8 @@ router.get("/all", async (req, res) => {
 // get user files
 router.get("/user/all", async (req, res) => {
     try {
-        const files = await File.find({ownerName: req.session.username}).populate([
+        const user = await User.findOne({username: req.session.username});
+        const files = await File.find({ownerName: user._id}).populate([
             { path: 'ownerName', model: 'User', select: 'name username' },
             { path: 'lastModifiedBy', model: 'User', select: 'name username' },
             { path: 'comments', model: 'Comment'} //, populate: { path: 'user', model: 'User' } } for future implementation
@@ -65,11 +66,14 @@ router.get("/user/all", async (req, res) => {
 // unique for folder names 
 // can enforce a folder name or "main"?
 router.get("/user/one", async(req, res) => {
-
     try {
+        const user = await User.findOne({username: req.session.username});
         const file = await File.find({ 
-            ownerName: req.session.username, 
-            fileName: req.body.fileName
+            ownerName: user._id, 
+            $or:[
+                {fileName: req.body.fileName},
+                {folder: req.body.folder }
+            ]
             }).populate([
                 { path: 'ownerName', model: 'User', select: 'name username' },
                 { path: 'lastModifiedBy', model: 'User', select: 'name username' },
@@ -107,7 +111,6 @@ router.get("/user-liked/all", async(req, res) => {
     }
 });
 
-// creates a file, for now files are empty until we deal with uploads
 // defaults to public and "main" folder 
 // need to have unique filename for the same folder 
 // need to have unique folder for the same owner 

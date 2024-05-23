@@ -3,23 +3,21 @@ const User = require("./User");
 const Comment = require("./Comment");
 
 /**
- * restructured the file system
- * files till now are just shells without being able to actually upload files
- * gridfs or multer will be used to upload files to the db and have their ID as a field of the file as a reference
- * preliminary features and working system is the following:
- *  - imagine a collection of files all in one place.
- *  - each file has an immutable owner which is the creator
- *      - this will be how we search for files using the session saved info
- *  - file names are unique to the folder that they are in 
- *  - folder names are unique to the owner names
- *  - this way we can properly identify which file belongs to which folder to which user
- *  - if you refer to the user model:
+ * Restructured the file system
+ * Preliminary features and working system is the following:
+ *  - Imagine a collection of files all in one place.
+ *  - Each file has an immutable owner which is the creator
+ *      - This will be how we search for files using the session saved info
+ *  - File names are unique to the folder that they are in 
+ *  - Folder names are unique to the owner names
+ *  - This way we can properly identify which file belongs to which folder to which user
+ *  - If you refer to the user model:
  *      - there is a files array that saves the ID of the files that belong to the user 
- *      - yes there is some redundancy there, which I can later remove is the first system works properly
+ *      - yes there is some redundancy there, which I can later remove if the first system works properly
  *      - there is also a liked files array which saves the ID of the files "liked" by the user
  *      - when expanding the community model, we will add another contributer field to the file to allow accessing, commenting
- *  -  I have added a bunch of getter functions for now for the files
- *  - have not tested all the get functions
+ *  - I have added a bunch of getter functions for now for the files
+ *  - Have not tested the get liked function
  */
 
 /**
