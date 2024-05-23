@@ -1,5 +1,3 @@
-import React from "react";
-import Navbar from "./Navbar";
 import { Button } from "./ui/button";
 import "../markdown.css";
 import "katex/dist/katex.min.css";
