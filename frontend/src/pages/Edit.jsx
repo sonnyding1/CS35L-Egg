@@ -37,7 +37,7 @@ function Edit() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-4 h-screen flex flex-col">
+    <div className="mx-auto px-4 py-4 h-screen flex flex-col">
       <div className="flex items-center justify-center mb-2">
         <h1 className="text-xl font-bold text-center">{fileName}</h1>
         <Button
