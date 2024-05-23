@@ -4,14 +4,7 @@ import rehypeKatex from "rehype-katex";
 import remarkMath from "remark-math";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardFooter,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Menubar } from "@/components/ui/menubar";
 import "../markdown.css";
 import "katex/dist/katex.min.css";
