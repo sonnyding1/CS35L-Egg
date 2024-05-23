@@ -1,24 +1,27 @@
-# Testing Markdown
+# Heading 1
+
 ## Heading 2
+
 ### Heading 3
+
 #### Heading 4
 
-**bold**
-*italics*
+**bold** _italics_
 
-[a link](google.com)
+[a link](https://www.google.com)
 
- - Bullet points
- - Another one
+- Bullet points
+- Another one
 
- 1. ordered lists
- 2. another
+1.  Item 1
+2.  Item 2
 
- > Block quotes
+> The greatest quote of all time.
 
- `int main()`
- 
+`int main()`
+
+![logo](vite.svg)
+
 ---
- Lorem ipsum dolor sit amet consectetur adipisicing elit. Quaerat assumenda laudantium perspiciatis mollitia aspernatur fugit ab quia corporis labore, provident similique pariatur ratione rerum consectetur optio dolorem culpa nam voluptas doloremque repellat vitae, facilis perferendis nisi aliquam. Aliquid esse neque itaque eos ratione quod hic ut! Libero similique incidunt quae.
 
- ![logo](vite.svg)
+**Taylor's theorem** - Let $k \in \mathbb{N}$ and let the function $f : \mathbb{R} \to \mathbb{R}$ be $k$ times differentiable at the point $a \in \mathbb{R}$. Then, $\exists h_k : \mathbb{R} \to \mathbb{R}$ such that $$f(x) = f(a) + f'(a)(x-a) + \frac{f''(a)}{2!}(x-a)^2+ \dots + \frac{f^{(k)}(a)}{k!}(x-a)^k + h_k(x)(x-a)^k$$ and $\lim_{x \to a}h_k(x)=0$. [Source](https://en.wikipedia.org/wiki/Taylor%27s_theorem)

@@ -1,10 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
+import rehypeKatex from "rehype-katex";
+import remarkMath from "remark-math";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Menubar } from "@/components/ui/menubar";
 import "../markdown.css";
+import "katex/dist/katex.min.css";
 import EditMenuBar from "@/components/EditMenuBarMenu";
 import FileMenuBar from "@/components/FileMenuBarMenu";
 import { Pencil1Icon } from "@radix-ui/react-icons";
@@ -38,7 +41,7 @@ function Edit() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 h-screen flex flex-col">
+    <div className="container mx-auto px-4 py-4 h-screen flex flex-col">
       <div className="flex items-center justify-center mb-2">
         <h1 className="text-xl font-bold text-center">{fileName}</h1>
         <Button
@@ -66,7 +69,7 @@ function Edit() {
         />
       </Menubar>
       <div className="flex-grow flex mt-2">
-        <div className="w-1/2 pr-2">
+        <div className="w-1/2 mr-2">
           <Textarea
             ref={textareaRef}
             value={content}
@@ -74,12 +77,17 @@ function Edit() {
             className="w-full h-full"
           />
         </div>
-        <div className="w-1/2 pl-2">
-          <Card className="h-full">
-            <CardContent className="h-full pt-2 overflow-y-auto">
-              <div className="markdown">
-                <ReactMarkdown>{content}</ReactMarkdown>
-              </div>
+        <div className="w-1/2 ml-2">
+          <Card>
+            <CardContent className="markdown pt-4">
+              {
+                <ReactMarkdown
+                  remarkPlugins={[remarkMath]}
+                  rehypePlugins={rehypeKatex}
+                >
+                  {content}
+                </ReactMarkdown>
+              }
             </CardContent>
           </Card>
         </div>
