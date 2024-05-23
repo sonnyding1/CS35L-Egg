@@ -16,5 +16,23 @@
     "author": "Mike Johnson",
     "date": "2023-04-12",
     "likes": 8
+  },
+  {
+    "comment": "Great post!",
+    "author": "John Doe",
+    "date": "2023-04-10",
+    "likes": 10
+  },
+  {
+    "comment": "Thanks for sharing!",
+    "author": "Jane Smith",
+    "date": "2023-04-11",
+    "likes": 5
+  },
+  {
+    "comment": "I learned something new.",
+    "author": "Mike Johnson",
+    "date": "2023-04-12",
+    "likes": 8
   }
 ]

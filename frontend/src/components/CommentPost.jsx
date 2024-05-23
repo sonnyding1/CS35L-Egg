@@ -1,7 +1,7 @@
 const CommentPost = ({ comment, author, date, likes }) => {
   return (
     <>
-      <div className="m-4 p-4 border rounded-lg">
+      <div className="p-4 border rounded-lg">
         <p className="text-gray-500">
           {author} on {date} | {likes} likes
         </p>

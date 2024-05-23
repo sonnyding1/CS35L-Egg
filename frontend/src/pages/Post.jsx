@@ -5,10 +5,13 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import CommentPost from "@/components/CommentPost";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 
 const Post = () => {
   const [post, setPost] = useState(null);
@@ -57,15 +60,28 @@ const Post = () => {
         </CardContent>
       </Card>
       <div className="max-w-5xl mx-auto">
-        {comments.map((comment, index) => (
-          <CommentPost
-            key={index}
-            comment={comment.comment}
-            author={comment.author}
-            date={comment.date}
-            likes={comment.likes}
-          />
-        ))}
+        <Card>
+          <CardHeader>Write a comment</CardHeader>
+          <CardContent>
+            <Textarea></Textarea>
+          </CardContent>
+          <CardFooter className="justify-end space-x-2  ">
+            <Button variant="outline">Cancel</Button>
+            <Button>Submit</Button>
+          </CardFooter>
+        </Card>
+
+        <div className="space-y-4 mt-4">
+          {comments.map((comment, index) => (
+            <CommentPost
+              key={index}
+              comment={comment.comment}
+              author={comment.author}
+              date={comment.date}
+              likes={comment.likes}
+            />
+          ))}
+        </div>
       </div>
     </>
   );

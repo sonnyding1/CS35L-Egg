@@ -27,6 +27,7 @@ const Navbar = () => {
             <NavBarLink title="Home" link="/" />
             <NavBarLink title="Files" link="/browse" />
             <NavBarLink title="Community" link="/community" />
+            <NavBarLink title="Sample Post" link="/samplepost" />
           </div>
         </div>
       </div>
