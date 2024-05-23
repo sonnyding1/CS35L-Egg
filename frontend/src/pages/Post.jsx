@@ -8,10 +8,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import CommentPost from "@/components/CommentPost";
 
 const Post = () => {
   const [post, setPost] = useState(null);
   const [content, setContent] = useState("");
+  const [comments, setComments] = useState([]);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -20,10 +22,14 @@ const Post = () => {
         const data = await response.json();
         setPost(data);
 
-        // Fetch the markdown content from the specified file path
         const contentResponse = await fetch(`/${data.filepath}`);
         const contentData = await contentResponse.text();
         setContent(contentData);
+
+        // Fetch the comments from comments.json
+        const commentsResponse = await fetch("/comments.json");
+        const commentsData = await commentsResponse.json();
+        setComments(commentsData);
       } catch (error) {
         console.error("Error fetching post:", error);
       }
@@ -43,13 +49,24 @@ const Post = () => {
         <CardHeader>
           <CardTitle>{post.title}</CardTitle>
           <CardDescription>
-            By {post.author} on {post.date}
+            By {post.author} on {post.date} | {post.likes} likes{" "}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <MarkdownPreview content={content} />
         </CardContent>
       </Card>
+      <div className="max-w-5xl mx-auto">
+        {comments.map((comment, index) => (
+          <CommentPost
+            key={index}
+            comment={comment.comment}
+            author={comment.author}
+            date={comment.date}
+            likes={comment.likes}
+          />
+        ))}
+      </div>
     </>
   );
 };

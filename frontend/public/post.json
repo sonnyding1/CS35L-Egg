@@ -2,5 +2,6 @@
   "title": "Sample File Preview",
   "author": "John Doe",
   "date": "2023-05-23",
-  "filepath": "content"
+  "filepath": "content",
+  "likes": "30"
 }
