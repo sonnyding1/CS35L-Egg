@@ -109,6 +109,7 @@ const FileMenuBarMenu = ({
           <div className="flex w-full max-w-sm items-center space-x-2">
             <Input
               type="file"
+              accept=".txt,.md,.markdown,*"
               onChange={(e) => setUploadedFile(e.target.files[0])}
             />
             <Button type="submit" onClick={handleFileUpload}>
