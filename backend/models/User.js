@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const File = require("./File");
 
 /**
  * @swagger

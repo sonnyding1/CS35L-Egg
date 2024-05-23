@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
-const User = require("./User");
-const Comment = require("./Comment");
+
 
 /**
  * Restructured the file system
