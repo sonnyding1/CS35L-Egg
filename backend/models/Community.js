@@ -12,11 +12,12 @@ const mongoose = require("mongoose");
 
 // comment system, mdo file, folder
 const CommunitySchema = new mongoose.Schema({
-  users: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
-  }]//array
-  
+  users: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ], //array
 });
 
 module.exports = mongoose.model("Community", CommunitySchema);

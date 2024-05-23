@@ -16,8 +16,8 @@ passport.use(
         console.log(profile);
       }
       done(null, profile);
-    }
-  )
+    },
+  ),
 );
 
 passport.serializeUser((user, done) => {

@@ -75,7 +75,7 @@ function Edit() {
         <MenubarMenu>
           <MenubarTrigger>File</MenubarTrigger>
           <MenubarContent>
-          <MenubarItem onSelect={handleOpenFile}>
+            <MenubarItem onSelect={handleOpenFile}>
               Open <MenubarShortcut>⌘O</MenubarShortcut>
             </MenubarItem>
             <MenubarItem onSelect={handleSave}>
@@ -86,7 +86,11 @@ function Edit() {
             </MenubarItem>
           </MenubarContent>
         </MenubarMenu>
-        <EditMenuBar content={content}textareaRef={textareaRef}onContentChange={setContent}/>
+        <EditMenuBar
+          content={content}
+          textareaRef={textareaRef}
+          onContentChange={setContent}
+        />
       </Menubar>
 
       <Dialog open={isFileNameDialogOpen} onOpenChange={setFileNameDialogOpen}>
