@@ -47,8 +47,8 @@ const FileMenuBarMenu = ({
     }
   };
 
-  const handleSave = () => {
-    const blob = new Blob([content], { type: "text/plain" }); // Use the content prop
+  const handleDownload = () => {
+    const blob = new Blob([content], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
@@ -73,9 +73,7 @@ const FileMenuBarMenu = ({
             Open <MenubarShortcut>⌘O</MenubarShortcut>
           </MenubarItem>
           <MenubarItem onSelect={handleUploadFile}>Upload</MenubarItem>
-          <MenubarItem onSelect={handleSave}>
-            Save <MenubarShortcut>⌘S</MenubarShortcut>
-          </MenubarItem>
+          <MenubarItem onSelect={handleDownload}>Download</MenubarItem>
           <MenubarSeparator />
           <MenubarItem onSelect={() => setFileNameDialogOpen(true)}>
             Rename
