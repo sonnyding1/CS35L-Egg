@@ -10,6 +10,7 @@ import {
   MenubarItem,
   MenubarMenu,
   MenubarShortcut,
+  MenubarSeparator,
   MenubarTrigger,
 } from "@/components/ui/menubar";
 import {
@@ -20,7 +21,8 @@ import {
 } from "@/components/ui/dialog";
 
 import "../markdown.css";
-import EditMenuBar from "@/components/editmenubar";
+import EditMenuBar from "@/components/EditMenuBar";
+import { Pencil1Icon } from "@radix-ui/react-icons";
 
 const FILENAMEGLOBAL = "content";
 
@@ -28,7 +30,9 @@ function Edit() {
   const [content, setContent] = useState("");
   const textareaRef = useRef(null);
   const [isFileNameDialogOpen, setFileNameDialogOpen] = useState(false);
+  const [isFileUploadDialogOpen, setFileUploadDialogOpen] = useState(false);
   const [fileName, setFileName] = useState("");
+  const [uploadedFile, setUploadedFile] = useState(null);
 
   useEffect(() => {
     setFileName(FILENAMEGLOBAL);
@@ -50,6 +54,26 @@ function Edit() {
     setContent(e.target.value);
   };
 
+  const handleOpenFile = () => {
+    // Some backend to load file.
+  };
+
+  const handleUploadFile = () => {
+    setFileUploadDialogOpen(true);
+  };
+
+  const handleFileUpload = () => {
+    if (uploadedFile) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setContent(e.target.result);
+        setFileName(uploadedFile.name);
+      };
+      reader.readAsText(uploadedFile);
+      setFileUploadDialogOpen(false);
+    }
+  };
+
   const handleSave = () => {
     const blob = new Blob([content], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
@@ -65,12 +89,19 @@ function Edit() {
     setFileNameDialogOpen(false);
   };
 
-  const handleOpenFile = () => {
-    // Some backend to load file.
-  };
-
   return (
     <div className="container mx-auto px-4 py-8 h-screen flex flex-col">
+      <div className="flex items-center justify-center mb-2">
+        <h1 className="text-xl font-bold text-center">{fileName}</h1>
+        <Button
+          className="ml-2"
+          size="sm"
+          variant="outline"
+          onClick={() => setFileNameDialogOpen(true)}
+        >
+          <Pencil1Icon />
+        </Button>
+      </div>
       <Menubar className="mb-2">
         <MenubarMenu>
           <MenubarTrigger>File</MenubarTrigger>
@@ -78,9 +109,11 @@ function Edit() {
             <MenubarItem onSelect={handleOpenFile}>
               Open <MenubarShortcut>⌘O</MenubarShortcut>
             </MenubarItem>
+            <MenubarItem onSelect={handleUploadFile}>Upload</MenubarItem>
             <MenubarItem onSelect={handleSave}>
               Save <MenubarShortcut>⌘S</MenubarShortcut>
             </MenubarItem>
+            <MenubarSeparator />
             <MenubarItem onSelect={() => setFileNameDialogOpen(true)}>
               Rename
             </MenubarItem>
@@ -107,6 +140,26 @@ function Edit() {
             />
             <Button type="submit" onClick={handleRename}>
               Rename
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={isFileUploadDialogOpen}
+        onOpenChange={setFileUploadDialogOpen}
+      >
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Upload File</DialogTitle>
+          </DialogHeader>
+          <div className="flex w-full max-w-sm items-center space-x-2">
+            <Input
+              type="file"
+              onChange={(e) => setUploadedFile(e.target.files[0])}
+            />
+            <Button type="submit" onClick={handleFileUpload}>
+              Upload
             </Button>
           </div>
         </DialogContent>
