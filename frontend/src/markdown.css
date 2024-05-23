@@ -26,7 +26,7 @@
 }
 
 .markdown p {
-  margin-bottom: 1rem;
+  margin-bottom: 0rem;
 }
 
 .markdown a {
@@ -70,7 +70,7 @@
 .markdown img {
   max-width: 100%;
   height: auto;
-  margin-bottom: 1rem;
+  margin: 1rem;
 }
 
 .markdown hr {

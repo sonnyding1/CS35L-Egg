@@ -93,7 +93,7 @@ function EditMenuBar({content, textareaRef, onContentChange}) {
       Italics <MenubarShortcut>⌘I</MenubarShortcut>
       </MenubarItem>
       <MenubarItem onSelect={() => handleEditAction(handleInlineCodeBlock)}>
-      Code <MenubarShortcut>⌘+Shift+C</MenubarShortcut>
+      Code <MenubarShortcut>⇧⌘C</MenubarShortcut>
       </MenubarItem>
       <MenubarItem onSelect={() => handleEditAction(handleBlockQuote)}>
       Blockquote

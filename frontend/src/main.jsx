@@ -7,6 +7,7 @@ import Community from "./pages/Community.jsx";
 import Edit from "./pages/Edit.jsx";
 import Login from "./pages/Login.jsx";
 import SignUp from "./pages/SignUp";
+import Profile from "./pages/Profile";
 
 const router = createBrowserRouter([
   {
@@ -28,6 +29,11 @@ const router = createBrowserRouter([
   {
     path: "/signup",
     element: <SignUp />,
+  },
+  // for now profile path is just /profile...
+  {
+    path: "/profile",
+    element: <Profile />,
   },
 ]);
 

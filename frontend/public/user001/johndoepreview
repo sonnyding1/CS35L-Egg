@@ -1,0 +1,24 @@
+# Hello there!
+---
+This is John Doe's **personal** page.
+[A link to google.com](https://www.google.com)
+
+ - Noting down things
+ - Ideas and thoughts
+
+Favorite Foods
+ 1. Pizza
+ 2. Ice Cream
+
+> Greatest quote of all time.
+
+```
+#include <stdio.h>
+int main() {
+  std::cout << "Hello World"" << std::endl;
+}
+```
+---
+ Lorem ipsum dolor sit amet consectetur adipisicing elit. Quaerat assumenda laudantium perspiciatis mollitia aspernatur fugit ab quia corporis labore, provident similique pariatur ratione rerum consectetur optio dolorem culpa nam voluptas doloremque repellat vitae, facilis perferendis nisi aliquam. Aliquid esse neque itaque eos ratione quod hic ut! Libero similique incidunt quae.
+
+ ![logo](vite.svg)
