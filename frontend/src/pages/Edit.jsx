@@ -127,6 +127,22 @@ function Edit() {
             </MenubarItem>
           </MenubarContent>
         </MenubarMenu>
+            <MenubarItem onSelect={handleOpenFile}>
+              Open <MenubarShortcut>⌘O</MenubarShortcut>
+            </MenubarItem>
+            <MenubarItem onSelect={handleSave}>
+              Save <MenubarShortcut>⌘S</MenubarShortcut>
+            </MenubarItem>
+            <MenubarItem onSelect={() => setFileNameDialogOpen(true)}>
+              Rename
+            </MenubarItem>
+          </MenubarContent>
+        </MenubarMenu>
+        <EditMenuBar
+          content={content}
+          textareaRef={textareaRef}
+          onContentChange={setContent}
+        />
       </Menubar>
 
       <Dialog open={isFileNameDialogOpen} onOpenChange={setFileNameDialogOpen}>

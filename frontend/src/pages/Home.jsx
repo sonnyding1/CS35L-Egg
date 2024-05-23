@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import Navigation from "@/components/ui/navigation";
+import Navigation from "@/components/navigation";
 
 function Home() {
   // const handleSubmit = (e) => {

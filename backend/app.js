@@ -4,6 +4,7 @@ const cors = require("cors");
 const passport = require("passport");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
+const fileRoutes = require("./routes/fileRoutes");
 const mongoose = require("mongoose");
 require("dotenv").config();
 const bodyParser = require("body-parser");
@@ -54,7 +55,7 @@ app.use(
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false },
-  })
+  }),
 );
 app.use(passport.initialize());
 app.use(passport.session());
@@ -64,6 +65,7 @@ app.use(bodyParser.json());
 // routes
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
+app.use("/file", fileRoutes);
 app.get("/", (req, res) => {
   res.send("Hello, World!");
 });
