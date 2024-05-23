@@ -1,17 +1,9 @@
 const express = require("express");
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
+const StatusCodes = require("./statusCodes");
 
 const router = express.Router();
-
-const StatusCodes = {
-  SUCCESS: 200,
-  USER_NOT_FOUND: 404,
-  WRONG_PASSWORD: 409,
-  VALUE_TAKEN: 409,
-  USER_CREATION_FAILED: 500,
-  INTERNAL_ERROR: 500,
-};
 
 
 /*
@@ -65,7 +57,7 @@ router.get("/all", async (req, res) => {
     const users = await User.find({}).exec();
     if (users.length === 0) {
       return res
-        .status(StatusCodes.USER_NOT_FOUND)
+        .status(StatusCodes.NOT_FOUND)
         .json({ error: "User not found!" });
     }
     return res.json(users);
@@ -117,7 +109,7 @@ router.get("/", async (req, res) => {
     }).exec();
     if (user.length === 0) {
       return res
-        .status(StatusCodes.USER_NOT_FOUND)
+        .status(StatusCodes.NOT_FOUND)
         .json({ error: "User not found!" });
     }
     return res.json(user);
@@ -196,7 +188,7 @@ router.post("/login", async (req, res) => {
       .json({ error: "Wrong Password!" });
   }
   return res
-    .status(StatusCodes.USER_NOT_FOUND)
+    .status(StatusCodes.NOT_FOUND)
     .json({ error: "User not found!" });
 });
 
@@ -263,7 +255,7 @@ router.post("/signup", async (req, res) => {
   const { email, password, username } = req.body;
   if (!email || !password | !username) {
     return res
-      .status(StatusCodes.USER_CREATION_FAILED)
+      .status(StatusCodes.CREATION_FAILED)
       .json("Missing Required Field!");
   }
   try {
@@ -271,6 +263,7 @@ router.post("/signup", async (req, res) => {
     const defaultUsername = email.split("@")[0];
     const finalUsername = username || defaultUsername;
     const newUser = new User({
+      dateCreated: new Date(),
       ...req.body,
       password: hashedPassword,
       username: finalUsername,
@@ -295,44 +288,9 @@ router.post("/signup", async (req, res) => {
     }
     // If encryption fails
     return res
-      .status(StatusCodes.USER_CREATION_FAILED)
+      .status(StatusCodes.CREATION_FAILED)
       .json({ error: "User creation failed due to internal server error." });
   }
-});
-
-
-/**
- * @swagger
- * /user/delete:
- *   post:
- *     tags: [User]
- *     summary: Delete a user
- *     description: Delete a user by username and password, will be adjusting to be more restrictive, but for now this is for testing purposes
- *     responses:
- *       200:
- *         description: A user.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/User'
- *       401:
- *         description: User not found.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- */
-router.post("/delete", async (req, res) => {
-  const user = await User.findOneAndDelete(req.body);
-  if (user == null) {
-    return res
-      .status(StatusCodes.USER_NOT_FOUND)
-      .json({ error: "User not found!" });
-  }
-  return res.json(user);
 });
 
 module.exports = router;

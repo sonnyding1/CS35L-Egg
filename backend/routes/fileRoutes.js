@@ -1,17 +1,11 @@
 const express = require("express");
 const User = require("../models/User");
 const File = require("../models/File");
-
+const Comment = require("../models/Comment");
+const StatusCodes = require("./statusCodes");
 const router = express.Router();
 
-const StatusCodes = {
-    SUCCESS: 200,
-    BAD_REQUEST: 400,
-    NOT_FOUND: 404,
-    VALUE_TAKEN: 409,
-    FILE_CREATION_FAILED: 500,
-    INTERNAL_ERROR: 500,    
-};
+
 
 // get all files in db
 // does not differentiate between public and private files yet
@@ -21,7 +15,13 @@ router.get("/all", async (req, res) => {
         const files = await File.find({}).populate([
             { path: 'ownerName', model: 'User', select: 'name username' },
             { path: 'lastModifiedBy', model: 'User', select: 'name username' },
-            { path: 'comments', model: 'Comment'} //, populate: { path: 'user', model: 'User' } } for future implementation
+            { path: 'comments',
+              model: 'Comment', 
+              populate: [
+                { path: 'author', model: 'User', select: 'name username' }, 
+                { path: 'file', model: 'File', select: 'fileName'}
+                ]
+            }
         ]);
         if (files.length === 0) {
         return res
@@ -45,8 +45,14 @@ router.get("/user/all", async (req, res) => {
         const files = await File.find({ownerName: user._id}).populate([
             { path: 'ownerName', model: 'User', select: 'name username' },
             { path: 'lastModifiedBy', model: 'User', select: 'name username' },
-            { path: 'comments', model: 'Comment'} //, populate: { path: 'user', model: 'User' } } for future implementation
-        ]);
+            { path: 'comments',
+              model: 'Comment', 
+              populate: [
+                { path: 'author', model: 'User', select: 'name username' }, 
+                { path: 'file', model: 'File', select: 'fileName'}
+                ]
+            }
+         ]);
         if (files.length === 0){
         return res
             .status(StatusCodes.NOT_FOUND)
@@ -77,8 +83,14 @@ router.get("/user/one", async(req, res) => {
             }).populate([
                 { path: 'ownerName', model: 'User', select: 'name username' },
                 { path: 'lastModifiedBy', model: 'User', select: 'name username' },
-                { path: 'comments', model: 'Comment'} //, populate: { path: 'user', model: 'User' } } for future implementation
-            ]);
+                { path: 'comments',
+              model: 'Comment', 
+              populate: [
+                { path: 'author', model: 'User', select: 'name username' }, 
+                { path: 'file', model: 'File', select: 'fileName'}
+                ]
+            }
+         ]);
         if (file.length === 0){
             return res
             .status(StatusCodes.NOT_FOUND)
@@ -96,7 +108,7 @@ router.get("/user/one", async(req, res) => {
 // get files liked by user
 router.get("/user-liked/all", async(req, res) => {
     try {
-        const liked = await User.findOne({username: req.session.username}, 'likedFiles').populate('likedFiles').exec();
+        const liked = await User.findOne({username: req.session.username}, 'likedFiles').populate('likedFiles');
         if (liked.length === 0){
             return res
             .status(StatusCodes.NOT_FOUND)
@@ -118,7 +130,7 @@ router.post("/create", async(req, res) => {
     const {fileName, public, folder, text, description} = req.body;
     if (!fileName) {
         return res
-          .status(StatusCodes.FILE_CREATION_FAILED)
+          .status(StatusCodes.CREATION_FAILED)
           .json("Missing Required Field!");
     }
     try{
@@ -138,7 +150,7 @@ router.post("/create", async(req, res) => {
             ownerName: user._id,
         });
         await newFile.save();
-        await user.files.push(newFile._id);
+        user.files.push(newFile._id);
         await user.save();
         return res
         .status(StatusCodes.SUCCESS)
@@ -160,35 +172,43 @@ router.post("/create", async(req, res) => {
         }
         // If encryption fails
         return res
-          .status(StatusCodes.FILE_CREATION_FAILED)
+          .status(StatusCodes.CREATION_FAILED)
           .json({ error: "File creation failed due to internal server error." });
       }
 });
 
-// delete one file from database
-// to work needs two fields plus user session
-// the fields are the file name and folder
-router.post("/delete/one", async (req, res) => {
-    const {fileName, folder} = req.body;
-    const user = await User.findOne({username:req.session.username});
+
+// for now we input the file we want to add a comment to
+// if we can have a cookie for file then we can discard the input
+router.post("/comment/create", async (req, res) =>{
+    const {fileName, folder, content} = req.body;
     if (!fileName || !folder){
         return res
         .status(StatusCodes.BAD_REQUEST)
-        .json({error: "Insufficient information to delete file!"});
+        .json({error: "Missing Search Field!"});
     }
-    const file = await File.findOneAndDelete({
-        fileName: fileName,
-        folder: folder,
-        ownerName: user._id
-    });
-    if (file  == null) {
-      return res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ error: "File not found!" });
+    try{
+        const user = await User.findOne({username: req.session.username});
+        const file = await File.findOne({ownerName: user._id, fileName: fileName, folder: folder});
+        const newComment = new Comment({
+            file: file._id,
+            author: user._id,
+            dateCreated: new Date(),
+            content: content
+        })
+        await newComment.save();
+        file.comments.push(newComment._id);
+        await file.save();
+        await user.save();
+        return res
+        .status(StatusCodes.SUCCESS)
+        .json(newComment);
+    } catch(error) {
+        console.log(error)
+        return res
+        .status(StatusCodes.CREATION_FAILED)
+        .json({ error: "Comment creation failed due to internal server error." });
     }
-    await user.files.pull(file._id);
-    await user.save();
-    return res.json(file);
 });
 
 module.exports = router;
