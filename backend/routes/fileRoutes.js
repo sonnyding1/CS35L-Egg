@@ -7,9 +7,8 @@ const router = express.Router();
 const StatusCodes = {
     SUCCESS: 200,
     BAD_REQUEST: 400,
-    FILES_NOT_FOUND: 404,
-    FILENAME_TAKEN: 409,
-    FOLDER_TAKEN: 409,
+    NOT_FOUND: 404,
+    VALUE_TAKEN: 409,
     FILE_CREATION_FAILED: 500,
     INTERNAL_ERROR: 500,    
 };
@@ -19,10 +18,14 @@ const StatusCodes = {
 // should that be in community get?
 router.get("/all", async (req, res) => {
     try {
-        const files = await File.find({}).exec();
+        const files = await File.find({}).populate([
+            { path: 'ownerName', model: 'User', select: 'name username' },
+            { path: 'lastModifiedBy', model: 'User', select: 'name username' },
+            { path: 'comments', model: 'Comment'} //, populate: { path: 'user', model: 'User' } } for future implementation
+        ]);
         if (files.length === 0) {
         return res
-            .status(StatusCodes.FILES_NOT_FOUND)
+            .status(StatusCodes.NOT_FOUND)
             .json({ error: "No files found!" });
         }
         return res.json(files);
@@ -38,10 +41,14 @@ router.get("/all", async (req, res) => {
 // get user files
 router.get("/user/all", async (req, res) => {
     try {
-        const files = await File.find({ownerName: req.session.username}).exec();
+        const files = await File.find({ownerName: req.session.username}).populate([
+            { path: 'ownerName', model: 'User', select: 'name username' },
+            { path: 'lastModifiedBy', model: 'User', select: 'name username' },
+            { path: 'comments', model: 'Comment'} //, populate: { path: 'user', model: 'User' } } for future implementation
+        ]);
         if (files.length === 0){
         return res
-            .status(StatusCodes.FILES_NOT_FOUND)
+            .status(StatusCodes.NOT_FOUND)
             .json({ error: "No files found!"});
         }
         return res.json(files);  
@@ -63,10 +70,14 @@ router.get("/user/one", async(req, res) => {
         const file = await File.find({ 
             ownerName: req.session.username, 
             fileName: req.body.fileName
-            }).exec();
+            }).populate([
+                { path: 'ownerName', model: 'User', select: 'name username' },
+                { path: 'lastModifiedBy', model: 'User', select: 'name username' },
+                { path: 'comments', model: 'Comment'} //, populate: { path: 'user', model: 'User' } } for future implementation
+            ]);
         if (file.length === 0){
             return res
-            .status(StatusCodes.FILES_NOT_FOUND)
+            .status(StatusCodes.NOT_FOUND)
             .json({ error: "No file found!"});
         }
         return res.json(file);
@@ -84,7 +95,7 @@ router.get("/user-liked/all", async(req, res) => {
         const liked = await User.findOne({username: req.session.username}, 'likedFiles').populate('likedFiles').exec();
         if (liked.length === 0){
             return res
-            .status(StatusCodes.FILES_NOT_FOUND)
+            .status(StatusCodes.NOT_FOUND)
             .json({ error: "No file found!"});
         }
         return res.json(liked);
@@ -101,25 +112,28 @@ router.get("/user-liked/all", async(req, res) => {
 // need to have unique filename for the same folder 
 // need to have unique folder for the same owner 
 router.post("/create", async(req, res) => {
-    const {fileName, public, folder} = req.body;
+    const {fileName, public, folder, text, description} = req.body;
     if (!fileName) {
         return res
           .status(StatusCodes.FILE_CREATION_FAILED)
           .json("Missing Required Field!");
     }
-    const user = await User.findOne({username:req.session.username});
     try{
-        const defaultFolder = folder || "main";
-        const defaultPublic = public || true;
+        const user = await User.findOne({username:req.session.username});
+        if (!user) {
+            return res.status(StatusCodes.NOT_FOUND).json({error:'User not found'});
+          }
         const newFile = new File({
             fileName: fileName,
-            public: defaultPublic,
-            folder: defaultFolder,
+            public: public,
+            folder: folder,
+            text: text,
+            description: description,
             dateCreated: new Date(),
             lastModified: new Date(),
             lastModifiedBy: user._id,
-            ownerName: user._id
-        })
+            ownerName: user._id,
+        });
         await newFile.save();
         await user.files.push(newFile._id);
         await user.save();
@@ -133,11 +147,11 @@ router.post("/create", async(req, res) => {
           const field = Object.keys(error.keyPattern)[0];
           if (field === "fileName") {
             return res
-              .status(StatusCodes.FILENAME_TAKEN)
+              .status(StatusCodes.VALUE_TAKEN)
               .json({ error: "File name already exists!" });
           } else if (field === "folder") {
             return res
-              .status(StatusCodes.FOLDER_TAKEN)
+              .status(StatusCodes.VALUE_TAKEN)
               .json({ error: "Folder already exists!" });
           }
         }
@@ -166,7 +180,7 @@ router.post("/delete/one", async (req, res) => {
     });
     if (file  == null) {
       return res
-        .status(StatusCodes.FILES_NOT_FOUND)
+        .status(StatusCodes.NOT_FOUND)
         .json({ error: "File not found!" });
     }
     await user.files.pull(file._id);

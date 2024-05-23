@@ -8,21 +8,10 @@ const StatusCodes = {
   SUCCESS: 200,
   USER_NOT_FOUND: 404,
   WRONG_PASSWORD: 409,
-  USERNAME_TAKEN: 409,
-  EMAIL_TAKEN: 409,
+  VALUE_TAKEN: 409,
   USER_CREATION_FAILED: 500,
   INTERNAL_ERROR: 500,
 };
-/**
- * DISCLAIMER:
- * THE FILE SYSTEM HAS NOT BEEN SET UP FULLY YET 
- * SO THE FILES ARE SIMPLY STRING NAMES FOR NOW 
- * I HAVE AN IDEA OF HOW TO UPLOAD FILES
- * BUT HAVE NOT YET WORKED ON IT
- * 
- * THE WAY I HAVE IMPLEMENTED THE GET SO FAR IS TO FIND THE USER
- * THEN FIND THE FILE/S, NOT SURE ABOUT THE SESSION TOPIC 
- */
 
 
 /*
@@ -296,11 +285,11 @@ router.post("/signup", async (req, res) => {
       const field = Object.keys(error.keyPattern)[0];
       if (field === "email") {
         return res
-          .status(StatusCodes.EMAIL_TAKEN)
+          .status(StatusCodes.VALUE_TAKEN)
           .json({ error: "Email already exists!" });
       } else if (field === "username") {
         return res
-          .status(StatusCodes.USERNAME_TAKEN)
+          .status(StatusCodes.VALUE_TAKEN)
           .json({ error: "Username already exists!" });
       }
     }

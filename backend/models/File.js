@@ -19,11 +19,6 @@ const Comment = require("./Comment");
  *      - there is also a liked files array which saves the ID of the files "liked" by the user
  *      - when expanding the community model, we will add another contributer field to the file to allow accessing, commenting
  *  -  I have added a bunch of getter functions for now for the files
- *  - there is also a create function and a delete function, which should be working
- *  - I have not tested them because I am not sure what the authentication interaction is like 
- *  - ...using postman, not sure how to create a session?
- *  - did a preliminary test by switching to req.body.username instead of req.session.username 
- *  - the create and delete functions worked properly!
  *  - have not tested all the get functions
  */
 
@@ -46,20 +41,19 @@ const Comment = require("./Comment");
 
 // comment system, mdo file, folder
 const FileSchema = new mongoose.Schema({
-  fileName: { type: String, required: true},
-  folder: { type: String },
-  ownerName: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true},
-  public: { type: Boolean, required: true },
-  dateCreated: { type: Date, required: true },
+  fileName: { type: String, required: true, unique: false},
+  folder: { type: String, default: "main", unique: false},
+  ownerName: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, immutable: true, unique: false},
+  public: { type: Boolean, required: true, default: true },
+  dateCreated: { type: Date, required: true, immutable: true },
   lastModified: { type: Date, required: true },
   lastModifiedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true},
+  description:{ type:String, default:""},
+  text: {type: String, default: ""},
   comments: [{type: mongoose.Schema.Types.ObjectId,ref: 'Comment'}],
 });
 
-// Ensure fileName is unique within the same folder
+// Ensure combination of owner, folder, and filename are unique
 FileSchema.index({ fileName: 1, folder: 1, ownerName: 1 }, { unique: true });
-
-// Ensure folder is unique for each owner
-FileSchema.index({ folder: 1, ownerName: 1 }, { unique: true });
 
 module.exports = mongoose.model("File", FileSchema);
