@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import Navbar from "@/components/Navbar";
 
 const FileBrowser = () => {
   const [files, setFiles] = useState([]);
@@ -34,6 +35,7 @@ const FileBrowser = () => {
 
   return (
     <>
+      <Navbar />
       <Table>
         <TableHeader>
           <TableRow>
