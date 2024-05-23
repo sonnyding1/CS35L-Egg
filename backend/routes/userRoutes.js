@@ -8,11 +8,11 @@ const StatusCodes = {
   SUCCESS: 200,
   USER_NOT_FOUND: 404,
   WRONG_PASSWORD: 409,
-  USERNAME_TAKEN: 409,
-  EMAIL_TAKEN: 409,
+  VALUE_TAKEN: 409,
   USER_CREATION_FAILED: 500,
   INTERNAL_ERROR: 500,
 };
+
 
 /*
 Implementing user functionality 
@@ -60,7 +60,7 @@ Implementing user functionality
  *                 error:
  *                   type: string
  */
-router.get("/users", async (req, res) => {
+router.get("/all", async (req, res) => {
   try {
     const users = await User.find({}).exec();
     if (users.length === 0) {
@@ -285,11 +285,11 @@ router.post("/signup", async (req, res) => {
       const field = Object.keys(error.keyPattern)[0];
       if (field === "email") {
         return res
-          .status(StatusCodes.EMAIL_TAKEN)
+          .status(StatusCodes.VALUE_TAKEN)
           .json({ error: "Email already exists!" });
       } else if (field === "username") {
         return res
-          .status(StatusCodes.USERNAME_TAKEN)
+          .status(StatusCodes.VALUE_TAKEN)
           .json({ error: "Username already exists!" });
       }
     }
@@ -299,6 +299,7 @@ router.post("/signup", async (req, res) => {
       .json({ error: "User creation failed due to internal server error." });
   }
 });
+
 
 /**
  * @swagger

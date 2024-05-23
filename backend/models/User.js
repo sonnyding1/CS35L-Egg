@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const File = require("./File");
 
 /**
  * @swagger
@@ -36,6 +37,8 @@ const UserSchema = new mongoose.Schema({
   email: { type: String, unique: true, require: true },
   username: { type: String, unique: true },
   password: { type: String, required: true },
+  files: [{type:mongoose.Schema.Types.ObjectId, ref:"File"}],
+  likedFiles: [{type: mongoose.Schema.Types.ObjectId, ref:"File"}]
 });
 
 const User = mongoose.model("User", UserSchema);
