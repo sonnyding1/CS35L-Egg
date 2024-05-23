@@ -84,7 +84,7 @@ const handleNumberedList = (content, textareaRef) => {
   return handleLinePrefix(content, textareaRef, "1. ");
 };
 
-function EditMenuBar({ content, textareaRef, onContentChange }) {
+const EditMenuBarMenu = ({ content, textareaRef, onContentChange }) => {
   const handleEditAction = (actionFn) => {
     const newContent = actionFn(content, textareaRef);
     onContentChange(newContent);
@@ -100,7 +100,7 @@ function EditMenuBar({ content, textareaRef, onContentChange }) {
           Italics <MenubarShortcut>⌘I</MenubarShortcut>
         </MenubarItem>
         <MenubarItem onSelect={() => handleEditAction(handleInlineCodeBlock)}>
-          Code <MenubarShortcut>⌘+Shift+C</MenubarShortcut>
+          Code <MenubarShortcut>⇧⌘C</MenubarShortcut>
         </MenubarItem>
         <MenubarItem onSelect={() => handleEditAction(handleBlockQuote)}>
           Blockquote
@@ -124,6 +124,6 @@ function EditMenuBar({ content, textareaRef, onContentChange }) {
       </MenubarContent>
     </MenubarMenu>
   );
-}
+};
 
-export default EditMenuBar;
+export default EditMenuBarMenu;
