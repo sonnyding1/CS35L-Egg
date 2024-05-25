@@ -1,16 +1,12 @@
 import { useState, useEffect, useRef } from "react";
-import ReactMarkdown from "react-markdown";
-import rehypeKatex from "rehype-katex";
-import remarkMath from "remark-math";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent } from "@/components/ui/card";
 import { Menubar } from "@/components/ui/menubar";
-import "../markdown.css";
-import "katex/dist/katex.min.css";
 import EditMenuBar from "@/components/EditMenuBarMenu";
 import FileMenuBar from "@/components/FileMenuBarMenu";
 import { Pencil1Icon } from "@radix-ui/react-icons";
+import MarkdownPreview from "@/components/MarkdownPreview";
+import { Card, CardContent } from "@/components/ui/card";
 
 const FILENAMEGLOBAL = "content";
 
@@ -41,7 +37,7 @@ function Edit() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-4 h-screen flex flex-col">
+    <div className="mx-auto px-4 py-4 h-screen flex flex-col">
       <div className="flex items-center justify-center mb-2">
         <h1 className="text-xl font-bold text-center">{fileName}</h1>
         <Button
@@ -79,15 +75,8 @@ function Edit() {
         </div>
         <div className="w-1/2 ml-2">
           <Card>
-            <CardContent className="markdown pt-4">
-              {
-                <ReactMarkdown
-                  remarkPlugins={[remarkMath]}
-                  rehypePlugins={rehypeKatex}
-                >
-                  {content}
-                </ReactMarkdown>
-              }
+            <CardContent className="pt-4">
+              <MarkdownPreview content={content} />
             </CardContent>
           </Card>
         </div>

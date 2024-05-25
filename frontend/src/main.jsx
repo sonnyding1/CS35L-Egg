@@ -8,6 +8,7 @@ import Edit from "./pages/Edit.jsx";
 import Login from "./pages/Login.jsx";
 import SignUp from "./pages/SignUp";
 import FileBrowser from "./pages/FileBrowser";
+import Post from "./pages/Post";
 
 const router = createBrowserRouter([
   {
@@ -33,6 +34,10 @@ const router = createBrowserRouter([
   {
     path: "/browse",
     element: <FileBrowser />,
+  },
+  {
+    path: "/samplepost",
+    element: <Post />,
   },
 ]);
 
