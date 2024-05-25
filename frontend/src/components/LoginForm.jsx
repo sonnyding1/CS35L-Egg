@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "./AuthContext";
@@ -15,10 +15,8 @@ const LoginForm = ({ isSignUpPage }) => {
     confirmPassword: "",
     errorMessage: "",
   });
-
   const { name, email, username, password, confirmPassword, errorMessage } =
     formState;
-
   const passwordsMatch = !isSignUpPage || password === confirmPassword;
 
   useEffect(() => {

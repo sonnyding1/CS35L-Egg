@@ -3,16 +3,47 @@ import { useState, createContext, useContext, useEffect } from "react";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    const storedUser = localStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    setLoading(false);
+    checkUserLoggedIn();
   }, []);
+
+  const checkUserLoggedIn = async () => {
+    setLoading(true);
+    try {
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      } else {
+        const response = await fetch("http://localhost:3000/user", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setUser(data[0]);
+          localStorage.setItem("user", JSON.stringify(data[0]));
+        } else {
+          setUser(null);
+          localStorage.removeItem("user");
+        }
+      }
+    } catch (error) {
+      console.error("Error checking user login:", error);
+      setUser(null);
+      localStorage.removeItem("user");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const login = async (email, password) => {
     setLoading(true);
@@ -60,26 +91,29 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem("user");
+  const logout = async () => {
+    setLoading(true);
+    try {
+      await fetch("http://localhost:3000/user/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+      setUser(null);
+      localStorage.removeItem("user");
+    } catch (error) {
+      console.error("Logout error:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout, loading }}>
+    <AuthContext.Provider
+      value={{ user, login, signup, logout, loading, checkUserLoggedIn }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
 
 export const useAuth = () => useContext(AuthContext);
-
-export const AuthWrapper = ({ children }) => {
-  const { loading } = useAuth();
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  return children;
-};
