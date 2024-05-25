@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-const LoginField = ({ id, label, value, onChange, type, isMatched }) => (
+const LoginField = ({ id, label, value, onChange, type, isMatched = true }) => (
   <div>
     <Label htmlFor={id}>{label}</Label>
     <Input
