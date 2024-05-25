@@ -1,93 +1,51 @@
-import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "./AuthContext";
 import LoginField from "./LoginField";
 
 const LoginForm = ({ isSignUpPage }) => {
   const navigate = useNavigate();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-  const [isPasswordMatched, setIsPasswordMatched] = useState(true);
+  const { login, signup } = useAuth();
+  const [formState, setFormState] = useState({
+    name: "",
+    email: "",
+    username: "",
+    password: "",
+    confirmPassword: "",
+    errorMessage: "",
+  });
+  const { name, email, username, password, confirmPassword, errorMessage } =
+    formState;
+  const passwordsMatch = !isSignUpPage || password === confirmPassword;
 
   useEffect(() => {
-    if (isSignUpPage) {
-      setIsPasswordMatched(password === confirmPassword);
+    if (isSignUpPage && password !== confirmPassword) {
+      setFormState((prev) => ({
+        ...prev,
+        errorMessage: "Passwords do not match.",
+      }));
+    } else {
+      setFormState((prev) => ({ ...prev, errorMessage: "" }));
     }
   }, [password, confirmPassword, isSignUpPage]);
 
-  const handleLogin = async (event) => {
-    event.preventDefault();
-    try {
-      const response = await fetch("http://localhost:3000/user/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-        credentials: "include",
-      });
-      if (response.ok) {
-        const data = await response.json();
-        console.log("User logged in successfully:", data);
-        navigate("/");
-      } else {
-        throw new Error("Login failed");
-      }
-    } catch (error) {
-      console.error("Error logging in:", error);
-      setErrorMessage("Invalid email or password.");
-    }
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormState((prev) => ({ ...prev, [id]: value, errorMessage: "" }));
   };
 
-  const handleSignup = async (event) => {
-    event.preventDefault();
-    if (!isPasswordMatched) {
-      return;
-    }
-    try {
-      const response = await fetch("http://localhost:3000/user/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username,
-          password,
-          name,
-          email,
-        }),
-        credentials: "include",
-      });
-      if (response.ok) {
-        const data = await response.json();
-        console.log("User signed up successfully:", data);
-        navigate("/");
-      } else {
-        throw new Error("Signup failed");
-      }
-    } catch (error) {
-      console.error("Error signing up:", error);
-      setErrorMessage("Signup failed.");
-    }
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isSignUpPage) {
-      if (password != confirmPassword) {
-        setErrorMessage("Passwords do not match.");
-        return;
+    try {
+      if (isSignUpPage) {
+        await signup(username, password, name, email);
+      } else {
+        await login(email, password);
       }
-      handleSignup(e);
-    } else {
-      handleLogin(e);
+      navigate("/");
+    } catch (error) {
+      setFormState((prev) => ({ ...prev, errorMessage: error.message }));
     }
   };
 
@@ -98,9 +56,8 @@ const LoginForm = ({ isSignUpPage }) => {
           id="name"
           label="Name"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={handleChange}
           type="text"
-          isMatched={true}
         />
       )}
       {isSignUpPage && (
@@ -108,41 +65,33 @@ const LoginForm = ({ isSignUpPage }) => {
           id="username"
           label="Username"
           value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          onChange={handleChange}
           type="text"
-          isMatched={true}
         />
       )}
       <LoginField
         id="email"
         label="Email"
         value={email}
-        onChange={(e) => setEmail(e.target.value)}
+        onChange={handleChange}
         type="email"
-        isMatched={true}
       />
       <LoginField
         id="password"
         label="Password"
         value={password}
-        onChange={(e) => {
-          setPassword(e.target.value);
-          setErrorMessage("");
-        }}
+        onChange={handleChange}
         type="password"
-        isMatched={isPasswordMatched}
+        isMatched={passwordsMatch}
       />
       {isSignUpPage && (
         <LoginField
           id="confirmPassword"
           label="Confirm Password"
           value={confirmPassword}
-          onChange={(e) => {
-            setConfirmPassword(e.target.value);
-            setErrorMessage("");
-          }}
+          onChange={handleChange}
           type="password"
-          isMatched={isPasswordMatched}
+          isMatched={passwordsMatch}
         />
       )}
       <div className="relative">

@@ -41,7 +41,7 @@ const Post = () => {
   }, []);
 
   if (!post) {
-    return <div>Loading...</div>;
+    return <></>;
   }
 
   return (
