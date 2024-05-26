@@ -13,7 +13,6 @@ const StatusCodes = {
   INTERNAL_ERROR: 500,
 };
 
-
 /*
 Implementing user functionality 
 */
@@ -299,7 +298,6 @@ router.post("/signup", async (req, res) => {
       .json({ error: "User creation failed due to internal server error." });
   }
 });
-
 
 /**
  * @swagger

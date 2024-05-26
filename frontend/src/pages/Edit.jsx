@@ -15,6 +15,9 @@ function Edit() {
   const textareaRef = useRef(null);
   const [fileName, setFileName] = useState("");
   const [isFileNameDialogOpen, setFileNameDialogOpen] = useState(false);
+  const [past, setPast] = useState("");
+  const [future, setFuture] = useState("");
+  const timeoutRef = useRef(null);
 
   useEffect(() => {
     setFileName(FILENAMEGLOBAL);
@@ -34,6 +37,20 @@ function Edit() {
 
   const handleChange = (e) => {
     setContent(e.target.value);
+
+    clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(() => {
+      setPast([...past, e.target.value]);
+      setFuture([]);
+    }, 500);
+  };
+
+  // for special operations such as formatting
+  // setContent but also add history
+  const onContentChange = (newContent) => {
+    setContent(newContent);
+    setPast([...past, newContent]);
+    setFuture([]);
   };
 
   return (
@@ -61,7 +78,11 @@ function Edit() {
         <EditMenuBar
           content={content}
           textareaRef={textareaRef}
-          onContentChange={setContent}
+          onContentChange={onContentChange}
+          past={past}
+          future={future}
+          setPast={setPast}
+          setFuture={setFuture}
         />
       </Menubar>
       <div className="flex-grow flex mt-2">
