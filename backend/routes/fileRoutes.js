@@ -79,13 +79,6 @@ router.post("/user-folder", async (req, res) =>{
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
         .json({ error: "Internal Server Error, folder fetch failed" });
     }
-    return res.json(files);
-  } catch (error) {
-    console.error(error);
-    return res
-      .status(StatusCodes.INTERNAL_ERROR)
-      .json({ error: "Internal Server Error" });
-  }
 });
 
 /**
@@ -133,13 +126,6 @@ router.post("/user-files", async (req, res) => {
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
         .json({ error: "Internal Server Error, file fetch failed" });
     }
-    return res.json(file);
-  } catch (error) {
-    console.error(error);
-    return res
-      .status(StatusCodes.INTERNAL_ERROR)
-      .json({ error: "Internal Server Error" });
-  }
 });
 
 /** 
@@ -171,13 +157,6 @@ router.get("/user-liked/all", async (req, res) => {
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
         .json({ error: "Internal Server Error, liked files fetch failed" });
     }
-    return res.json(liked);
-  } catch (error) {
-    console.error(error);
-    return res
-      .status(StatusCodes.INTERNAL_ERROR)
-      .json({ error: "Internal Server Error" });
-  }
 });
 
 /**
@@ -357,13 +336,7 @@ router.post("/create", async(req, res) => {
         return res
           .status(StatusCodes.CREATION_FAILED)
           .json({ error: "File creation failed due to internal server error." });
-      }
     }
-    // If encryption fails
-    return res
-      .status(StatusCodes.FILE_CREATION_FAILED)
-      .json({ error: "File creation failed due to internal server error." });
-  }
 });
 
 /**
