@@ -7,7 +7,15 @@ import {
   MenubarTrigger,
 } from "@/components/ui/menubar";
 
-const EditMenuBarMenu = ({ content, textareaRef, onContentChange }) => {
+const EditMenuBarMenu = ({
+  content,
+  textareaRef,
+  onContentChange,
+  past,
+  future,
+  setPast,
+  setFuture,
+}) => {
   const handleFormatting = (formatter) => {
     const textarea = textareaRef.current;
     const start = textarea.selectionStart;
@@ -48,10 +56,36 @@ const EditMenuBarMenu = ({ content, textareaRef, onContentChange }) => {
     }, 1);
   };
 
+  const handleUndo = () => {
+    if (past.length === 0) return;
+    const newFuture = [past[past.length - 1], ...future];
+    const newPast = past.slice(0, past.length - 1);
+    onContentChange(newPast[newPast.length - 1]);
+    setPast(newPast);
+    setFuture(newFuture);
+  };
+
+  const handleRedo = () => {
+    if (future.length === 0) return;
+    const newPast = [...past, future[0]];
+    const newFuture = future.slice(1);
+    onContentChange(newPast[newPast.length - 1]);
+    setPast(newPast);
+    setFuture(newFuture);
+  };
+
   return (
     <MenubarMenu>
       <MenubarTrigger>Edit</MenubarTrigger>
       <MenubarContent>
+        <MenubarItem onSelect={() => handleUndo()}>
+          Undo
+          <MenubarShortcut>&#8984;Z</MenubarShortcut>
+        </MenubarItem>
+        <MenubarItem onSelect={() => handleRedo()}>
+          Redo
+          <MenubarShortcut>&#8984;&#8679;Z</MenubarShortcut>
+        </MenubarItem>
         <MenubarItem onSelect={() => handleFormatting((text) => `**${text}**`)}>
           Bold
           <MenubarShortcut>⌘B</MenubarShortcut>
