@@ -1,0 +1,82 @@
+[
+  {
+    "_id": {
+      "$oid": "664ec94820951a52a060b0c1"
+    },
+    "fileName": "file1.txt",
+    "folder": "test1",
+    "ownerName": {
+      "$oid": "664ec8c320951a52a060b09a"
+    },
+    "public": true,
+    "dateCreated": "2024-05-23T04:42:48.019Z",
+    "lastModified": "2024-05-23T04:42:48.019Z",
+    "lastModifiedBy": {
+      "$oid": "664ec8c320951a52a060b09a"
+    },
+    "description": "Sample text file",
+    "text": "Lorem ipsum dolor sit amet.",
+    "comments": [],
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "664ec94820951a52a060b0c2"
+    },
+    "fileName": "document",
+    "folder": "test2",
+    "ownerName": {
+      "$oid": "664ec8c320951a52a060b09b"
+    },
+    "public": false,
+    "dateCreated": "2024-05-22T10:30:00.000Z",
+    "lastModified": "2024-05-22T10:30:00.000Z",
+    "lastModifiedBy": {
+      "$oid": "664ec8c320951a52a060b09b"
+    },
+    "description": "Important document",
+    "text": "",
+    "comments": [],
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "664ec94820951a52a060b0c3"
+    },
+    "fileName": "image.md",
+    "folder": "test3",
+    "ownerName": {
+      "$oid": "664ec8c320951a52a060b09c"
+    },
+    "public": true,
+    "dateCreated": "2024-05-21T15:45:00.000Z",
+    "lastModified": "2024-05-21T15:45:00.000Z",
+    "lastModifiedBy": {
+      "$oid": "664ec8c320951a52a060b09c"
+    },
+    "description": "Sample image",
+    "text": "",
+    "comments": [],
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "664ec94820951a52a060b0c4"
+    },
+    "fileName": "file4.md",
+    "folder": "test4",
+    "ownerName": {
+      "$oid": "664ec8c320951a52a060b09d"
+    },
+    "public": false,
+    "dateCreated": "2024-05-20T09:00:00.000Z",
+    "lastModified": "2024-05-20T09:00:00.000Z",
+    "lastModifiedBy": {
+      "$oid": "664ec8c320951a52a060b09d"
+    },
+    "description": "Another text file",
+    "text": "Consectetur adipiscing elit.",
+    "comments": [],
+    "__v": 0
+  }
+]

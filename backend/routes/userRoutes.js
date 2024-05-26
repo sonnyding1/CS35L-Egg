@@ -5,7 +5,6 @@ const StatusCodes = require("./statusCodes");
 
 const router = express.Router();
 
-
 /*
 Implementing user functionality 
 */
