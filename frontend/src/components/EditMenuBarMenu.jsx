@@ -81,7 +81,6 @@ const EditMenuBarMenu = ({
 
       if ((isMac ? e.metaKey : e.ctrlKey) && e.key === "z" && !e.shiftKey) {
         e.preventDefault();
-        console.log("undo");
         handleUndo();
       }
 
@@ -108,27 +107,27 @@ const EditMenuBarMenu = ({
         </MenubarItem>
         <MenubarItem onSelect={() => handleRedo()}>
           Redo
-          <MenubarShortcut>&#8984;&#8679;Z</MenubarShortcut>
+          <MenubarShortcut>&#8679;&#8984;Z</MenubarShortcut>
         </MenubarItem>
         <MenubarItem onSelect={() => handleFormatting((text) => `**${text}**`)}>
           Bold
-          <MenubarShortcut>⌘B</MenubarShortcut>
+          <MenubarShortcut>&#8984;B</MenubarShortcut>
         </MenubarItem>
         <MenubarItem onSelect={() => handleFormatting((text) => `*${text}*`)}>
           Italics
-          <MenubarShortcut>⌘I</MenubarShortcut>
+          <MenubarShortcut>&#8984;I</MenubarShortcut>
         </MenubarItem>
         <MenubarSeparator />
         <MenubarItem onSelect={() => handleFormatting((text) => `\`${text}\``)}>
           Code
-          <MenubarShortcut>⇧⌘C</MenubarShortcut>
+          <MenubarShortcut>&#8679;&#8984;C</MenubarShortcut>
         </MenubarItem>
         <MenubarItem onSelect={() => handleLinePrefix("> ")}>
           Blockquote
         </MenubarItem>
         <MenubarItem onSelect={() => handleFormatting((text) => `$${text}$`)}>
           Math
-          <MenubarShortcut>⇧⌘M</MenubarShortcut>
+          <MenubarShortcut>&#8679;&#8984;M</MenubarShortcut>
         </MenubarItem>
         <MenubarSeparator />
         <MenubarItem onSelect={() => handleLinePrefix("- ")}>
@@ -137,13 +136,13 @@ const EditMenuBarMenu = ({
         <MenubarItem onSelect={() => handleLinePrefix("1. ")}>List</MenubarItem>
         <MenubarSeparator />
         <MenubarItem onSelect={() => handleLinePrefix("# ")}>
-          Heading 1<MenubarShortcut>⌘H1</MenubarShortcut>
+          Heading 1<MenubarShortcut>&#8679;&#8984;1</MenubarShortcut>
         </MenubarItem>
         <MenubarItem onSelect={() => handleLinePrefix("## ")}>
-          Heading 2<MenubarShortcut>⌘H2</MenubarShortcut>
+          Heading 2<MenubarShortcut>&#8679;&#8984;2</MenubarShortcut>
         </MenubarItem>
         <MenubarItem onSelect={() => handleLinePrefix("### ")}>
-          Heading 3<MenubarShortcut>⌘H3</MenubarShortcut>
+          Heading 3<MenubarShortcut>&#8679;&#8984;3</MenubarShortcut>
         </MenubarItem>
       </MenubarContent>
     </MenubarMenu>
