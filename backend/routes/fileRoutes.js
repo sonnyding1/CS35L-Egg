@@ -55,23 +55,22 @@ router.get("/all", async (req, res) => {
  */ 
 router.post("/user-folder", async (req, res) =>{
     try {
-        const {defFolder} = req.body;
-        const folder = defFolder || "Main";
+        const {folder} = req.body;
+        const finalFolder = folder || "Main";
         if (!req.session.userId) {
             return res
               .status(StatusCodes.BAD_REQUEST)
               .json({ error: "User not logged in" });
         }
-        const currentFolder = await File.find({folder: folder, authorId:req.session.userId });
-    
+        const currentFolder = await File.find({authorId:req.session.userId, folder:finalFolder });
         if (currentFolder.length === 0) {
             return res
             .status(StatusCodes.NOT_FOUND)
-            .json({error: "Folder/Files not found!"});
+            .json({error: "Folder - Files not found!"});
         }
 
         return res
-        .status(StatusCodes.SUCCESS)
+        .status(StatusCodes.OK)
         .json(currentFolder);
         
     } catch (error) {
@@ -104,6 +103,7 @@ router.post("/user-files", async (req, res) => {
         }
         let file;
         if (req.body){
+            console.log(req.body);
             file = await File.find({
                 ...req.body,
                 authorId: req.session.userId
@@ -170,9 +170,9 @@ router.get("/user-liked/all", async (req, res) => {
  */
 router.post("/other-folder", async (req, res) =>{
     try{
-        const {authorName, authorEmail, defFolder } = req.body;
+        const {authorName, authorEmail, folder } = req.body;
         let {authorId} = req.body;
-        const folder = defFolder || "Main";
+        const finalFolder = folder || "Main";
         if (!req.body){
             return res
             .status(StatusCodes.BAD_REQUEST)
@@ -181,12 +181,12 @@ router.post("/other-folder", async (req, res) =>{
         if ((authorName || authorEmail) && !authorId){
             authorId = await User.findOne({$or:[{username: authorName}, {email: authorEmail}]},{select: '_id'});
         }
-        const currentFolder = await File.find({authorId: authorId, folder: folder, public:true});
+        const currentFolder = await File.find({authorId: authorId, folder: finalFolder, public:true});
     
         if (currentFolder.length === 0) {
             return res
             .status(StatusCodes.NOT_FOUND)
-            .json({error: "Public folder/files not found!"});
+            .json({error: "Public folder - files not found!"});
         }
 
         return res
@@ -340,43 +340,6 @@ router.post("/create", async(req, res) => {
 });
 
 /**
- * get all comments associated with a file
- * search by file Id only since file should be at hand
- * then get the comments
- * This function populates the comment information so that 
- * front end does not need to fetch author name when displaying comment
-*/
-router.post("/comment/all", async (req, res) => {
-    try {
-        if (!req.body._id){
-            return res
-            .status(StatusCodes.BAD_REQUEST)
-            .json({error:"Missing file Id!"});
-        }
-        const file = await User.findById(req.body._id);
-        if (!file) {
-            return res
-            .status(StatusCodes.NOT_FOUND)
-            .json({ error: "File not found!" });
-        } 
-        if (file.comments.length === 0){
-            return res 
-            .status(StatusCodes.NOT_FOUND)
-            .json({status: "No comments found!"})
-        }
-        return res.json(file.comments.populate([
-            { path: 'authorId', model: 'User', select: 'name username' }, 
-            { path: 'file', model: 'File', select: 'fileName'}
-        ]));
-    } catch (error) {
-        console.error(error);
-        return res
-            .status(StatusCodes.INTERNAL_ERROR)
-            .json({ error: "Internal Server Error, comments fetch failed!" });
-    }
-});
-
-/**
  * create a comment on a file and update anything that is needed
  * should have file Id on hand to create comment 
  * input: 
@@ -426,5 +389,44 @@ router.post("/comment/create", async (req, res) => {
         .json({ error: "Comment creation failed due to internal server error." });
     }
 });
+
+/**
+ * get all comments associated with a file
+ * search by file Id only since file should be at hand
+ * then get the comments
+ * This function populates the comment information so that 
+ * front end does not need to fetch author name when displaying comment
+*/
+router.post("/comment/all", async (req, res) => {
+    try {
+        if (!req.body._id){
+            return res
+            .status(StatusCodes.BAD_REQUEST)
+            .json({error:"Missing file Id!"});
+        }
+        const file = await File.findById(req.body._id).populate({path: 'comments',
+            populate:[
+            { path: 'authorId', model: 'User', select: 'name username' }, 
+            { path: 'file', model: 'File', select: 'fileName'}
+            ]});
+        if (!file) {
+            return res
+            .status(StatusCodes.NOT_FOUND)
+            .json({ error: "File not found!" });
+        } 
+        if (file.comments.length === 0){
+            return res 
+            .status(StatusCodes.NOT_FOUND)
+            .json({status: "No comments found!"})
+        }
+        return res.json(file.comments);
+    } catch (error) {
+        console.error(error);
+        return res
+            .status(StatusCodes.INTERNAL_ERROR)
+            .json({ error: "Internal Server Error, comments fetch failed!" });
+    }
+});
+
 
 module.exports = router;
