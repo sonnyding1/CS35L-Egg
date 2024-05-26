@@ -41,13 +41,6 @@ router.get("/all", async (req, res) => {
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
         .json({ error: "Internal Server Error" });
     }
-    return res.json(files);
-  } catch (error) {
-    console.error(error);
-    return res
-      .status(StatusCodes.INTERNAL_ERROR)
-      .json({ error: "Internal Server Error" });
-  }
 });
 
 /**
