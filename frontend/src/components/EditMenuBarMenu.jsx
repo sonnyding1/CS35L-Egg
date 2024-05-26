@@ -6,6 +6,7 @@ import {
   MenubarShortcut,
   MenubarTrigger,
 } from "@/components/ui/menubar";
+import { useCallback, useEffect } from "react";
 
 const EditMenuBarMenu = ({
   content,
@@ -56,23 +57,46 @@ const EditMenuBarMenu = ({
     }, 1);
   };
 
-  const handleUndo = () => {
+  const handleUndo = useCallback(() => {
     if (past.length === 0) return;
     const newFuture = [past[past.length - 1], ...future];
     const newPast = past.slice(0, past.length - 1);
     onContentChange(newPast[newPast.length - 1]);
     setPast(newPast);
     setFuture(newFuture);
-  };
+  }, [past, future, setPast, setFuture, onContentChange]);
 
-  const handleRedo = () => {
+  const handleRedo = useCallback(() => {
     if (future.length === 0) return;
     const newPast = [...past, future[0]];
     const newFuture = future.slice(1);
     onContentChange(newPast[newPast.length - 1]);
     setPast(newPast);
     setFuture(newFuture);
-  };
+  }, [past, future, setPast, setFuture, onContentChange]);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      const isMac = navigator.userAgent.includes("Macintosh");
+
+      if ((isMac ? e.metaKey : e.ctrlKey) && e.key === "z" && !e.shiftKey) {
+        e.preventDefault();
+        console.log("undo");
+        handleUndo();
+      }
+
+      if ((isMac ? e.metaKey : e.ctrlKey) && e.shiftKey && e.key === "z") {
+        e.preventDefault();
+        handleRedo();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [handleUndo, handleRedo]);
 
   return (
     <MenubarMenu>
