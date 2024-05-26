@@ -41,19 +41,34 @@ const EditMenuBarMenu = ({
     const value = textarea.value;
     const startOfLine = value.lastIndexOf("\n", start - 1) + 1;
     const endOfLine = value.indexOf("\n", end);
-    const currentLine = value.slice(
+    let currentLine = value.slice(
       startOfLine,
       endOfLine !== -1 ? endOfLine : value.length,
     );
+    const oldLineLength = currentLine.length;
+
+    // check if there is already a prefix
+    const headingRegex = /^(#{1,5}\s|>\s|- \s|\d+\. )/;
+    const match = currentLine.match(headingRegex);
+    if (match) {
+      currentLine = currentLine.replace(headingRegex, prefix);
+    } else {
+      currentLine = prefix + currentLine;
+    }
+    const newLineLength = currentLine.length;
+
     const newContent =
       value.slice(0, startOfLine) +
-      prefix +
       currentLine +
       value.slice(endOfLine !== -1 ? endOfLine : value.length);
+    console.log(newContent);
     onContentChange(newContent);
     setTimeout(() => {
       textarea.focus();
-      textarea.setSelectionRange(start + prefix.length, start + prefix.length);
+      textarea.setSelectionRange(
+        start + newLineLength - oldLineLength,
+        start + newLineLength - oldLineLength,
+      );
     }, 1);
   };
 

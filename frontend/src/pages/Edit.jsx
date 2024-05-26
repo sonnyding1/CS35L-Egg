@@ -45,6 +45,14 @@ function Edit() {
     }, 500);
   };
 
+  // for special operations such as formatting
+  // setContent but also add history
+  const onContentChange = (newContent) => {
+    setContent(newContent);
+    setPast([...past, newContent]);
+    setFuture([]);
+  };
+
   return (
     <div className="mx-auto px-4 py-4 h-screen flex flex-col">
       <div className="flex items-center justify-center mb-2">
@@ -70,7 +78,7 @@ function Edit() {
         <EditMenuBar
           content={content}
           textareaRef={textareaRef}
-          onContentChange={setContent}
+          onContentChange={onContentChange}
           past={past}
           future={future}
           setPast={setPast}
