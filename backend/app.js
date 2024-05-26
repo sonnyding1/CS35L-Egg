@@ -5,6 +5,7 @@ const passport = require("passport");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const fileRoutes = require("./routes/fileRoutes");
+const deleteRoutes = require("./routes/deleteRoutes");
 const mongoose = require("mongoose");
 require("dotenv").config();
 const bodyParser = require("body-parser");
@@ -66,6 +67,7 @@ app.use(bodyParser.json());
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
 app.use("/file", fileRoutes);
+app.use("/delete", deleteRoutes);
 app.get("/", (req, res) => {
   res.send("Hello, World!");
 });
