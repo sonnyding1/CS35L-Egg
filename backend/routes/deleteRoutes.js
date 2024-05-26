@@ -45,7 +45,7 @@ router.post("/user", async (req, res) => {
 // the fields are the file name and folder
 router.post("/one-file", async (req, res) => {
     const {fileName, folder} = req.body;
-    const user = await User.findOne({username:req.session.username});
+    const user = await User.findById(req.session.userId);
     try {
         if (!fileName || !folder){
             return res
@@ -55,7 +55,7 @@ router.post("/one-file", async (req, res) => {
         const file = await File.findOneAndDelete({
             fileName: fileName,
             folder: folder,
-            ownerName: user._id
+            authorId: user._id
         });
         if (file  == null) {
         return res
@@ -84,11 +84,11 @@ router.post("/one-comment", async (req, res) => {
         .json({error: "Insufficient information to delete comment!"});
     }
     try{
-        const user = await User.findOne({username:req.session.username});
-        const file = await File.findOne({ownerName: user._id, fileName: fileName, folder: folder});
+        const user = await User.findById(req.session.userId);
+        const file = await File.findOne({authorId: user._id, fileName: fileName, folder: folder});
         const comment = await Comment.findOneAndDelete({
             file: file._id,
-            author: user._id
+            authorId: user._id
         });
         if (comment  == null) {
         return res

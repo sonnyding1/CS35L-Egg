@@ -5,20 +5,26 @@ const Comment = require("../models/Comment");
 const StatusCodes = require("./statusCodes");
 const router = express.Router();
 
+/**
+ * File routes file:
+ * all get and post functions related to files
+ * create, and get files/ comments
+ * get folder
+ * get liked files  
+*/
 
-
-// get all files in db
-// does not differentiate between public and private files yet
-// should that be in community get?
+/**
+ *  get all files in db with no restriction, this is for development purposes
+ *  the function populates the object fields to make reading easier
+*/
 router.get("/all", async (req, res) => {
     try {
         const files = await File.find({}).populate([
-            { path: 'ownerName', model: 'User', select: 'name username' },
-            { path: 'lastModifiedBy', model: 'User', select: 'name username' },
+            { path: 'authorId', model: 'User', select: 'name username' },
             { path: 'comments',
               model: 'Comment', 
               populate: [
-                { path: 'author', model: 'User', select: 'name username' }, 
+                { path: 'authorId', model: 'User', select: 'name username' }, 
                 { path: 'file', model: 'File', select: 'fileName'}
                 ]
             }
@@ -37,96 +43,256 @@ router.get("/all", async (req, res) => {
     }
 });
 
-
-// get user files
-router.get("/user/all", async (req, res) => {
+/**
+ * get folder of logged in user
+ * returns the files pertaining to a certain folder
+ * 
+ * input types:
+ * -- folder name = return files in folder if found
+ * -- no input = return files in "Main" (default folder)
+ * 
+ * no restriction on public or private
+ */ 
+router.post("/user-folder", async (req, res) =>{
     try {
-        const user = await User.findOne({username: req.session.username});
-        const files = await File.find({ownerName: user._id}).populate([
-            { path: 'ownerName', model: 'User', select: 'name username' },
-            { path: 'lastModifiedBy', model: 'User', select: 'name username' },
-            { path: 'comments',
-              model: 'Comment', 
-              populate: [
-                { path: 'author', model: 'User', select: 'name username' }, 
-                { path: 'file', model: 'File', select: 'fileName'}
-                ]
-            }
-         ]);
-        if (files.length === 0){
-        return res
-            .status(StatusCodes.NOT_FOUND)
-            .json({ error: "No files found!"});
+        const {defFolder} = req.body;
+        const folder = defFolder || "Main";
+        if (!req.session.userId) {
+            return res
+              .status(StatusCodes.BAD_REQUEST)
+              .json({ error: "User not logged in" });
         }
-        return res.json(files);  
+        const currentFolder = await File.find({folder: folder, authorId:req.session.userId });
+    
+        if (currentFolder.length === 0) {
+            return res
+            .status(StatusCodes.NOT_FOUND)
+            .json({error: "Folder/Files not found!"});
+        }
+
+        return res
+        .status(StatusCodes.SUCCESS)
+        .json(currentFolder);
+        
     } catch (error) {
         console.error(error);
         return res
         .status(StatusCodes.INTERNAL_ERROR)
-        .json({ error: "Internal Server Error" });
+        .json({ error: "Internal Server Error, folder fetch failed" });
     }
 });
 
-// get files that match a file name from a user 
-// can have multiple files since they are only 
-// unique for folder names 
-// can enforce a folder name or "main"?
-router.get("/user/one", async(req, res) => {
+/**
+ * get certain files of a logged in user 
+ * 
+ * input types:
+ * -- filename only = return all files matching file name 
+ * -- filename and folder = return that file if found
+ * -- file  _id = return that file if found
+ * 
+ * if no input is given it will return all user files
+ * no restriction on private or public
+ * 
+ * will handle folder only input though is not as clearly defined as user-folder
+ */
+router.post("/user-files", async (req, res) => {
     try {
-        const user = await User.findOne({username: req.session.username});
-        const file = await File.find({ 
-            ownerName: user._id, 
-            $or:[
-                {fileName: req.body.fileName},
-                {folder: req.body.folder }
-            ]
-            }).populate([
-                { path: 'ownerName', model: 'User', select: 'name username' },
-                { path: 'lastModifiedBy', model: 'User', select: 'name username' },
-                { path: 'comments',
-              model: 'Comment', 
-              populate: [
-                { path: 'author', model: 'User', select: 'name username' }, 
-                { path: 'file', model: 'File', select: 'fileName'}
-                ]
-            }
-         ]);
+        if (!req.session.userId) {
+            return res
+              .status(StatusCodes.BAD_REQUEST)
+              .json({ error: "User not logged in" });
+        }
+        let file;
+        if (req.body){
+            file = await File.find({
+                ...req.body,
+                authorId: req.session.userId
+            })
+        } else{
+            file = await File.find({authorId: req.session.userId});
+        }
         if (file.length === 0){
             return res
             .status(StatusCodes.NOT_FOUND)
             .json({ error: "No file found!"});
         }
-        return res.json(file);
+        return res
+        .status(StatusCodes.SUCCESS)
+        .json(file);
+
     } catch (error) {
         console.error(error);
         return res
         .status(StatusCodes.INTERNAL_ERROR)
-        .json({ error: "Internal Server Error" });
+        .json({ error: "Internal Server Error, file fetch failed" });
     }
 });
 
-// get files liked by user
-router.get("/user-liked/all", async(req, res) => {
+/** 
+ * get files liked by user
+ * populates the array so that we can see the file names and ids 
+ * no input necessary 
+*/
+router.get("/user-liked/all", async (req, res) => {
     try {
-        const liked = await User.findOne({username: req.session.username}, 'likedFiles').populate('likedFiles');
+        if (!req.session.userId) {
+            return res
+              .status(StatusCodes.BAD_REQUEST)
+              .json({ error: "User not logged in" });
+        }
+
+        const liked = await User.findById(req.session.userId, 'likedFiles').populate('likedFiles');
         if (liked.length === 0){
             return res
             .status(StatusCodes.NOT_FOUND)
             .json({ error: "No file found!"});
         }
-        return res.json(liked);
+        return res
+        .status(StatusCodes.SUCCESS)
+        .json(liked);
+
     } catch (error) {
         console.error(error);
         return res
         .status(StatusCodes.INTERNAL_ERROR)
-        .json({ error: "Internal Server Error" });
+        .json({ error: "Internal Server Error, liked files fetch failed" });
     }
 });
 
-// defaults to public and "main" folder 
-// need to have unique filename for the same folder 
-// need to have unique folder for the same owner 
+/**
+ * get other user folder
+ * input types:
+ * -- either authorId or author username/email
+ * -- folder name
+ * -- if no folder name = folder = Main
+ * 
+ * restricted to public files only
+ */
+router.post("/other-folder", async (req, res) =>{
+    try{
+        const {authorName, authorEmail, defFolder } = req.body;
+        let {authorId} = req.body;
+        const folder = defFolder || "Main";
+        if (!req.body){
+            return res
+            .status(StatusCodes.BAD_REQUEST)
+            .json({error:"No author provided"});
+        }
+        if ((authorName || authorEmail) && !authorId){
+            authorId = await User.findOne({$or:[{username: authorName}, {email: authorEmail}]},{select: '_id'});
+        }
+        const currentFolder = await File.find({authorId: authorId, folder: folder, public:true});
+    
+        if (currentFolder.length === 0) {
+            return res
+            .status(StatusCodes.NOT_FOUND)
+            .json({error: "Public folder/files not found!"});
+        }
+
+        return res
+        .status(StatusCodes.SUCCESS)
+        .json(currentFolder);
+        
+    } catch (error) {
+        console.error(error);
+        return res
+        .status(StatusCodes.INTERNAL_ERROR)
+        .json({ error: "Internal Server Error, folder fetch failed" });
+    } 
+});
+
+/**
+ * return the files of another user 
+ * restricted to public files only
+ * 
+ * inputs needed:
+ * -- author username, email, or _id --> need some unique identifier to find the user (name alone will not work)
+ * -- fileName  
+ * -- folder (optional)
+ * -- file _id
+ * 
+ * output types (assuming user found):
+ * -- fileName + folder or _id = return file if found
+ * -- fileName alone = return list of files with that name
+ * -- only author details = return list of all public files of a user
+ * 
+ * will not handle folder with no file name since that is other-folder
+ *  
+*/
+router.post("/other-files", async (req, res) =>{
+    try {
+        const {authorName, authorEmail, fileName, folder, _id} = req.body;
+        // check if the user provided exists
+        let {authorId} = req.body;
+        if (!req.body){
+            return res
+            .status(StatusCodes.BAD_REQUEST)
+            .json({error:"No author provided"});
+        } 
+        if ((authorName || authorEmail) && !authorId){
+            authorId = await User.findOne({$or:[{username: authorName}, {email: authorEmail}]},{select: '_id'});
+        }
+
+        // find file
+        let file;
+        if (_id){
+            file = await File.findOne({_id:_id, public:true});
+
+        } else if (fileName && folder){
+            file = await File.findOne({
+                authorId: authorId,
+                public: true,
+                folder: folder,
+                fileName: fileName
+            });
+        } else if (fileName && !folder){
+            file = await File.find({
+                authorId: authorId,
+                fileName: fileName,
+                public: true
+            });
+        } else if (!fileName && !folder){
+            file = await File.find({
+                authorId: authorId,
+                public: true
+            });
+        }
+
+        if (file.length === 0){
+            return res
+            .status(StatusCodes.NOT_FOUND)
+            .json({ error: "No file found!"});
+        }
+        return res
+        .status(StatusCodes.SUCCESS)
+        .json(file);
+
+    } catch (error) {
+        console.error(error);
+        return res
+        .status(StatusCodes.INTERNAL_ERROR)
+        .json({ error: "Internal Server Error, file fetch failed" });
+    }
+});
+
+/**
+ * create a new file 
+ * requires:
+ * -- need to have unique filename for the same folder 
+ * -- need to have unique folder for the same authorId 
+ * 
+ * will fetch username from session 
+ * defaults to public and "Main" folder unless changed
+ * text and description will be blank unless input is provided
+ * comments will be empty
+ *  
+ */
 router.post("/create", async(req, res) => {
+    if (!req.session.userId) {
+        return res
+          .status(StatusCodes.BAD_REQUEST)
+          .json({ error: "User not logged in" });
+    }
     const {fileName, public, folder, text, description} = req.body;
     if (!fileName) {
         return res
@@ -134,10 +300,7 @@ router.post("/create", async(req, res) => {
           .json("Missing Required Field!");
     }
     try{
-        const user = await User.findOne({username:req.session.username});
-        if (!user) {
-            return res.status(StatusCodes.NOT_FOUND).json({error:'User not found'});
-          }
+        const user = await User.findById(req.session.userId);
         const newFile = new File({
             fileName: fileName,
             public: public,
@@ -146,15 +309,14 @@ router.post("/create", async(req, res) => {
             description: description,
             dateCreated: new Date(),
             lastModified: new Date(),
-            lastModifiedBy: user._id,
-            ownerName: user._id,
+            authorId: user._id,
         });
         await newFile.save();
         user.files.push(newFile._id);
         await user.save();
         return res
-        .status(StatusCodes.SUCCESS)
-        .json(newFile);
+            .status(StatusCodes.SUCCESS)
+            .json(newFile);
     } catch (error) {
         console.error(error);
         if (error.code === 11000) {
@@ -177,22 +339,76 @@ router.post("/create", async(req, res) => {
       }
 });
 
-
-// for now we input the file we want to add a comment to
-// if we can have a cookie for file then we can discard the input
-router.post("/comment/create", async (req, res) =>{
-    const {fileName, folder, content} = req.body;
-    if (!fileName || !folder){
+/**
+ * get all comments associated with a file
+ * search by file Id only since file should be at hand
+ * then get the comments
+ * This function populates the comment information so that 
+ * front end does not need to fetch author name when displaying comment
+*/
+router.post("/comment/all", async (req, res) => {
+    try {
+        if (!req.body._id){
+            return res
+            .status(StatusCodes.BAD_REQUEST)
+            .json({error:"Missing file Id!"});
+        }
+        const file = await User.findById(req.body._id);
+        if (!file) {
+            return res
+            .status(StatusCodes.NOT_FOUND)
+            .json({ error: "File not found!" });
+        } 
+        if (file.comments.length === 0){
+            return res 
+            .status(StatusCodes.NOT_FOUND)
+            .json({status: "No comments found!"})
+        }
+        return res.json(file.comments.populate([
+            { path: 'authorId', model: 'User', select: 'name username' }, 
+            { path: 'file', model: 'File', select: 'fileName'}
+        ]));
+    } catch (error) {
+        console.error(error);
         return res
-        .status(StatusCodes.BAD_REQUEST)
-        .json({error: "Missing Search Field!"});
+            .status(StatusCodes.INTERNAL_ERROR)
+            .json({ error: "Internal Server Error, comments fetch failed!" });
+    }
+});
+
+/**
+ * create a comment on a file and update anything that is needed
+ * should have file Id on hand to create comment 
+ * input: 
+ * -- file _id
+ * -- comment content defaults to empty
+ * 
+ * will retrieve user id from session
+ * 
+ */
+router.post("/comment/create", async (req, res) => {
+    if (!req.session.userId) {
+        return res
+          .status(StatusCodes.BAD_REQUEST)
+          .json({ error: "User not logged in" });
+    }
+    const {content} = req.body;
+    if (!req.body._id){
+        return res
+            .status(StatusCodes.BAD_REQUEST)
+            .json({error:"Missing file Id!"});
     }
     try{
-        const user = await User.findOne({username: req.session.username});
-        const file = await File.findOne({ownerName: user._id, fileName: fileName, folder: folder});
+        const user = await User.findById( req.session.userId);
+        const file = await File.findById(req.body._id);
+        if (!file){
+            return res
+                .status(StatusCodes.NOT_FOUND)
+                .json({error:"File not found!"});
+        }
         const newComment = new Comment({
             file: file._id,
-            author: user._id,
+            authorId: user._id,
             dateCreated: new Date(),
             content: content
         })
