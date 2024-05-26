@@ -102,12 +102,6 @@ function Edit() {
           </Card>
         </div>
       </div>
-      <div className="text-red-500">past</div>
-      {past.length !== 0 &&
-        past.map((item, index) => <div key={index}>{item}</div>)}
-      <div className="text-red-500">future</div>
-      {future.length !== 0 &&
-        future.map((item, index) => <div key={index}>{item}</div>)}
     </div>
   );
 }
