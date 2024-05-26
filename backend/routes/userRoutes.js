@@ -118,6 +118,7 @@ router.post("/login", async (req, res) => {
       .json({ error: "User not found!" });
 
   } catch(error){
+    console.log(error);
     return res
     .status(StatusCodes.INTERNAL_SERVER_ERROR)
     .json({ error: "Internal server error, user log in failed!" });

@@ -157,7 +157,6 @@ router.get("/user-liked/all", async (req, res) => {
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
         .json({ error: "Internal Server Error, liked files fetch failed" });
     }
-    return res.json(liked);
 });
 
 /**
