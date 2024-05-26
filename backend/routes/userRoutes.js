@@ -36,7 +36,7 @@ router.get("/all", async (req, res) => {
   } catch (error) {
     console.error(error);
     return res
-      .status(StatusCodes.INTERNAL_ERROR)
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .json({ error: "Internal Server Error, could not get users!" });
   }
 });
@@ -81,7 +81,7 @@ router.post("/", async (req, res) => {
   } catch (error) {
     console.error(error);
     return res
-      .status(StatusCodes.INTERNAL_ERROR)
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .json({ error: "Internal server error, could not get user!" });
   }
 });
@@ -120,7 +120,7 @@ router.post("/login", async (req, res) => {
 
   } catch(error){
     return res
-    .status(StatusCodes.INTERNAL_ERROR)
+    .status(StatusCodes.INTERNAL_SERVER_ERROR)
     .json({ error: "Internal server error, user log in failed!" });
   } 
 });
@@ -183,18 +183,17 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-
 /**
  * user log out function
  * clears the cookies for current user and any folders/files they had open 
  * and destroys the session
  */
-router.post("/logout", async (req,res)=>{
+router.get("/logout", async (req,res)=>{
   try{
     req.session.destroy(err => {
     if (err) {
       console.error('Failed to destroy session:', err);
-      return res.status(StatusCodes.INTERNAL_ERROR).json({ error: 'Failed to destroy session!' });
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: 'Failed to destroy session!' });
     }
     // clear the cookie as well
     res.clearCookie('connect.sid');
@@ -204,7 +203,7 @@ router.post("/logout", async (req,res)=>{
   }catch(error) {
     console.error(error);
     return res
-    .status(StatusCodes.INTERNAL_ERROR)
+    .status(StatusCodes.INTERNAL_SERVER_ERROR)
     .json({error: "Internal server error, could not logout!"});
   }
 });

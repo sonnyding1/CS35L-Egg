@@ -38,7 +38,7 @@ router.get("/all", async (req, res) => {
     } catch (error) {
         console.error(error);
         return res
-        .status(StatusCodes.INTERNAL_ERROR)
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
         .json({ error: "Internal Server Error" });
     }
 });
@@ -76,7 +76,7 @@ router.post("/user-folder", async (req, res) =>{
     } catch (error) {
         console.error(error);
         return res
-        .status(StatusCodes.INTERNAL_ERROR)
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
         .json({ error: "Internal Server Error, folder fetch failed" });
     }
 });
@@ -123,7 +123,7 @@ router.post("/user-files", async (req, res) => {
     } catch (error) {
         console.error(error);
         return res
-        .status(StatusCodes.INTERNAL_ERROR)
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
         .json({ error: "Internal Server Error, file fetch failed" });
     }
 });
@@ -154,7 +154,7 @@ router.get("/user-liked/all", async (req, res) => {
     } catch (error) {
         console.error(error);
         return res
-        .status(StatusCodes.INTERNAL_ERROR)
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
         .json({ error: "Internal Server Error, liked files fetch failed" });
     }
 });
@@ -196,7 +196,7 @@ router.post("/other-folder", async (req, res) =>{
     } catch (error) {
         console.error(error);
         return res
-        .status(StatusCodes.INTERNAL_ERROR)
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
         .json({ error: "Internal Server Error, folder fetch failed" });
     } 
 });
@@ -270,7 +270,7 @@ router.post("/other-files", async (req, res) =>{
     } catch (error) {
         console.error(error);
         return res
-        .status(StatusCodes.INTERNAL_ERROR)
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
         .json({ error: "Internal Server Error, file fetch failed" });
     }
 });
@@ -423,7 +423,7 @@ router.post("/comment/all", async (req, res) => {
     } catch (error) {
         console.error(error);
         return res
-            .status(StatusCodes.INTERNAL_ERROR)
+            .status(StatusCodes.INTERNAL_SERVER_ERROR)
             .json({ error: "Internal Server Error, comments fetch failed!" });
     }
 });

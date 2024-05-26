@@ -6,99 +6,147 @@ const StatusCodes = require("./statusCodes");
 const router = express.Router();
 
 /**
- * @swagger
- * /user/delete:
- *   post:
- *     tags: [User]
- *     summary: Delete a user
- *     description: Delete a user by username and password, will be adjusting to be more restrictive, but for now this is for testing purposes
- *     responses:
- *       200:
- *         description: A user.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/User'
- *       401:
- *         description: User not found.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- */
-router.post("/user", async (req, res) => {
-    const user = await User.findOneAndDelete(req.body);
-    if (user == null) {
-      return res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ error: "User not found!" });
-    }
-    return res.json(user);
-});
-  
+ * for development and testing please use the mongodb compass interface
+ * these functions are set to handle a singular input, ie delete one object at a time
+*/
 
-// delete one file from database
-// to work needs two fields plus user session
-// the fields are the file name and folder
-router.post("/one-file", async (req, res) => {
-    const {fileName, folder} = req.body;
-    const user = await User.findById(req.session.userId);
+/**
+ * Delete the logged in  user
+ * no input neeeded but user has to be logged in
+ * when deleted, all related files and comments are also deleted
+ * after deleting, need to route to log out to destroy session properly
+*/
+router.post("/user", async (req, res) => {
     try {
-        if (!fileName || !folder){
+        if (!req.session.userId) {
             return res
-            .status(StatusCodes.BAD_REQUEST)
-            .json({error: "Insufficient information to delete file!"});
+                .status(StatusCodes.FORBIDDEN)
+                .json({ error: "User not logged in!" });
         }
-        const file = await File.findOneAndDelete({
-            fileName: fileName,
-            folder: folder,
-            authorId: user._id
-        });
-        if (file  == null) {
+        const user = await User.findById(req.session.userId);
+        if (!user) {
+            return res
+                .status(StatusCodes.NOT_FOUND)
+                .json({ error: "User not found!" });
+        }
+
+        // Find and remove user's files
+        const userFiles = await File.find({ authorId: user._id });
+        for (const file of userFiles) {
+            // Remove comments associated with this file
+            await Comment.deleteMany({ file: file._id });
+
+            // Remove the file itself
+            await File.deleteOne({ _id: file._id });
+
+            // Remove this file from other users' liked files
+            await User.updateMany(
+                { likedFiles: file._id },
+                { $pull: { likedFiles: file._id } }
+            );
+        }
+        // Remove the user
+        await User.deleteOne({ _id: req.session.userId });
         return res
-            .status(StatusCodes.NOT_FOUND)
-            .json({ error: "File not found!" });
+            .status(StatusCodes.OK)
+            .json({message: "User deleted successfully!"});
+
+    } catch (error) {
+        console.error(error);
+        return res
+            .status(StatusCodes.INTERNAL_SERVER_ERROR)
+            .json({ error: "Internal Server Error, user deletion failed!" });
+    }
+});
+
+/**
+ * Delete one file
+ * file has to be owned by user
+ * input needs to be file _id 
+ * deleting the file deletes the comments associated with it too 
+ */
+router.post("/file", async (req, res) => {
+   
+    try {
+        const user = await User.findById(req.session.userId);
+        const file = await File.findById(req.body._id);
+        if (!user){
+            return res 
+                .status(StatusCodes.UNAUTHORIZED)
+                .json({error:"User not logged in!"});
         }
-        await user.files.pull(file._id);
-        await user.save();
-        return res.json(file);
+        if (!file) {
+            return res
+                .status(StatusCodes.NOT_FOUND)
+                .json({ error: "File not found!" });
+        }
+        if (file.authorId.toString() !== user._id.toString()){
+            return res
+                .status(StatusCodes.FORBIDDEN)
+                .json({error: "File not owned by user!"});
+        }
+
+        // Remove comments associated with this file
+        await Comment.deleteMany({ file: file._id });
+        // Remove the file itself
+        await File.deleteOne({ _id: file._id });
+
+        // Remove this file from users files
+        await User.updateMany(
+            { files: file._id },
+            { $pull: { files: file._id } }
+        );
+  
+        // Remove this file from users' likedFiles
+        await User.updateMany(
+            { likedFiles: file._id },
+            { $pull: { likedFiles: file._id } }
+        );
+        
+        return res.status(StatusCodes.OK).json({message: "File deleted successfully!"})
+
     } catch (error){
         console.log(error);
         return res
-        .status(StatusCodes.CREATION_FAILED)
-        .json({ error: "File creation failed due to internal server error." });
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({ error: "Internal server error, file deletion failed!" });
     }
 });
 
-
-// delete oldest comment, the input should be filename and folder
-// this can be avoided by having info in session too
-router.post("/one-comment", async (req, res) => {
-    const {fileName, folder} = req.body;
-    if (!fileName || !folder){
-        return res
-        .status(StatusCodes.BAD_REQUEST)
-        .json({error: "Insufficient information to delete comment!"});
-    }
+/**
+ * delete one comment, need comment _id to delete comment 
+ * comment needs to be written by user 
+ * or on a file owned by user 
+ */
+router.post("/comment", async (req, res) => {
     try{
         const user = await User.findById(req.session.userId);
-        const file = await File.findOne({authorId: user._id, fileName: fileName, folder: folder});
-        const comment = await Comment.findOneAndDelete({
-            file: file._id,
-            authorId: user._id
-        });
-        if (comment  == null) {
-        return res
-            .status(StatusCodes.NOT_FOUND)
-            .json({ error: "Comment not found!" });
+        const comment = await Comment.findById(req.body._id);
+        const file = await File.findById(comment.file);
+        if (!user) {
+            return res
+                .status(StatusCodes.FORBIDDEN)
+                .json({error: "User not logged in!"});
         }
-        await file.comments.pull(comment._id);
-        await file.save();
-        await user.save();
-        return res.json(comment);
+        if (!comment) {
+            return res
+                .status(StatusCodes.NOT_FOUND)
+                .json({ error: "Comment not found!" });
+        }
+        if (file.authorId.toString() !== user._id.toString() || comment.authorId.toString() !== user._id.toString()){
+            return res
+                .status(StatusCodes.FORBIDDEN)
+                .json({error: "Not authorized to delete comment!"});
+        }
+        // delete the comment itself
+        await Comment.deleteOne({_id:comment._id});
+        // update the file in user array
+        await File.updateOne(
+            { comments: comment._id },
+            { $pull: { comments: comment._id } }
+        );
+
+        return res.status(StatusCodes.OK).json({message: "Comment deleted successfully!"});
     } catch (error){
         console.log(error);
         return res
