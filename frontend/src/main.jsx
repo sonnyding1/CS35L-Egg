@@ -7,6 +7,10 @@ import Community from "./pages/Community.jsx";
 import Edit from "./pages/Edit.jsx";
 import Login from "./pages/Login.jsx";
 import SignUp from "./pages/SignUp";
+import FileBrowser from "./pages/FileBrowser";
+import Post from "./pages/Post";
+import { AuthProvider } from "./components/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const router = createBrowserRouter([
   {
@@ -19,7 +23,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/edit",
-    element: <Edit />,
+    element: (
+      <ProtectedRoute>
+        <Edit />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/login",
@@ -29,10 +37,24 @@ const router = createBrowserRouter([
     path: "/signup",
     element: <SignUp />,
   },
+  {
+    path: "/browse",
+    element: (
+      <ProtectedRoute>
+        <FileBrowser />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/samplepost",
+    element: <Post />,
+  },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
-  </React.StrictMode>
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
+  </React.StrictMode>,
 );

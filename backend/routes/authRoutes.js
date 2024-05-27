@@ -8,7 +8,7 @@ router.get("/google", googleAuth);
 router.get(
   "/google/callback",
   passport.authenticate("google"),
-  googleAuthCallback
+  googleAuthCallback,
 );
 router.get("/google/logout", logout);
 
