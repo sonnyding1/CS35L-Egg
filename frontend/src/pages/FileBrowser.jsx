@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-const FileBrowser = () => {
+const FileBrowser = ({ onFileSelect }) => {
   const [files, setFiles] = useState([]);
   const navigate = useNavigate();
 
@@ -39,8 +39,8 @@ const FileBrowser = () => {
   }, []);
 
   const handleFileDoubleClick = (id) => {
-    console.log(id);
     navigate("/edit", { state: { fileId: id } });
+    onFileSelect();
   };
 
   return (

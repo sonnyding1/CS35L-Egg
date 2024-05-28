@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -15,7 +16,7 @@ import {
   MenubarShortcut,
   MenubarSeparator,
 } from "@/components/ui/menubar";
-import { useAuth } from "./AuthContext";
+import FileBrowser from "@/pages/FileBrowser";
 
 const FileMenuBarMenu = ({
   fileName,
@@ -26,11 +27,11 @@ const FileMenuBarMenu = ({
   content,
 }) => {
   const [isFileUploadDialogOpen, setFileUploadDialogOpen] = useState(false);
+  const [isFileBrowserDialogOpen, setFileBrowserDialogOpen] = useState(false);
   const [uploadedFile, setUploadedFile] = useState(null);
-  const { user } = useAuth();
 
   const handleOpenFile = () => {
-    // Some backend to load file.
+    setFileBrowserDialogOpen(true);
   };
 
   const handleUploadFile = () => {
@@ -147,6 +148,22 @@ const FileMenuBarMenu = ({
               Upload
             </Button>
           </div>
+        </DialogContent>
+      </Dialog>
+      <Dialog
+        open={isFileBrowserDialogOpen}
+        onOpenChange={setFileBrowserDialogOpen}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Open File</DialogTitle>
+          </DialogHeader>
+          <FileBrowser onFileSelect={() => setFileBrowserDialogOpen(false)} />
+          <DialogFooter>
+            <Button onClick={() => setFileBrowserDialogOpen(false)}>
+              Close
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </>
