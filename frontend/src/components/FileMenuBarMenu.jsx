@@ -67,18 +67,11 @@ const FileMenuBarMenu = ({
   };
 
   const handleSave = async () => {
-    const date = new Date();
     try {
       const newFile = {
         fileName: fileName,
-        folder: "Main",
-        authorId: user.id,
-        public: false,
-        dateCreated: date,
-        lastModified: date,
         text: content,
         description: "",
-        comments: [],
       };
 
       const response = await fetch("http://localhost:3000/file/create", {

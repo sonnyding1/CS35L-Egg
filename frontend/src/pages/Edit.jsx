@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Menubar } from "@/components/ui/menubar";
@@ -8,8 +9,6 @@ import { Pencil1Icon } from "@radix-ui/react-icons";
 import MarkdownPreview from "@/components/MarkdownPreview";
 import { Card, CardContent } from "@/components/ui/card";
 
-const FILENAMEGLOBAL = "content";
-
 function Edit() {
   const [content, setContent] = useState("");
   const textareaRef = useRef(null);
@@ -18,26 +17,52 @@ function Edit() {
   const [past, setPast] = useState("");
   const [future, setFuture] = useState("");
   const timeoutRef = useRef(null);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    setFileName(FILENAMEGLOBAL);
-    const loadContent = async () => {
+    const fetchFileContent = async () => {
+      const fileId = location.state?.fileId;
+      if (!fileId) {
+        // Handle case when fileId is not available
+        console.error("File ID not found", fileId);
+        navigate("/");
+        return;
+      }
+
       try {
-        const response = await fetch(FILENAMEGLOBAL);
+        const response = await fetch(`http://localhost:3000/file/user-files`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({ _id: fileId }),
+        });
+
         if (response.ok) {
-          const text = await response.text();
-          setContent(text);
+          const data = await response.json();
+          setFileName(data[0].fileName);
+          setContent(data[0].text);
+        } else if (response.status === 401) {
+          console.error("Unauthorized access");
+          navigate("/login");
+        } else if (response.status === 403) {
+          console.error("Forbidden access to the file");
+          navigate("/");
+        } else {
+          console.error("Error loading file content:", response.statusText);
         }
       } catch (error) {
-        console.error("Error loading content:", error);
+        console.error("Error loading file content:", error);
       }
     };
-    loadContent();
-  }, []);
+
+    fetchFileContent();
+  }, [location.state, navigate]);
 
   const handleChange = (e) => {
     setContent(e.target.value);
-
     clearTimeout(timeoutRef.current);
     timeoutRef.current = setTimeout(() => {
       setPast([...past, e.target.value]);
@@ -45,8 +70,6 @@ function Edit() {
     }, 500);
   };
 
-  // for special operations such as formatting
-  // setContent but also add history
   const onContentChange = (newContent) => {
     setContent(newContent);
     setPast([...past, newContent]);
