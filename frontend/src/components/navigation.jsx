@@ -25,7 +25,7 @@ export default function Navigation() {
           </button> */}
 
           <Button variant="navButton">
-            <NavLink to="/" activeclassname="active">
+            <NavLink to="/Home" activeclassname="active">
               <b>Home </b>
             </NavLink>
           </Button>

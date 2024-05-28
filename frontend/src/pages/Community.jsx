@@ -1,6 +1,6 @@
 import Navigation from "@/components/navigation";
 import { Button } from "@/components/ui/button";
-import {MainLayout, SideBar, MainBar, Box} from "@/components/layout"
+import {MainLayout, SideBar, MainBar, Box} from "@/components/Layout"
 
 function Community() {
   return (
