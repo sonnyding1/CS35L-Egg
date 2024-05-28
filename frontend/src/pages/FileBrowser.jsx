@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-const FileBrowser = () => {
+const FileBrowser = ({ onFileSelect, fileCreated }) => {
   const [files, setFiles] = useState([]);
   const navigate = useNavigate();
 
@@ -36,11 +36,11 @@ const FileBrowser = () => {
     };
 
     fetchData();
-  }, []);
+  }, [fileCreated]);
 
-  const handleFileDoubleClick = (file) => {
-    const filePath = `/files/${file._id}`;
-    navigate(filePath);
+  const handleFileDoubleClick = (id) => {
+    navigate("/edit", { state: { fileId: id } });
+    onFileSelect();
   };
 
   return (
@@ -59,7 +59,7 @@ const FileBrowser = () => {
           {files.map((file) => (
             <TableRow
               key={file._id}
-              onDoubleClick={() => handleFileDoubleClick(file)}
+              onDoubleClick={() => handleFileDoubleClick(file._id)}
               className="cursor-pointer"
             >
               <TableCell className="font-medium">{file.fileName}</TableCell>
