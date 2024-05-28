@@ -7,7 +7,6 @@ import Community from "./pages/Community.jsx";
 import Edit from "./pages/Edit.jsx";
 import Login from "./pages/Login.jsx";
 import SignUp from "./pages/SignUp";
-import FileBrowser from "./pages/FileBrowser";
 import Post from "./pages/Post";
 import { AuthProvider } from "./components/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
