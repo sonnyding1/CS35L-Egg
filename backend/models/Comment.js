@@ -12,11 +12,21 @@ const mongoose = require("mongoose");
  */
 
 const CommentSchema = new mongoose.Schema({
-  file: {type: mongoose.Schema.Types.ObjectId, ref:'File', required: true, immutable: true},
-  authorId: {type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, immutable: true},
-  dateCreated: {type: Date, immutable: true},
-  content: {type: String, default: ''}
+  file: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "File",
+    required: true,
+    immutable: true,
+  },
+  authorId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+    immutable: true,
+  },
+  dateCreated: { type: Date, immutable: true },
+  content: { type: String, default: "" },
 });
 
-CommentSchema.index({dateCreated:1});
+CommentSchema.index({ dateCreated: 1 });
 module.exports = mongoose.model("Comment", CommentSchema);

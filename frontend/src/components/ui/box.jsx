@@ -1,133 +1,122 @@
 import * as React from "react";
-
+import { cva } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 /*
-* box has three classes: folder, files_home, files_community.
-*/
+ * box has three classes: folder, files_home, files_community.
+ */
 
-
-const BoxVariants = cva(
-
-    {
-      variants: {
-        variant: {
-            folder: "",
-            fileCommunity: "rounded-lg border-2 shadow-lg p-4 grid-rows-2 grid-cols-8 gap-2",
-            fileHome: "",
-        },
-        size: {
-          default: "h-10 px-4 py-2",
-          sm: "h-9 rounded-md px-3",
-          lg: "h-11 rounded-md px-8",
-          icon: "h-10 w-10",
-        },
-      },
-      defaultVariants: {
-        variant: "default",
-        size: "default",
-      },
+const BoxVariants = cva({
+  variants: {
+    variant: {
+      folder: "",
+      fileCommunity:
+        "rounded-lg border-2 shadow-lg p-4 grid-rows-2 grid-cols-8 gap-2",
+      fileHome: "",
     },
-  );
-  
-  const Box = React.forwardRef(
-    ({ className, variant, size, asChild = false, ...props }, ref) => {
-  
-      return (
-        <div
-          className={cn(BoxVariants({ variant, size, className }))}
-          ref={ref}
-          {...props}
-        />
-        
-      );
+    size: {
+      default: "h-10 px-4 py-2",
+      sm: "h-9 rounded-md px-3",
+      lg: "h-11 rounded-md px-8",
+      icon: "h-10 w-10",
     },
-  );
-  Box.displayName = "Box";
+  },
+  defaultVariants: {
+    variant: "default",
+    size: "default",
+  },
+});
 
-  const BoxFileName = React.forwardRef(({ filename, className, ...props }, ref) => (
+const Box = React.forwardRef(({ className, variant, size, ...props }, ref) => {
+  return (
+    <div
+      className={cn(BoxVariants({ variant, size, className }))}
+      ref={ref}
+      {...props}
+    />
+  );
+});
+Box.displayName = "Box";
+
+const BoxFileName = React.forwardRef(
+  ({ filename, className, ...props }, ref) => (
     <>
-        <div
+      <div
         ref={ref}
         className={cn("col-start-1 col-span-3 row-start-1 ", className)}
         {...props}
-
-        >
-
-            <p> {filename} </p>
-        </div>
+      >
+        <p> {filename} </p>
+      </div>
     </>
-  ));
-  BoxFileName.displayName = "BoxFileName";
+  ),
+);
+BoxFileName.displayName = "BoxFileName";
 
-  const BoxAuthor = React.forwardRef(({ author, className, ...props }, ref) => (
+const BoxAuthor = React.forwardRef(({ author, className, ...props }, ref) => (
+  <>
+    <div
+      ref={ref}
+      className={cn("col-start-4 col-span-3 row-start-1", className)}
+      {...props}
+    >
+      <p> {author} </p>
+    </div>
+  </>
+));
+BoxAuthor.displayName = "BoxAuthor";
+
+const BoxDate = React.forwardRef(({ date, className, ...props }, ref) => (
+  <>
+    <div
+      ref={ref}
+      className={cn("col-start-6 col-span-2 row-start-1", className)}
+      {...props}
+    >
+      <p> {date} </p>
+    </div>
+  </>
+));
+BoxDate.displayName = "BoxDate";
+
+const BoxNumLikes = React.forwardRef(
+  ({ numlikes, className, ...props }, ref) => (
     <>
-        <div
-        ref={ref}
-        className={cn("col-start-4 col-span-3 row-start-1", className)}
-        {...props}
-        >
-
-            <p> {author} </p>
-        </div>
-    </>
-
-  ));
-  BoxAuthor.displayName = "BoxAuthor";
-
-  const BoxDate = React.forwardRef(({ date, className, ...props }, ref) => (
-    <>
-        <div
-        ref={ref}
-        className={cn("col-start-6 col-span-2 row-start-1", className)}
-        {...props}
-        >
-
-        <p> {date} </p>
-        </div>
-    </>
-  ));
-  BoxDate.displayName = "BoxDate";
-
-
-  const BoxNumLikes = React.forwardRef(({ numlikes, className, ...props }, ref) => (
-    <>
-        <div
+      <div
         ref={ref}
         className={cn("col-start-2 row-start-2", className)}
         {...props}
-        >
-
+      >
         <p> {numlikes} </p>
-        </div>
+      </div>
     </>
-  ));
-  BoxNumLikes.displayName = "BoxNumLikes";
+  ),
+);
+BoxNumLikes.displayName = "BoxNumLikes";
 
+// Has to import an image as a button and an action.
+const BoxLike = React.forwardRef(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("col-start-3 row-start-2", className)}
+    {...props}
+  />
+));
+BoxLike.displayName = "BoxLike";
 
-  // Has to import an image as a button and an action.
-  const BoxLike = React.forwardRef(({ numlikes, className, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn("col-start-3 row-start-2", className)}
-      {...props}
-    />
-  ));
-  BoxLike.displayName = "BoxLike";
-
-  const BoxLastComment = React.forwardRef(({ lastComment, className, ...props }, ref) => (
+const BoxLastComment = React.forwardRef(
+  ({ lastComment, className, ...props }, ref) => (
     <>
-        <div
+      <div
         ref={ref}
         className={cn("col-start-3 col-span-4 row-start-2", className)}
         {...props}
-        >
-
-            <p> {lastComment} </p>
-        </div>
+      >
+        <p> {lastComment} </p>
+      </div>
     </>
-  ));
-  BoxLastComment.displayName = "BoxLastComment";
-  
-  export { Box, BoxVariants };
-  
+  ),
+);
+BoxLastComment.displayName = "BoxLastComment";
+
+export { Box, BoxVariants };
