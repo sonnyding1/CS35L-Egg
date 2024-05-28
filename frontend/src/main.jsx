@@ -11,6 +11,7 @@ import FileBrowser from "./pages/FileBrowser";
 import Post from "./pages/Post";
 import { AuthProvider } from "./components/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Browse from "./pages/Browse";
 
 const router = createBrowserRouter([
   {
@@ -41,7 +42,7 @@ const router = createBrowserRouter([
     path: "/browse",
     element: (
       <ProtectedRoute>
-        <FileBrowser />
+        <Browse />
       </ProtectedRoute>
     ),
   },
