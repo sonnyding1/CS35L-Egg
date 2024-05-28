@@ -15,6 +15,7 @@ import {
   MenubarShortcut,
   MenubarSeparator,
 } from "@/components/ui/menubar";
+import { useAuth } from "./AuthContext";
 
 const FileMenuBarMenu = ({
   fileName,
@@ -26,6 +27,7 @@ const FileMenuBarMenu = ({
 }) => {
   const [isFileUploadDialogOpen, setFileUploadDialogOpen] = useState(false);
   const [uploadedFile, setUploadedFile] = useState(null);
+  const { user } = useAuth();
 
   const handleOpenFile = () => {
     // Some backend to load file.
@@ -64,6 +66,41 @@ const FileMenuBarMenu = ({
     setFileNameDialogOpen(false);
   };
 
+  const handleSave = async () => {
+    const date = new Date();
+    try {
+      const newFile = {
+        fileName: fileName,
+        folder: "Main",
+        authorId: user.id,
+        public: false,
+        dateCreated: date,
+        lastModified: date,
+        text: content,
+        description: "",
+        comments: [],
+      };
+
+      const response = await fetch("http://localhost:3000/file/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(newFile),
+      });
+
+      if (response.ok) {
+        console.log("File saved successfully.");
+      } else {
+        const error = await response.json();
+        console.error(error);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <>
       <MenubarMenu>
@@ -78,6 +115,7 @@ const FileMenuBarMenu = ({
           <MenubarItem onSelect={() => setFileNameDialogOpen(true)}>
             Rename
           </MenubarItem>
+          <MenubarItem onSelect={handleSave}>Save</MenubarItem>
         </MenubarContent>
       </MenubarMenu>
       <Dialog open={isFileNameDialogOpen} onOpenChange={setFileNameDialogOpen}>

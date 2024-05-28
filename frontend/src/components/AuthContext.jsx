@@ -83,10 +83,16 @@ export const AuthProvider = ({ children }) => {
     setLoading(true);
     try {
       await fetch("http://localhost:3000/user/logout", {
-        method: "POST",
+        method: "GET",
         credentials: "include",
+      }).then((response) => {
+        if (response.ok) {
+          console.log("Logout successful");
+          setUser(null);
+        } else {
+          console.log("Logout failed");
+        }
       });
-      setUser(null);
     } catch (error) {
       console.error("Logout error:", error);
     } finally {

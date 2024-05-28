@@ -16,9 +16,20 @@ const FileBrowser = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("files.json");
-        const data = await response.json();
-        setFiles(data);
+        const response = await fetch("http://localhost:3000/file/user-files", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setFiles(data);
+        } else {
+          console.error("Error loading file data:", response.statusText);
+        }
       } catch (error) {
         console.error("Error loading file data:", error);
       }
@@ -28,7 +39,7 @@ const FileBrowser = () => {
   }, []);
 
   const handleFileDoubleClick = (file) => {
-    const filePath = `/files/${file.folder}/${file.fileName}`;
+    const filePath = `/files/${file._id}`;
     navigate(filePath);
   };
 
