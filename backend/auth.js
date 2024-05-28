@@ -1,6 +1,7 @@
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 require("dotenv").config();
+const User = require('./models/User');
 
 passport.use(
   new GoogleStrategy(
@@ -14,6 +15,17 @@ passport.use(
       // supposedly we check if the user exists here
       if (profile) {
         console.log(profile);
+        const profileJSON = profile._json;
+        new User({
+          name: profileJSON.given_name,
+          email: profileJSON.email,
+          username: profileJSON.sub,
+          password: 'foo',
+          dateCreated: Date.now(),
+        }).save().then((newUser) => {
+          console.log('New user created' + newUser);
+        })
+        
       }
       done(null, profile);
     },
