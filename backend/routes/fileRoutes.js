@@ -373,6 +373,7 @@ router.post("/comment/create", async (req, res) => {
             file: file._id,
             authorId: user._id,
             dateCreated: new Date(),
+            lastModified: new Date(),
             content: content
         })
         await newComment.save();
