@@ -10,22 +10,31 @@ passport.use(
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: "/auth/google/callback",
     },
-    (accessToken, refreshToken, profile, done) => {
+    async (accessToken, refreshToken, profile, done) => {
       // bypass querying in db for now
       // supposedly we check if the user exists here
-      if (profile) {
-        console.log(profile);
-        const profileJSON = profile._json;
-        new User({
-          name: profileJSON.given_name,
-          email: profileJSON.email,
-          username: profileJSON.sub,
-          password: 'foo',
-          dateCreated: Date.now(),
-        }).save().then((newUser) => {
-          console.log('New user created' + newUser);
-        })
-        
+      try {
+        if (profile) {
+          console.log(profile);
+          const profileJSON = profile._json;
+          const newUser = new User({
+            name: profileJSON.given_name,
+            email: profileJSON.email,
+            username: profileJSON.sub, // username is set to Google ID by default, can change later
+            googleId: profileJSON.sub,
+            password: 'foo',
+            dateCreated: Date.now(),
+          });
+
+          try {
+            const savedUser = await newUser.save();
+            console.log('New user created: ' + savedUser);
+          } catch (err) {
+            console.log('User already exists! Details: ' + err);
+          }
+        }
+      } catch (err) {
+        console.err('Error:', err);
       }
       done(null, profile);
     },
@@ -50,6 +59,7 @@ const googleAuthCallback = (req, res) => {
   // redirect to the backend root after login for now,
   // in the future send a response to the frontend
   res.redirect("http://localhost:3000");
+  req.session.googleId = req.session.passport.user;
 };
 
 const logout = (req, res) => {
