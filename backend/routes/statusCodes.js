@@ -7,6 +7,7 @@ const StatusCodes = {
     NOT_FOUND: 404,
     WRONG_PASSWORD: 409,
     VALUE_TAKEN: 409,
+    CONFLICT: 409,
     CREATION_FAILED: 500,
     INTERNAL_SERVER_ERROR: 500,
 };
