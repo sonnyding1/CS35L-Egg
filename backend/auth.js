@@ -28,9 +28,9 @@ passport.use(
 
           try {
             const savedUser = await newUser.save();
-            console.log('New user created: ' + newUser);
+            console.log('New user created: ' + savedUser);
           } catch (err) {
-            console.log('User already exists!');
+            console.log('User already exists! Details: ' + err);
           }
         }
       } catch (err) {
