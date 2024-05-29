@@ -1,6 +1,8 @@
 import Navigation from "@/components/navigation";
 import { Button } from "@/components/ui/button";
-import { MainLayout, SideBar, MainBar, Box } from "@/components/Layout";
+import {Box, BoxAuthor, BoxDate, BoxFileName, BoxLastComment, BoxLike, BoxNumLikes} from "@/components/ui/box"
+import { MainLayout, SideBar, MainBar } from "@/components/Layout";
+
 
 function Community() {
   return (
@@ -13,9 +15,17 @@ function Community() {
           <Button variant="navButton">Folders</Button>
         </SideBar>
         <MainBar>
-          <Box>File #1</Box>
-          <Box>File #2</Box>
-          <Box>File #3</Box>
+          <Box variant="fileCommunity">
+            <BoxFileName filename="Hello.txt"></BoxFileName>
+            <BoxAuthor author="Gon Freecs"></BoxAuthor>
+            <BoxDate date="01/01/2024"></BoxDate>
+            <BoxNumLikes numlikes="17"></BoxNumLikes>
+            <BoxLike> Like </BoxLike> {/*Replace with an appropriate immage*/}
+            <BoxLastComment lastComment="Hello world!"></BoxLastComment>
+            
+          </Box>
+          <Box variant="fileCommunity">File #2</Box>
+          <Box variant="fileCommunity">File #3</Box>
         </MainBar>
       </MainLayout>
       <h1>Community</h1>

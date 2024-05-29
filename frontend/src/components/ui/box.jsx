@@ -6,31 +6,37 @@ import { cn } from "@/lib/utils";
  * box has three classes: folder, files_home, files_community.
  */
 
-const BoxVariants = cva({
-  variants: {
-    variant: {
-      folder: "",
-      fileCommunity:
-        "rounded-lg border-2 shadow-lg p-4 grid-rows-2 grid-cols-8 gap-2",
-      fileHome: "",
+const BoxVariants = cva(
+    "",
+    {
+        variants: {
+            
+            variant: {
+            folder: "",
+            fileCommunity:
+                "rounded-lg border-2 shadow-lg grid p-4 grid-rows-2 grid-cols-8 gap-2",
+            fileHome: "",
+            default: 
+            "rounded-lg border-2 shadow-lg p-4 grid-rows-2 grid-cols-8 gap-2 bg-red-100",
+            },
+            size: {
+            default: "px-4 py-2",
+            sm: "h-9 rounded-md px-3",
+            lg: "h-11 rounded-md px-8",
+            icon: "h-10 w-10",
+            },
+        },
+        defaultVariants: {
+            variant: "default",
+            size: "default",
+        },
     },
-    size: {
-      default: "h-10 px-4 py-2",
-      sm: "h-9 rounded-md px-3",
-      lg: "h-11 rounded-md px-8",
-      icon: "h-10 w-10",
-    },
-  },
-  defaultVariants: {
-    variant: "default",
-    size: "default",
-  },
-});
+);
 
-const Box = React.forwardRef(({ className, variant, size, ...props }, ref) => {
+const Box = React.forwardRef(({ className, variant,size, ...props }, ref) => {
   return (
     <div
-      className={cn(BoxVariants({ variant, size, className }))}
+      className={cn(BoxVariants({variant,size, className}))}
       ref={ref}
       {...props}
     />
@@ -43,7 +49,7 @@ const BoxFileName = React.forwardRef(
     <>
       <div
         ref={ref}
-        className={cn("col-start-1 col-span-3 row-start-1 ", className)}
+        className={cn("col-start-1 col-end-4 row-start-1 row-end-2", className)}
         {...props}
       >
         <p> {filename} </p>
@@ -57,7 +63,7 @@ const BoxAuthor = React.forwardRef(({ author, className, ...props }, ref) => (
   <>
     <div
       ref={ref}
-      className={cn("col-start-4 col-span-3 row-start-1", className)}
+      className={cn("col-start-5 col-end-7 row-start-1 row-end-2", className)}
       {...props}
     >
       <p> {author} </p>
@@ -70,7 +76,7 @@ const BoxDate = React.forwardRef(({ date, className, ...props }, ref) => (
   <>
     <div
       ref={ref}
-      className={cn("col-start-6 col-span-2 row-start-1", className)}
+      className={cn("col-start-8 col-end-9 row-start-1 row-end-2", className)}
       {...props}
     >
       <p> {date} </p>
@@ -84,7 +90,7 @@ const BoxNumLikes = React.forwardRef(
     <>
       <div
         ref={ref}
-        className={cn("col-start-2 row-start-2", className)}
+        className={cn("col-start-2 row-start-2 row-end-3 text-right", className)}
         {...props}
       >
         <p> {numlikes} </p>
@@ -98,7 +104,7 @@ BoxNumLikes.displayName = "BoxNumLikes";
 const BoxLike = React.forwardRef(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("col-start-3 row-start-2", className)}
+    className={cn("col-start-3 row-start-2 row-end-3", className)}
     {...props}
   />
 ));
@@ -109,7 +115,7 @@ const BoxLastComment = React.forwardRef(
     <>
       <div
         ref={ref}
-        className={cn("col-start-3 col-span-4 row-start-2", className)}
+        className={cn("col-start-5 col-end-9 row-start-2 row-end-3", className)}
         {...props}
       >
         <p> {lastComment} </p>
@@ -119,4 +125,4 @@ const BoxLastComment = React.forwardRef(
 );
 BoxLastComment.displayName = "BoxLastComment";
 
-export { Box, BoxVariants };
+export { Box, BoxVariants, BoxAuthor, BoxDate, BoxFileName, BoxLastComment, BoxLike, BoxNumLikes };
