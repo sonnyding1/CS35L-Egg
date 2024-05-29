@@ -1,8 +1,15 @@
 import Navigation from "@/components/navigation";
 import { Button } from "@/components/ui/button";
-import {Box, BoxAuthor, BoxDate, BoxFileName, BoxLastComment, BoxLike, BoxNumLikes} from "@/components/ui/box"
+import {
+  Box,
+  BoxAuthor,
+  BoxDate,
+  BoxFileName,
+  BoxLastComment,
+  BoxLike,
+  BoxNumLikes,
+} from "@/components/ui/box";
 import { MainLayout, SideBar, MainBar } from "@/components/Layout";
-
 
 function Community() {
   return (
@@ -22,7 +29,6 @@ function Community() {
             <BoxNumLikes numlikes="17"></BoxNumLikes>
             <BoxLike> Like </BoxLike> {/*Replace with an appropriate immage*/}
             <BoxLastComment lastComment="Hello world!"></BoxLastComment>
-            
           </Box>
           <Box variant="fileCommunity">File #2</Box>
           <Box variant="fileCommunity">File #3</Box>
