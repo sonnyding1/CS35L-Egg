@@ -11,7 +11,6 @@ import {
   BoxNumLikes,
 } from "@/components/ui/box";
 
-
 import { cn } from "@/lib/utils";
 
 // MainLayout: The fundamental layout housing the two columns (side bar and contents)
@@ -42,8 +41,6 @@ const SideBar = React.forwardRef(({ className, ...props }, ref) => (
 ));
 SideBar.displayName = "SideBar";
 
-
-
 // MainBar: Contents.
 const MainBar = () => {
   const [files, setFiles] = useState([]);
@@ -67,33 +64,32 @@ const MainBar = () => {
     const filePath = `/files/${file.folder}/${file.fileName}`;
     navigate(filePath);
   };
-  
+
   return (
     <>
       <div
         className={cn(
-          "rounded-lg border shadow-lg col-span-6 grid-rows-[repeat(auto-fill,minmax(500px,1fr))] space-y-8")} 
+          "rounded-lg border shadow-lg col-span-6 grid-rows-[repeat(auto-fill,minmax(500px,1fr))] space-y-8",
+        )}
       >
-        
-          {files.map((file) => (
-            <Box variant="fileCommunity">
-            <BoxFileName fileName={file.fileName}></BoxFileName>
+        {files.map((file) => (
+          <Box variant="fileCommunity" key={file._id}>
+            <BoxFileName
+              fileName={file.fileName}
+              onDoubleClick={() => handleFileDoubleClick(file)}
+            ></BoxFileName>
             <BoxAuthor author={file.author}></BoxAuthor>
             <BoxDate date={Date(file.lastModified).toLocaleString()}></BoxDate>
-            <BoxNumLikes numlikes="17"></BoxNumLikes> {/*  NEEDS TO BE UPDATED*/}
+            <BoxNumLikes numlikes="17"></BoxNumLikes>{" "}
+            {/*  NEEDS TO BE UPDATED*/}
             <BoxLike> Like </BoxLike> {/*Replace with an appropriate immage*/}
-            <BoxLastComment lastComment="Hello world!"></BoxLastComment> {/*  NEEDS TO BE UPDATED*/}
-
-            </Box>
-
-          ))
-          } 
-
-
+            <BoxLastComment lastComment="Hello world!"></BoxLastComment>{" "}
+            {/*  NEEDS TO BE UPDATED*/}
+          </Box>
+        ))}
       </div>
     </>
-    
-)
+  );
 };
 //MainBar.displayName = "MainBar";
 

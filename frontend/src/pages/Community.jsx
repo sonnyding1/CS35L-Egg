@@ -13,8 +13,7 @@ function Community() {
           <Button variant="sideButton">Groups</Button>
           <Button variant="navButton">Folders</Button>
         </SideBar>
-        <MainBar>
-        </MainBar>
+        <MainBar></MainBar>
       </MainLayout>
       <h1>Community</h1>
     </div>
