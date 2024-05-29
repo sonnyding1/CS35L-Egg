@@ -45,7 +45,10 @@ const BoxFileName = React.forwardRef(
     <>
       <div
         ref={ref}
-        className={cn("col-start-1 col-end-5 row-start-1 row-end-2 border-2 shadow-lg p-1", className)}
+        className={cn(
+          "col-start-1 col-end-5 row-start-1 row-end-2 border-2 shadow-lg p-1",
+          className,
+        )}
         {...props}
       >
         <p> {filename} </p>
@@ -59,7 +62,10 @@ const BoxAuthor = React.forwardRef(({ author, className, ...props }, ref) => (
   <>
     <div
       ref={ref}
-      className={cn("col-start-5 col-end-7 row-start-1 row-end-2 border-2 shadow-lg p-1", className)}
+      className={cn(
+        "col-start-5 col-end-7 row-start-1 row-end-2 border-2 shadow-lg p-1",
+        className,
+      )}
       {...props}
     >
       <p> {author} </p>
@@ -72,7 +78,10 @@ const BoxDate = React.forwardRef(({ date, className, ...props }, ref) => (
   <>
     <div
       ref={ref}
-      className={cn("col-start-8 col-end-9 row-start-1 row-end-2 border-2 shadow-lg p-1", className)}
+      className={cn(
+        "col-start-8 col-end-9 row-start-1 row-end-2 border-2 shadow-lg p-1",
+        className,
+      )}
       {...props}
     >
       <p> {date} </p>
@@ -80,7 +89,6 @@ const BoxDate = React.forwardRef(({ date, className, ...props }, ref) => (
   </>
 ));
 BoxDate.displayName = "BoxDate";
-
 
 // May combine BoxNumLikes and BoxLike together in one go.
 const BoxNumLikes = React.forwardRef(
@@ -105,7 +113,10 @@ BoxNumLikes.displayName = "BoxNumLikes";
 const BoxLike = React.forwardRef(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("col-start-3 row-start-2 row-end-3 border-2 shadow-lg p-1", className)}
+    className={cn(
+      "col-start-3 row-start-2 row-end-3 border-2 shadow-lg p-1",
+      className,
+    )}
     {...props}
   />
 ));
@@ -116,7 +127,10 @@ const BoxLastComment = React.forwardRef(
     <>
       <div
         ref={ref}
-        className={cn("col-start-5 col-end-9 row-start-2 row-end-3 border-2 shadow-lg p-1", className)}
+        className={cn(
+          "col-start-5 col-end-9 row-start-2 row-end-3 border-2 shadow-lg p-1",
+          className,
+        )}
         {...props}
       >
         <p> {lastComment} </p>
