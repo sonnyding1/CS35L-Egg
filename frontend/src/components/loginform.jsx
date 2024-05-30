@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 
 const LoginForm = ({ isSignUpPage }) => {
   const [email, setEmail] = useState("");
@@ -84,12 +85,13 @@ const LoginForm = ({ isSignUpPage }) => {
           </p>
         </>
       )}
-      <button
-        className="mt-4 w-full bg-primary hover:bg-slate-700 text-primary-foreground font-medium py-2 px-4 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+      <Button
+        //className="mt-4 w-full bg-primary hover:bg-slate-700 text-primary-foreground font-medium py-2 px-4 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+        className=""
         type="submit"
       >
         {isSignUpPage ? "Sign Up" : "Log In"}
-      </button>
+      </Button>
     </form>
   );
 };
