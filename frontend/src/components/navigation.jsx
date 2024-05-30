@@ -24,8 +24,8 @@ export default function Navigation() {
             </NavLink>
           </button> */}
 
-          <Button variant="sun">
-            <NavLink to="/" activeclassname="active">
+          <Button variant="navButton">
+            <NavLink to="/Home" activeclassname="active">
               <b>Home </b>
             </NavLink>
           </Button>
@@ -36,16 +36,11 @@ export default function Navigation() {
         </NavLink>
       </li> */}
 
-          <button
-            className="bg-neutral-100 p-3 rounded-2xl focus:ring-2 
-      transition-all ease-in-out delay-150 hover:bg-neutral-200 hover:overline hover:decoration-slate-900
-      text-slate-700 hover:text-slate-900
-      "
-          >
+          <Button variant="navButton">
             <NavLink to="/Community" activeclassname="active">
               <b>Community</b>
             </NavLink>
-          </button>
+          </Button>
         </nav>
       </div>
       <div></div> {/* wasting the second column*/}
