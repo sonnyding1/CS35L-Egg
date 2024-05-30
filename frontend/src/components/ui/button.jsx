@@ -22,8 +22,8 @@ const buttonVariants = cva(
           "m-2 bg-neutral-100 p-3 rounded-2xl focus:ring-2 transition-all ease-in-out delay-150 hover:bg-neutral-200 hover:overline hover:decoration-slate-900 text-slate-700 hover:text-slate-900",
         sideButton:
           "justify-self-auto m-2 bg-neutral-100 p-3 rounded-2xl focus:ring-2 transition-all ease-in-out delay-150 hover:bg-neutral-200 hover:overline hover:decoration-slate-900 text-slate-700 hover:text-slate-900",
-        likeButton: 
-        "bg-[url('@/images/like-png.jpg')] w-[19px] h-[18px] bg-contain hover:scale-110 transition-all delay-200 align-middle",
+        likeButton:
+          "bg-[url('@/images/like-png.jpg')] w-[19px] h-[18px] bg-contain hover:scale-110 transition-all delay-200 align-middle",
       },
       size: {
         default: "h-10 px-4 py-2",
