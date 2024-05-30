@@ -115,10 +115,7 @@ const BoxLike = React.forwardRef(({ className, ...props }, ref) => (
   <>
     <div
       ref={ref}
-      className={cn(
-        "col-start-3 row-start-2 row-end-3 p-1",
-        className,
-      )}
+      className={cn("col-start-3 row-start-2 row-end-3 p-1", className)}
       {...props}
     >
       <Button variant="likeButton" size="none" aria-label="Like"></Button>
