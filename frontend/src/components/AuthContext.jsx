@@ -14,12 +14,16 @@ export const AuthProvider = ({ children }) => {
     setLoading(true);
     try {
       const response = await fetch("http://localhost:3000/user", {
-        method: "GET",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({}),
         credentials: "include",
       });
       if (response.ok) {
         const data = await response.json();
-        setUser(data[0]);
+        setUser(data);
       } else {
         setUser(null);
       }
@@ -42,9 +46,7 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify({ email, password }),
         credentials: "include",
       });
-
       if (!response.ok) throw new Error("Login failed");
-
       const data = await response.json();
       setUser(data);
     } catch (error) {
@@ -66,9 +68,7 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify({ username, password, name, email }),
         credentials: "include",
       });
-
       if (!response.ok) throw new Error("Signup failed");
-
       const data = await response.json();
       setUser(data);
     } catch (error) {
@@ -83,10 +83,16 @@ export const AuthProvider = ({ children }) => {
     setLoading(true);
     try {
       await fetch("http://localhost:3000/user/logout", {
-        method: "POST",
+        method: "GET",
         credentials: "include",
+      }).then((response) => {
+        if (response.ok) {
+          console.log("Logout successful");
+          setUser(null);
+        } else {
+          console.log("Logout failed");
+        }
       });
-      setUser(null);
     } catch (error) {
       console.error("Logout error:", error);
     } finally {

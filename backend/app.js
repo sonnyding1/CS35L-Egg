@@ -6,6 +6,7 @@ const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const fileRoutes = require("./routes/fileRoutes");
 const deleteRoutes = require("./routes/deleteRoutes");
+const updateRoutes = require("./routes/updateRoutes");
 const mongoose = require("mongoose");
 require("dotenv").config();
 const bodyParser = require("body-parser");
@@ -68,6 +69,7 @@ app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
 app.use("/file", fileRoutes);
 app.use("/delete", deleteRoutes);
+app.use("/update", updateRoutes);
 app.get("/", (req, res) => {
   res.send("Hello, World!");
 });

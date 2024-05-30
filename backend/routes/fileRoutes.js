@@ -349,24 +349,46 @@ router.post("/create", async (req, res) => {
  *
  */
 router.post("/comment/create", async (req, res) => {
-  if (!req.session.userId) {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ error: "User not logged in" });
-  }
-  const { content } = req.body;
-  if (!req.body._id) {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ error: "Missing file Id!" });
-  }
-  try {
-    const user = await User.findById(req.session.userId);
-    const file = await File.findById(req.body._id);
-    if (!file) {
-      return res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ error: "File not found!" });
+
+    if (!req.session.userId) {
+        return res
+          .status(StatusCodes.BAD_REQUEST)
+          .json({ error: "User not logged in" });
+    }
+    const {content} = req.body;
+    if (!req.body._id){
+        return res
+            .status(StatusCodes.BAD_REQUEST)
+            .json({error:"Missing file Id!"});
+    }
+    try{
+        const user = await User.findById( req.session.userId);
+        const file = await File.findById(req.body._id);
+        if (!file){
+            return res
+                .status(StatusCodes.NOT_FOUND)
+                .json({error:"File not found!"});
+        }
+        const newComment = new Comment({
+            file: file._id,
+            authorId: user._id,
+            dateCreated: new Date(),
+            lastModified: new Date(),
+            content: content
+        })
+        await newComment.save();
+        file.comments.push(newComment._id);
+        await file.save();
+        await user.save();
+        return res
+        .status(StatusCodes.SUCCESS)
+        .json(newComment);
+    } catch(error) {
+        console.log(error)
+        return res
+        .status(StatusCodes.CREATION_FAILED)
+        .json({ error: "Comment creation failed due to internal server error." });
+
     }
     const newComment = new Comment({
       file: file._id,

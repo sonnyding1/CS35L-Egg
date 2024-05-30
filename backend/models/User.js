@@ -33,8 +33,9 @@ const mongoose = require("mongoose");
  */
 const UserSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  email: { type: String, unique: true, require: true },
+  email: { type: String, unique: true, required: true },
   username: { type: String, unique: true },
+  googleId: {type: String, unique: true},
   password: { type: String, required: true },
   dateCreated: { type: Date, required: true, immutable: true },
   files: [{ type: mongoose.Schema.Types.ObjectId, ref: "File" }],

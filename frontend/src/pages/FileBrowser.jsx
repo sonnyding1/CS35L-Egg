@@ -9,27 +9,38 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-const FileBrowser = () => {
+const FileBrowser = ({ onFileSelect, fileCreated }) => {
   const [files, setFiles] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("files.json");
-        const data = await response.json();
-        setFiles(data);
+        const response = await fetch("http://localhost:3000/file/user-files", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setFiles(data);
+        } else {
+          console.error("Error loading file data:", response.statusText);
+        }
       } catch (error) {
         console.error("Error loading file data:", error);
       }
     };
 
     fetchData();
-  }, []);
+  }, [fileCreated]);
 
-  const handleFileDoubleClick = (file) => {
-    const filePath = `/files/${file.folder}/${file.fileName}`;
-    navigate(filePath);
+  const handleFileDoubleClick = (id) => {
+    navigate("/edit", { state: { fileId: id } });
+    onFileSelect();
   };
 
   return (
@@ -48,7 +59,7 @@ const FileBrowser = () => {
           {files.map((file) => (
             <TableRow
               key={file._id}
-              onDoubleClick={() => handleFileDoubleClick(file)}
+              onDoubleClick={() => handleFileDoubleClick(file._id)}
               className="cursor-pointer"
             >
               <TableCell className="font-medium">{file.fileName}</TableCell>

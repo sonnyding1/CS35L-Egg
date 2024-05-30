@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -15,6 +16,7 @@ import {
   MenubarShortcut,
   MenubarSeparator,
 } from "@/components/ui/menubar";
+import FileBrowser from "@/pages/FileBrowser";
 
 const FileMenuBarMenu = ({
   fileName,
@@ -25,10 +27,11 @@ const FileMenuBarMenu = ({
   content,
 }) => {
   const [isFileUploadDialogOpen, setFileUploadDialogOpen] = useState(false);
+  const [isFileBrowserDialogOpen, setFileBrowserDialogOpen] = useState(false);
   const [uploadedFile, setUploadedFile] = useState(null);
 
   const handleOpenFile = () => {
-    // Some backend to load file.
+    setFileBrowserDialogOpen(true);
   };
 
   const handleUploadFile = () => {
@@ -64,6 +67,34 @@ const FileMenuBarMenu = ({
     setFileNameDialogOpen(false);
   };
 
+  const handleSave = async () => {
+    try {
+      const newFile = {
+        fileName: fileName,
+        text: content,
+        description: "",
+      };
+
+      const response = await fetch("http://localhost:3000/file/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(newFile),
+      });
+
+      if (response.ok) {
+        console.log("File saved successfully.");
+      } else {
+        const error = await response.json();
+        console.error(error);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <>
       <MenubarMenu>
@@ -78,6 +109,7 @@ const FileMenuBarMenu = ({
           <MenubarItem onSelect={() => setFileNameDialogOpen(true)}>
             Rename
           </MenubarItem>
+          <MenubarItem onSelect={handleSave}>Save</MenubarItem>
         </MenubarContent>
       </MenubarMenu>
       <Dialog open={isFileNameDialogOpen} onOpenChange={setFileNameDialogOpen}>
@@ -116,6 +148,22 @@ const FileMenuBarMenu = ({
               Upload
             </Button>
           </div>
+        </DialogContent>
+      </Dialog>
+      <Dialog
+        open={isFileBrowserDialogOpen}
+        onOpenChange={setFileBrowserDialogOpen}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Open File</DialogTitle>
+          </DialogHeader>
+          <FileBrowser onFileSelect={() => setFileBrowserDialogOpen(false)} />
+          <DialogFooter>
+            <Button onClick={() => setFileBrowserDialogOpen(false)}>
+              Close
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </>
