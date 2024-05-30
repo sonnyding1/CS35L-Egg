@@ -1,7 +1,7 @@
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 require("dotenv").config();
-const User = require('./models/User');
+const User = require("./models/User");
 
 passport.use(
   new GoogleStrategy(
@@ -22,19 +22,19 @@ passport.use(
             email: profileJSON.email,
             username: profileJSON.sub, // username is set to Google ID by default, can change later
             googleId: profileJSON.sub,
-            password: 'foo',
+            password: "foo",
             dateCreated: Date.now(),
           });
 
           try {
             const savedUser = await newUser.save();
-            console.log('New user created: ' + savedUser);
+            console.log("New user created: " + savedUser);
           } catch (err) {
-            console.log('User already exists! Details: ' + err);
+            console.log("User already exists! Details: " + err);
           }
         }
       } catch (err) {
-        console.err('Error:', err);
+        console.err("Error:", err);
       }
       done(null, profile);
     },
