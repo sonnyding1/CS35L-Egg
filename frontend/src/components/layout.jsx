@@ -65,6 +65,11 @@ const MainBar = () => {
     navigate(filePath);
   };
 
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
   return (
     <>
       <div
@@ -79,10 +84,10 @@ const MainBar = () => {
               onDoubleClick={() => handleFileDoubleClick(file)}
             ></BoxFileName>
             <BoxAuthor author={file.author}></BoxAuthor>
-            <BoxDate date={Date(file.lastModified).toLocaleString()}></BoxDate>
+            <BoxDate date={formatDate(file.lastModified)}></BoxDate>
             <BoxNumLikes numlikes="17"></BoxNumLikes>{" "}
             {/*  NEEDS TO BE UPDATED*/}
-            <BoxLike> Like </BoxLike> {/*Replace with an appropriate immage*/}
+            <BoxLike> </BoxLike> {/*Replace with an appropriate immage*/}
             <BoxLastComment lastComment="Hello world!"></BoxLastComment>{" "}
             {/*  NEEDS TO BE UPDATED*/}
           </Box>

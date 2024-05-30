@@ -1,6 +1,7 @@
 import * as React from "react";
 import { cva } from "class-variance-authority";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 /*
  * box has three classes: folder, files_home, files_community.
@@ -111,14 +112,18 @@ BoxNumLikes.displayName = "BoxNumLikes";
 
 // Has to import an image as a button and an action.
 const BoxLike = React.forwardRef(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn(
-      "col-start-3 row-start-2 row-end-3 border-2 shadow-lg p-1",
-      className,
-    )}
-    {...props}
-  />
+  <>
+    <div
+      ref={ref}
+      className={cn(
+        "col-start-3 row-start-2 row-end-3 border-2 shadow-lg p-1",
+        className,
+      )}
+      {...props}
+    >
+      <Button variant="likeButton" size="none" aria-label="Like"></Button>
+    </div>
+  </>
 ));
 BoxLike.displayName = "BoxLike";
 
