@@ -98,7 +98,7 @@ const BoxNumLikes = React.forwardRef(
       <div
         ref={ref}
         className={cn(
-          "col-start-2 row-start-2 row-end-3 text-right border-2 shadow-lg p-1",
+          "col-start-2 row-start-2 row-end-3 text-right p-1",
           className,
         )}
         {...props}
@@ -116,7 +116,7 @@ const BoxLike = React.forwardRef(({ className, ...props }, ref) => (
     <div
       ref={ref}
       className={cn(
-        "col-start-3 row-start-2 row-end-3 border-2 shadow-lg p-1",
+        "col-start-3 row-start-2 row-end-3 p-1",
         className,
       )}
       {...props}
