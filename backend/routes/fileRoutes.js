@@ -14,34 +14,31 @@ const router = express.Router();
  */
 
 /**
- *  get all files in db with no restriction, this is for development purposes
- *  the function populates the object fields to make reading easier
- */
+ *  get all public files, no input necessary
+*/
 router.get("/all", async (req, res) => {
-  try {
-    const files = await File.find({}).populate([
-      { path: "authorId", model: "User", select: "name username" },
-      {
-        path: "comments",
-        model: "Comment",
-        populate: [
-          { path: "authorId", model: "User", select: "name username" },
-          { path: "file", model: "File", select: "fileName" },
-        ],
-      },
-    ]);
-    if (files.length === 0) {
-      return res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ error: "No files found!" });
+    try {
+        const files = await File.find({public:true}).populate([
+            { path: 'authorId', model: 'User', select: 'name username' },
+            { path: 'comments',
+              model: 'Comment', 
+              populate: [
+                { path: 'authorId', model: 'User', select: 'name username' }, 
+                ]
+            }
+        ]);
+        if (files.length === 0) {
+        return res
+            .status(StatusCodes.NOT_FOUND)
+            .json({ error: "No files found!" });
+        }
+        return res.json(files);
+    } catch (error) {
+        console.error(error);
+        return res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({ error: "Internal Server Error" });
     }
-    return res.json(files);
-  } catch (error) {
-    console.error(error);
-    return res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ error: "Internal Server Error" });
-  }
 });
 
 /**
@@ -132,29 +129,114 @@ router.post("/user-files", async (req, res) => {
  * no input necessary
  */
 router.get("/user-liked/all", async (req, res) => {
-  try {
-    if (!req.session.userId) {
-      return res
-        .status(StatusCodes.BAD_REQUEST)
-        .json({ error: "User not logged in" });
-    }
+    try {
+        if (!req.session.userId) {
+            return res
+              .status(StatusCodes.BAD_REQUEST)
+              .json({ error: "User not logged in" });
+        }
 
-    const liked = await User.findById(
-      req.session.userId,
-      "likedFiles",
-    ).populate("likedFiles");
-    if (liked.length === 0) {
-      return res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ error: "No file found!" });
+        const liked = await User.findById(req.session.userId, 'likedFiles').populate('likedFiles');
+        if (liked.length === 0){
+            return res
+            .status(StatusCodes.NOT_FOUND)
+            .json({ error: "No file found!"});
+        }
+        return res
+        .status(StatusCodes.OK)
+        .json(liked);
+
+    } catch (error) {
+        console.error(error);
+        return res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({ error: "Internal Server Error, liked files fetch failed" });
     }
-    return res.status(StatusCodes.SUCCESS).json(liked);
-  } catch (error) {
-    console.error(error);
-    return res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ error: "Internal Server Error, liked files fetch failed" });
-  }
+});
+
+/**
+ * add liked file
+ * input must be file _id to be added to the liked array
+ * the function will check if the file is already liked and returns error message
+ * user must be logged in to work 
+ * there is no restriction on liking your own files
+*/
+router.post("/user-liked/add", async (req, res) => {
+    try {
+      if (!req.session.userId) {
+        return res
+          .status(StatusCodes.UNAUTHORIZED)
+          .json({ error: "User not logged in" });
+      }
+      const user = await User.findById(req.session.userId);
+      const { _id } = req.body;
+      const file = await File.findById(_id);
+      if (!file) {
+        return res
+          .status(StatusCodes.BAD_REQUEST)
+          .json({ error: "File not found!" });
+      }
+  
+      if (user.likedFiles.includes(file._id)) {
+        return res
+          .status(StatusCodes.CONFLICT)
+          .json({ error: "File is already liked by the user" });
+      }
+  
+      user.likedFiles.push(file._id);
+      await user.save();
+  
+      return res
+        .status(StatusCodes.OK)
+        .json(file);
+    } catch (error) {
+      console.error(error);
+      return res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({ error: "File like failed due to internal server error." });
+    }
+});
+  
+/**
+ * remove file from liked files for a user (ie unlike a file)
+ * input requires file _id to unlike
+ * user has to be logged in to work
+*/
+router.post("/user-liked/remove", async(req, res) =>{
+
+    try{
+        if (!req.session.userId){
+            return res
+                .status(StatusCodes.UNAUTHORIZED)
+                .json({error: "User not logged in!"});
+        }
+        const user = await User.findById(req.session.userId);
+        const { _id } = req.body;
+        const file = await File.findById(_id);
+        if (!file) {
+            return res
+            .status(StatusCodes.BAD_REQUEST)
+            .json({ error: "File not found!" });
+        }
+
+        const likedFileIndex = user.likedFiles.indexOf(file._id);
+        if (likedFileIndex === -1) {
+          return res
+            .status(StatusCodes.CONFLICT)
+            .json({ error: "File not liked by the user" });
+        }
+    
+        user.likedFiles.splice(likedFileIndex, 1);
+        await user.save();
+        return res
+            .status(StatusCodes.OK)
+            .json(file);
+    } catch (error){
+        console.log(error);
+        return res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({ error: "File unlike failed due to internal server error." });
+    }
 });
 
 /**
@@ -208,8 +290,8 @@ router.post("/other-folder", async (req, res) => {
  * restricted to public files only
  *
  * inputs needed:
- * -- author username, email, or _id --> need some unique identifier to find the user (name alone will not work)
- * -- fileName
+ * -- author username, email, or authorId --> need some unique identifier to find the user (name alone will not work)
+ * -- fileName  
  * -- folder (optional)
  * -- file _id
  *

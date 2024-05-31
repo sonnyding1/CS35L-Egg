@@ -17,7 +17,7 @@ Implementing user functionality
  */
 
 /**
- * get all users from db, more for internal data than a user function.
+ * get all users from db
  * gets all information with no restrictions.
  */
 router.get("/all", async (req, res) => {
@@ -28,7 +28,10 @@ router.get("/all", async (req, res) => {
         .status(StatusCodes.NOT_FOUND)
         .json({ error: "User not found!" });
     }
-    return res.status(StatusCodes.SUCCESS).json(users);
+    return res
+    .status(StatusCodes.OK)
+    .json(users);
+
   } catch (error) {
     console.error(error);
     return res
