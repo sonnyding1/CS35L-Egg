@@ -18,7 +18,12 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        sun: "bg-neutral-100 p-3 rounded-2xl focus:ring-2 transition-all ease-in-out delay-150 hover:bg-neutral-200 hover:overline hover:decoration-slate-900 text-slate-700 hover:text-slate-900 mr-4",
+        navButton:
+          "m-2 bg-neutral-100 p-3 rounded-2xl focus:ring-2 transition-all ease-in-out delay-150 hover:bg-neutral-200 hover:overline hover:decoration-slate-900 text-slate-700 hover:text-slate-900",
+        sideButton:
+          "justify-self-auto m-2 bg-neutral-100 p-3 rounded-2xl focus:ring-2 transition-all ease-in-out delay-150 hover:bg-neutral-200 hover:overline hover:decoration-slate-900 text-slate-700 hover:text-slate-900",
+        likeButton:
+          "bg-[url('@/images/like-png.jpg')] w-[19px] h-[18px] bg-contain hover:scale-110 transition-all delay-200 align-middle",
         gabe: "bg-neutral-100 p-3 rounded-sm focus:ring-2 transition-all ease-in-out delay-150 text-slate-700 mr-4 hover:bg-neutral-300 hover:text-slate-900 hover:decoration-slate-900",
       },
       size: {
@@ -26,13 +31,14 @@ const buttonVariants = cva(
         sm: "h-9 rounded-md px-3",
         lg: "h-11 rounded-md px-8",
         icon: "h-10 w-10",
+        none: "",
       },
     },
     defaultVariants: {
       variant: "default",
       size: "default",
     },
-  }
+  },
 );
 
 const Button = React.forwardRef(
@@ -45,7 +51,7 @@ const Button = React.forwardRef(
         {...props}
       />
     );
-  }
+  },
 );
 Button.displayName = "Button";
 

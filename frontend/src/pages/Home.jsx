@@ -1,19 +1,20 @@
+import { useAuth } from "@/components/AuthContext";
+import Navigation from "@/components/navigation";
 import { Button } from "@/components/ui/button";
-import  Navigation from "@/components/ui/navigation";
+import { useNavigate } from "react-router-dom";
 
-function Home() {
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(e);
-  };
+const Home = () => {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <div>
       <Navigation />
-      <p className="text-red-500 text-3xl">Home</p>
-      <Button>Click me</Button>
+      {user ? <div>Welcome, {user.name}!</div> : <div>Please log in.</div>}
+      <Button onClick={logout}>Log Out</Button>
+      <Button onClick={() => navigate("/browse")}>Browse Files</Button>
     </div>
   );
-}
+};
 
 export default Home;
