@@ -11,7 +11,7 @@ const router = express.Router();
  * create, and get files/ comments
  * get folder
  * get liked files
- */
+*/
 
 /**
  *  get all public files, no input necessary
