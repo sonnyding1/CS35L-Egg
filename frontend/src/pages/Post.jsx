@@ -15,7 +15,7 @@ import { useParams } from "react-router-dom";
 
 const Post = () => {
   const [post, setPost] = useState(null);
-  const [content, setContent] = useState("");
+  const [commentContent, setCommentContent] = useState("");
   const [comments, setComments] = useState([]);
 
   const { fileID } = useParams();
@@ -50,6 +50,57 @@ const Post = () => {
     fetchPost();
   }, [fileID]);
 
+  const fetchComments = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/file/comment/all", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ _id: fileID }),
+        credentials: "include",
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setComments(data);
+      } else {
+        setComments([]);
+      }
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+      setComments([]);
+    }
+  };
+
+  const handleSubmitComment = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:3000/file/comment/create",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ _id: fileID, content: commentContent }),
+          credentials: "include",
+        },
+      );
+      if (response.ok) {
+        const newComment = await response.json();
+        setComments((prevComments) => [...prevComments, newComment]);
+        setCommentContent("");
+      } else {
+        console.error("Error creating comment:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error creating comment:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchComments();
+  }, [fileID]);
+
   if (!post) {
     return <></>;
   }
@@ -60,7 +111,7 @@ const Post = () => {
         <CardHeader>
           <CardTitle>{post.fileName}</CardTitle>
           <CardDescription>
-            By {post.authorId.name} on {post.dateCreated} | {post.likes} likes{" "}
+            By {post.authorId.name} on {post.dateCreated}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -71,11 +122,14 @@ const Post = () => {
         <Card>
           <CardHeader>Write a comment</CardHeader>
           <CardContent>
-            <Textarea></Textarea>
+            <Textarea
+              value={commentContent}
+              onChange={(e) => setCommentContent(e.target.value)}
+            ></Textarea>
           </CardContent>
-          <CardFooter className="justify-end space-x-2  ">
+          <CardFooter className="justify-end space-x-2">
             <Button variant="outline">Cancel</Button>
-            <Button>Submit</Button>
+            <Button onClick={handleSubmitComment}>Submit</Button>
           </CardFooter>
         </Card>
 
@@ -83,10 +137,9 @@ const Post = () => {
           {comments.map((comment, index) => (
             <CommentPost
               key={index}
-              comment={comment.comment}
-              author={comment.author}
-              date={comment.date}
-              likes={comment.likes}
+              comment={comment.content}
+              author={comment.authorId.name}
+              date={new Date(comment.dateCreated).toLocaleDateString("en-US")}
             />
           ))}
         </div>
