@@ -12,6 +12,7 @@ import CommentPost from "@/components/CommentPost";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useParams } from "react-router-dom";
+import NotFoundPage from "./NotFoundPage";
 
 const Post = () => {
   const [post, setPost] = useState(null);
@@ -99,7 +100,7 @@ const Post = () => {
   };
 
   if (!post) {
-    return <></>;
+    return <NotFoundPage />;
   }
 
   return (
