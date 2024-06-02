@@ -13,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useParams } from "react-router-dom";
 import NotFoundPage from "./NotFoundPage";
+import { useAuth } from "@/components/AuthContext";
 
 const Post = () => {
   const [post, setPost] = useState(null);
@@ -20,6 +21,7 @@ const Post = () => {
   const [comments, setComments] = useState([]);
 
   const { fileID } = useParams();
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -117,19 +119,21 @@ const Post = () => {
         </CardContent>
       </Card>
       <div className="max-w-5xl mx-auto">
-        <Card>
-          <CardHeader>Write a comment</CardHeader>
-          <CardContent>
-            <Textarea
-              value={commentContent}
-              onChange={(e) => setCommentContent(e.target.value)}
-            ></Textarea>
-          </CardContent>
-          <CardFooter className="justify-end space-x-2">
-            <Button variant="outline">Cancel</Button>
-            <Button onClick={handleSubmitComment}>Submit</Button>
-          </CardFooter>
-        </Card>
+        {user && (
+          <Card>
+            <CardHeader>Write a comment</CardHeader>
+            <CardContent>
+              <Textarea
+                value={commentContent}
+                onChange={(e) => setCommentContent(e.target.value)}
+              ></Textarea>
+            </CardContent>
+            <CardFooter className="justify-end space-x-2">
+              <Button variant="outline">Cancel</Button>
+              <Button onClick={handleSubmitComment}>Submit</Button>
+            </CardFooter>
+          </Card>
+        )}
 
         <div className="space-y-4 mt-4">
           {comments.map((comment, index) => (
