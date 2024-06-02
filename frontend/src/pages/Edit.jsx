@@ -91,6 +91,7 @@ function Edit() {
       </div>
       <Menubar className="mb-2">
         <FileMenuBar
+          fileID={location.state?.fileId}
           fileName={fileName}
           onFileNameChange={setFileName}
           onContentChange={setContent}

@@ -19,6 +19,7 @@ import {
 import FileBrowser from "@/pages/FileBrowser";
 
 const FileMenuBarMenu = ({
+  fileID,
   fileName,
   onFileNameChange,
   onContentChange,
@@ -55,33 +56,60 @@ const FileMenuBarMenu = ({
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
+    console.log(fileName)
     link.download = fileName;
     link.click();
     URL.revokeObjectURL(url);
   };
-
-  const handleRename = (e) => {
+  
+  const handleRename = async (e) => {
     e.preventDefault();
     const newFileName = e.target.newFileName.value;
-    onFileNameChange(newFileName);
-    setFileNameDialogOpen(false);
-  };
-
-  const handleSave = async () => {
+  
     try {
-      const newFile = {
-        fileName: fileName,
-        text: content,
-        description: "",
+      const updatedFile = {
+        _id: fileID,
+        fileName: newFileName,
       };
-
-      const response = await fetch("http://localhost:3000/file/create", {
+  
+      const response = await fetch("http://localhost:3000/update/user/file", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         credentials: "include",
-        body: JSON.stringify(newFile),
+        body: JSON.stringify(updatedFile),
+      });
+  
+      if (response.ok) {
+        onFileNameChange(newFileName);
+        setFileNameDialogOpen(false);
+        console.log("File renamed successfully.");
+      } else {
+        const error = await response.json();
+        console.error(error);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const handleSave = async () => {
+    try {
+      const updatedFile = {
+        _id: fileID,
+        fileName: fileName,
+        text: content,
+        description: "",
+      };
+      console.log
+
+      const response = await fetch("http://localhost:3000/update/user/file", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(updatedFile),
       });
 
       if (response.ok) {
