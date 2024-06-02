@@ -5,7 +5,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Menubar } from "@/components/ui/menubar";
 import EditMenuBar from "@/components/EditMenuBarMenu";
 import FileMenuBarMenu from "@/components/FileMenuBarMenu";
-import { Pencil1Icon } from "@radix-ui/react-icons";
 import MarkdownPreview from "@/components/MarkdownPreview";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -17,16 +16,19 @@ function Edit() {
   const [isFileNameDialogOpen, setFileNameDialogOpen] = useState(false);
   const [past, setPast] = useState("");
   const [future, setFuture] = useState("");
+  const [fileId, setFileId] = useState(null);
+
   const timeoutRef = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchFileContent = async () => {
-      const fileId = location.state?.fileId;
-      if (!fileId) {
+      const fetchedFileId = location.state?.fileId;
+      setFileId(fetchedFileId);
+      if (!fetchedFileId) {
         // Handle case when fileId is not available
-        console.error("File ID not found", fileId);
+        console.error("File ID not found", fetchedFileId);
         navigate("/");
         return;
       }
@@ -38,7 +40,7 @@ function Edit() {
             "Content-Type": "application/json",
           },
           credentials: "include",
-          body: JSON.stringify({ _id: fileId }),
+          body: JSON.stringify({ _id: fetchedFileId }),
         });
 
         if (response.ok) {
@@ -82,21 +84,24 @@ function Edit() {
     <div className="mx-auto px-4 py-4 h-screen flex flex-col">
       <div className="flex items-center justify-between mb-2">
         <div>
-          <Button onClick={() => navigate("/browse")}>Browse</Button>
+          <Button variant="outline" onClick={() => navigate("/browse")}>
+            Browse
+          </Button>
         </div>
-        <h1 className="text-xl font-bold text-center">{fileName}</h1>
+        <Button variant="link" onClick={() => setFileNameDialogOpen(true)}>
+          {fileName}
+        </Button>
         <Button
-          className="ml-2"
-          size="sm"
-          variant="outline"
-          onClick={() => setFileNameDialogOpen(true)}
+          onClick={() => {
+            navigate("/posts/" + fileId);
+          }}
         >
-          <Pencil1Icon />
+          View Post
         </Button>
       </div>
       <Menubar className="mb-2">
         <FileMenuBarMenu
-          fileID={location.state?.fileId}
+          fileID={fileId}
           fileName={fileName}
           onFileNameChange={setFileName}
           onContentChange={setContent}
