@@ -13,6 +13,7 @@ function Edit() {
   const [content, setContent] = useState("");
   const textareaRef = useRef(null);
   const [fileName, setFileName] = useState("");
+  const [isFilePublic, setFilePublic] = useState(false);
   const [isFileNameDialogOpen, setFileNameDialogOpen] = useState(false);
   const [past, setPast] = useState("");
   const [future, setFuture] = useState("");
@@ -44,6 +45,7 @@ function Edit() {
           const data = await response.json();
           setFileName(data[0].fileName);
           setContent(data[0].text);
+          setFilePublic(data[0].public);
         } else if (response.status === 401) {
           console.error("Unauthorized access");
           navigate("/login");
@@ -78,7 +80,10 @@ function Edit() {
 
   return (
     <div className="mx-auto px-4 py-4 h-screen flex flex-col">
-      <div className="flex items-center justify-center mb-2">
+      <div className="flex items-center justify-between mb-2">
+        <div>
+          <Button onClick={() => navigate("/browse")}>Browse</Button>
+        </div>
         <h1 className="text-xl font-bold text-center">{fileName}</h1>
         <Button
           className="ml-2"
@@ -98,6 +103,8 @@ function Edit() {
           isFileNameDialogOpen={isFileNameDialogOpen}
           setFileNameDialogOpen={setFileNameDialogOpen}
           content={content}
+          isFilePublic={isFilePublic}
+          setFilePublic={setFilePublic}
         />
         <EditMenuBar
           content={content}

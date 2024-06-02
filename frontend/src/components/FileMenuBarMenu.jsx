@@ -15,6 +15,7 @@ import {
   MenubarItem,
   MenubarShortcut,
   MenubarSeparator,
+  MenubarCheckboxItem,
 } from "@/components/ui/menubar";
 import FileBrowser from "@/pages/FileBrowser";
 
@@ -26,6 +27,8 @@ const FileMenuBarMenu = ({
   isFileNameDialogOpen,
   setFileNameDialogOpen,
   content,
+  isFilePublic,
+  setFilePublic,
 }) => {
   const [isFileUploadDialogOpen, setFileUploadDialogOpen] = useState(false);
   const [isFileBrowserDialogOpen, setFileBrowserDialogOpen] = useState(false);
@@ -56,71 +59,83 @@ const FileMenuBarMenu = ({
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    console.log(fileName)
     link.download = fileName;
     link.click();
     URL.revokeObjectURL(url);
   };
-  
+
+  const updateFile = async (updatedFile, onSuccess, onError) => {
+    try {
+      const response = await fetch("http://localhost:3000/update/user/file", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(updatedFile),
+      });
+
+      if (response.ok) {
+        onSuccess();
+      } else {
+        const error = await response.json();
+        onError(error);
+      }
+    } catch (error) {
+      onError(error);
+    }
+  };
+
   const handleRename = async (e) => {
     e.preventDefault();
     const newFileName = e.target.newFileName.value;
-  
-    try {
-      const updatedFile = {
-        _id: fileID,
-        fileName: newFileName,
-      };
-  
-      const response = await fetch("http://localhost:3000/update/user/file", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(updatedFile),
-      });
-  
-      if (response.ok) {
+
+    const updatedFile = {
+      _id: fileID,
+      fileName: newFileName,
+    };
+
+    updateFile(
+      updatedFile,
+      () => {
         onFileNameChange(newFileName);
         setFileNameDialogOpen(false);
         console.log("File renamed successfully.");
-      } else {
-        const error = await response.json();
-        console.error(error);
-      }
-    } catch (error) {
-      console.error(error);
-    }
+      },
+      console.error,
+    );
   };
+
   const handleSave = async () => {
-    try {
-      const updatedFile = {
-        _id: fileID,
-        fileName: fileName,
-        text: content,
-        description: "",
-      };
-      console.log
+    const updatedFile = {
+      _id: fileID,
+      fileName: fileName,
+      text: content,
+    };
 
-      const response = await fetch("http://localhost:3000/update/user/file", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(updatedFile),
-      });
-
-      if (response.ok) {
+    updateFile(
+      updatedFile,
+      () => {
         console.log("File saved successfully.");
-      } else {
-        const error = await response.json();
-        console.error(error);
-      }
-    } catch (error) {
-      console.error(error);
-    }
+      },
+      console.error,
+    );
+  };
+
+  const handleFileIsPublic = async () => {
+    const updatedFile = {
+      _id: fileID,
+      public: !isFilePublic,
+    };
+
+    updateFile(
+      updatedFile,
+      () => {
+        setFilePublic(!isFilePublic);
+        console.log("File toggled public.");
+      },
+      console.error,
+    );
   };
 
   return (
@@ -138,8 +153,15 @@ const FileMenuBarMenu = ({
             Rename
           </MenubarItem>
           <MenubarItem onSelect={handleSave}>Save</MenubarItem>
+          <MenubarCheckboxItem
+            checked={isFilePublic}
+            onCheckedChange={handleFileIsPublic}
+          >
+            Public
+          </MenubarCheckboxItem>
         </MenubarContent>
       </MenubarMenu>
+
       <Dialog open={isFileNameDialogOpen} onOpenChange={setFileNameDialogOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
