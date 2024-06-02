@@ -18,6 +18,7 @@ import {
   MenubarCheckboxItem,
 } from "@/components/ui/menubar";
 import FileBrowser from "@/pages/FileBrowser";
+import { useNavigate } from "react-router-dom";
 
 const FileMenuBarMenu = ({
   fileID,
@@ -33,6 +34,8 @@ const FileMenuBarMenu = ({
   const [isFileUploadDialogOpen, setFileUploadDialogOpen] = useState(false);
   const [isFileBrowserDialogOpen, setFileBrowserDialogOpen] = useState(false);
   const [uploadedFile, setUploadedFile] = useState(null);
+
+  const navigate = useNavigate();
 
   const handleOpenFile = () => {
     setFileBrowserDialogOpen(true);
@@ -122,6 +125,28 @@ const FileMenuBarMenu = ({
     );
   };
 
+  const handleDelete = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/delete/file", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ _id: fileID }),
+      });
+
+      if (response.ok) {
+        console.log("File deleted successfully.");
+        navigate("/browse");
+      } else {
+        const error = await response.json();
+        console.error("File deletion failed:", error);
+      }
+    } catch (error) {
+      console.error("File deletion failed:", error);
+    }
+  };
   const handleFileIsPublic = async () => {
     const updatedFile = {
       _id: fileID,
@@ -153,6 +178,7 @@ const FileMenuBarMenu = ({
             Rename
           </MenubarItem>
           <MenubarItem onSelect={handleSave}>Save</MenubarItem>
+          <MenubarItem onSelect={handleDelete}>Delete</MenubarItem>
           <MenubarCheckboxItem
             checked={isFilePublic}
             onCheckedChange={handleFileIsPublic}
