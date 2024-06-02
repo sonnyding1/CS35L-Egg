@@ -21,7 +21,9 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify({}),
         credentials: "include",
       });
-      if (response.ok) {
+      if (response.status === 204) {
+        setUser(null);
+      } else if (response.ok) {
         const data = await response.json();
         setUser(data);
       } else {
