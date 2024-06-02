@@ -165,7 +165,7 @@ const Post = () => {
   }
 
   return (
-    <>
+    <div className="px-16">
       <Card className="m-4">
         <CardHeader>
           <CardTitle>
@@ -218,7 +218,7 @@ const Post = () => {
           ))}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
