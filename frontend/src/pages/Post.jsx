@@ -47,30 +47,31 @@ const Post = () => {
       }
     };
 
-    fetchPost();
-  }, [fileID]);
-
-  const fetchComments = async () => {
-    try {
-      const response = await fetch("http://localhost:3000/file/comment/all", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ _id: fileID }),
-        credentials: "include",
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setComments(data);
-      } else {
+    const fetchComments = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/file/comment/all", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ _id: fileID }),
+          credentials: "include",
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setComments(data);
+        } else {
+          setComments([]);
+        }
+      } catch (error) {
+        console.error("Error fetching comments:", error);
         setComments([]);
       }
-    } catch (error) {
-      console.error("Error fetching comments:", error);
-      setComments([]);
-    }
-  };
+    };
+
+    fetchPost();
+    fetchComments();
+  }, [fileID]);
 
   const handleSubmitComment = async () => {
     try {
@@ -96,10 +97,6 @@ const Post = () => {
       console.error("Error creating comment:", error);
     }
   };
-
-  useEffect(() => {
-    fetchComments();
-  }, [fileID]);
 
   if (!post) {
     return <></>;
