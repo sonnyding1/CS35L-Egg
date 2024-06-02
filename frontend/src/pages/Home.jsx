@@ -13,6 +13,9 @@ const Home = () => {
       {user ? <div>Welcome, {user.name}!</div> : <div>Please log in.</div>}
       <Button onClick={logout}>Log Out</Button>
       <Button onClick={() => navigate("/browse")}>Browse Files</Button>
+      <Button onClick={() => navigate("/posts/665becd2f039d7519dd91557")}>
+        Sample Post
+      </Button>
     </div>
   );
 };

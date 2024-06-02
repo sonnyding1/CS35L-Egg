@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Menubar } from "@/components/ui/menubar";
 import EditMenuBar from "@/components/EditMenuBarMenu";
-import FileMenuBar from "@/components/FileMenuBarMenu";
+import FileMenuBarMenu from "@/components/FileMenuBarMenu";
 import { Pencil1Icon } from "@radix-ui/react-icons";
 import MarkdownPreview from "@/components/MarkdownPreview";
 import { Card, CardContent } from "@/components/ui/card";
@@ -95,7 +95,7 @@ function Edit() {
         </Button>
       </div>
       <Menubar className="mb-2">
-        <FileMenuBar
+        <FileMenuBarMenu
           fileID={location.state?.fileId}
           fileName={fileName}
           onFileNameChange={setFileName}

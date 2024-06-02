@@ -11,34 +11,44 @@ import {
 import CommentPost from "@/components/CommentPost";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { useParams } from "react-router-dom";
 
 const Post = () => {
   const [post, setPost] = useState(null);
   const [content, setContent] = useState("");
   const [comments, setComments] = useState([]);
 
+  const { fileID } = useParams();
+
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await fetch("/post.json");
-        const data = await response.json();
-        setPost(data);
-
-        const contentResponse = await fetch(`/${data.filepath}`);
-        const contentData = await contentResponse.text();
-
-        // Fetch the comments from comments.json
-        const commentsResponse = await fetch("/comments.json");
-        const commentsData = await commentsResponse.json();
-        setComments(commentsData);
-        setContent(contentData);
+        const response = await fetch("http://localhost:3000/file/all", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        });
+        if (response.ok) {
+          const data = await response.json();
+          const filteredData = data.filter((file) => file._id === fileID)[0];
+          const dateCreatedString = filteredData.dateCreated;
+          filteredData.dateCreated = new Date(
+            dateCreatedString,
+          ).toLocaleDateString("en-US");
+          setPost(filteredData);
+        } else {
+          setPost(null);
+        }
       } catch (error) {
-        console.error("Error fetching post:", error);
+        console.error("Error fetching files:", error);
+        setPost(null);
       }
     };
 
     fetchPost();
-  }, []);
+  }, [fileID]);
 
   if (!post) {
     return <></>;
@@ -48,13 +58,13 @@ const Post = () => {
     <>
       <Card className="m-4">
         <CardHeader>
-          <CardTitle>{post.title}</CardTitle>
+          <CardTitle>{post.fileName}</CardTitle>
           <CardDescription>
-            By {post.author} on {post.date} | {post.likes} likes{" "}
+            By {post.authorId.name} on {post.dateCreated} | {post.likes} likes{" "}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <MarkdownPreview content={content} />
+          <MarkdownPreview content={post.text} />
         </CardContent>
       </Card>
       <div className="max-w-5xl mx-auto">
