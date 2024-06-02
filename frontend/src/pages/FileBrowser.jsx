@@ -38,11 +38,6 @@ const FileBrowser = ({ onFileSelect, fileCreated }) => {
     fetchData();
   }, [fileCreated]);
 
-  const handleFileDoubleClick = (id) => {
-    navigate("/edit", { state: { fileId: id } });
-    onFileSelect();
-  };
-
   return (
     <>
       <Table>
@@ -59,7 +54,10 @@ const FileBrowser = ({ onFileSelect, fileCreated }) => {
           {files.map((file) => (
             <TableRow
               key={file._id}
-              onDoubleClick={() => handleFileDoubleClick(file._id)}
+              onDoubleClick={() => {
+                navigate("/edit", { state: { fileId: file._id } });
+                onFileSelect();
+              }}
               className="cursor-pointer"
             >
               <TableCell className="font-medium">{file.fileName}</TableCell>

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Menubar } from "@/components/ui/menubar";
 import EditMenuBar from "@/components/EditMenuBarMenu";
-import FileMenuBar from "@/components/FileMenuBarMenu";
+import FileMenuBarMenu from "@/components/FileMenuBarMenu";
 import { Pencil1Icon } from "@radix-ui/react-icons";
 import MarkdownPreview from "@/components/MarkdownPreview";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,6 +13,7 @@ function Edit() {
   const [content, setContent] = useState("");
   const textareaRef = useRef(null);
   const [fileName, setFileName] = useState("");
+  const [isFilePublic, setFilePublic] = useState(false);
   const [isFileNameDialogOpen, setFileNameDialogOpen] = useState(false);
   const [past, setPast] = useState("");
   const [future, setFuture] = useState("");
@@ -44,6 +45,7 @@ function Edit() {
           const data = await response.json();
           setFileName(data[0].fileName);
           setContent(data[0].text);
+          setFilePublic(data[0].public);
         } else if (response.status === 401) {
           console.error("Unauthorized access");
           navigate("/login");
@@ -78,7 +80,10 @@ function Edit() {
 
   return (
     <div className="mx-auto px-4 py-4 h-screen flex flex-col">
-      <div className="flex items-center justify-center mb-2">
+      <div className="flex items-center justify-between mb-2">
+        <div>
+          <Button onClick={() => navigate("/browse")}>Browse</Button>
+        </div>
         <h1 className="text-xl font-bold text-center">{fileName}</h1>
         <Button
           className="ml-2"
@@ -90,13 +95,16 @@ function Edit() {
         </Button>
       </div>
       <Menubar className="mb-2">
-        <FileMenuBar
+        <FileMenuBarMenu
+          fileID={location.state?.fileId}
           fileName={fileName}
           onFileNameChange={setFileName}
           onContentChange={setContent}
           isFileNameDialogOpen={isFileNameDialogOpen}
           setFileNameDialogOpen={setFileNameDialogOpen}
           content={content}
+          isFilePublic={isFilePublic}
+          setFilePublic={setFilePublic}
         />
         <EditMenuBar
           content={content}

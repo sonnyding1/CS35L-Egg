@@ -11,34 +11,92 @@ import {
 import CommentPost from "@/components/CommentPost";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { useParams } from "react-router-dom";
 
 const Post = () => {
   const [post, setPost] = useState(null);
-  const [content, setContent] = useState("");
+  const [commentContent, setCommentContent] = useState("");
   const [comments, setComments] = useState([]);
+
+  const { fileID } = useParams();
 
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await fetch("/post.json");
-        const data = await response.json();
-        setPost(data);
-
-        const contentResponse = await fetch(`/${data.filepath}`);
-        const contentData = await contentResponse.text();
-
-        // Fetch the comments from comments.json
-        const commentsResponse = await fetch("/comments.json");
-        const commentsData = await commentsResponse.json();
-        setComments(commentsData);
-        setContent(contentData);
+        const response = await fetch("http://localhost:3000/file/all", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        });
+        if (response.ok) {
+          const data = await response.json();
+          const filteredData = data.filter((file) => file._id === fileID)[0];
+          const dateCreatedString = filteredData.dateCreated;
+          filteredData.dateCreated = new Date(
+            dateCreatedString,
+          ).toLocaleDateString("en-US");
+          setPost(filteredData);
+        } else {
+          setPost(null);
+        }
       } catch (error) {
-        console.error("Error fetching post:", error);
+        console.error("Error fetching files:", error);
+        setPost(null);
+      }
+    };
+
+    const fetchComments = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/file/comment/all", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ _id: fileID }),
+          credentials: "include",
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setComments(data);
+        } else {
+          setComments([]);
+        }
+      } catch (error) {
+        console.error("Error fetching comments:", error);
+        setComments([]);
       }
     };
 
     fetchPost();
-  }, []);
+    fetchComments();
+  }, [fileID]);
+
+  const handleSubmitComment = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:3000/file/comment/create",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ _id: fileID, content: commentContent }),
+          credentials: "include",
+        },
+      );
+      if (response.ok) {
+        const newComment = await response.json();
+        setComments((prevComments) => [...prevComments, newComment]);
+        setCommentContent("");
+      } else {
+        console.error("Error creating comment:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error creating comment:", error);
+    }
+  };
 
   if (!post) {
     return <></>;
@@ -48,24 +106,27 @@ const Post = () => {
     <>
       <Card className="m-4">
         <CardHeader>
-          <CardTitle>{post.title}</CardTitle>
+          <CardTitle>{post.fileName}</CardTitle>
           <CardDescription>
-            By {post.author} on {post.date} | {post.likes} likes{" "}
+            By {post.authorId.name} on {post.dateCreated}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <MarkdownPreview content={content} />
+          <MarkdownPreview content={post.text} />
         </CardContent>
       </Card>
       <div className="max-w-5xl mx-auto">
         <Card>
           <CardHeader>Write a comment</CardHeader>
           <CardContent>
-            <Textarea></Textarea>
+            <Textarea
+              value={commentContent}
+              onChange={(e) => setCommentContent(e.target.value)}
+            ></Textarea>
           </CardContent>
-          <CardFooter className="justify-end space-x-2  ">
+          <CardFooter className="justify-end space-x-2">
             <Button variant="outline">Cancel</Button>
-            <Button>Submit</Button>
+            <Button onClick={handleSubmitComment}>Submit</Button>
           </CardFooter>
         </Card>
 
@@ -73,10 +134,9 @@ const Post = () => {
           {comments.map((comment, index) => (
             <CommentPost
               key={index}
-              comment={comment.comment}
-              author={comment.author}
-              date={comment.date}
-              likes={comment.likes}
+              comment={comment.content}
+              author={comment.authorId.name}
+              date={new Date(comment.dateCreated).toLocaleDateString("en-US")}
             />
           ))}
         </div>

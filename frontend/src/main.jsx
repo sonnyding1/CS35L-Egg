@@ -46,7 +46,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/samplepost",
+    path: "/posts/:fileID",
     element: <Post />,
   },
 ]);

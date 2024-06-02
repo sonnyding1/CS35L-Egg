@@ -15,16 +15,20 @@ import {
   MenubarItem,
   MenubarShortcut,
   MenubarSeparator,
+  MenubarCheckboxItem,
 } from "@/components/ui/menubar";
 import FileBrowser from "@/pages/FileBrowser";
 
 const FileMenuBarMenu = ({
+  fileID,
   fileName,
   onFileNameChange,
   onContentChange,
   isFileNameDialogOpen,
   setFileNameDialogOpen,
   content,
+  isFilePublic,
+  setFilePublic,
 }) => {
   const [isFileUploadDialogOpen, setFileUploadDialogOpen] = useState(false);
   const [isFileBrowserDialogOpen, setFileBrowserDialogOpen] = useState(false);
@@ -60,39 +64,78 @@ const FileMenuBarMenu = ({
     URL.revokeObjectURL(url);
   };
 
-  const handleRename = (e) => {
-    e.preventDefault();
-    const newFileName = e.target.newFileName.value;
-    onFileNameChange(newFileName);
-    setFileNameDialogOpen(false);
-  };
-
-  const handleSave = async () => {
+  const updateFile = async (updatedFile, onSuccess, onError) => {
     try {
-      const newFile = {
-        fileName: fileName,
-        text: content,
-        description: "",
-      };
-
-      const response = await fetch("http://localhost:3000/file/create", {
+      const response = await fetch("http://localhost:3000/update/user/file", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         credentials: "include",
-        body: JSON.stringify(newFile),
+        body: JSON.stringify(updatedFile),
       });
 
       if (response.ok) {
-        console.log("File saved successfully.");
+        onSuccess();
       } else {
         const error = await response.json();
-        console.error(error);
+        onError(error);
       }
     } catch (error) {
-      console.error(error);
+      onError(error);
     }
+  };
+
+  const handleRename = async (e) => {
+    e.preventDefault();
+    const newFileName = e.target.newFileName.value;
+
+    const updatedFile = {
+      _id: fileID,
+      fileName: newFileName,
+    };
+
+    updateFile(
+      updatedFile,
+      () => {
+        onFileNameChange(newFileName);
+        setFileNameDialogOpen(false);
+        console.log("File renamed successfully.");
+      },
+      console.error,
+    );
+  };
+
+  const handleSave = async () => {
+    const updatedFile = {
+      _id: fileID,
+      fileName: fileName,
+      text: content,
+    };
+
+    updateFile(
+      updatedFile,
+      () => {
+        console.log("File saved successfully.");
+      },
+      console.error,
+    );
+  };
+
+  const handleFileIsPublic = async () => {
+    const updatedFile = {
+      _id: fileID,
+      public: !isFilePublic,
+    };
+
+    updateFile(
+      updatedFile,
+      () => {
+        setFilePublic(!isFilePublic);
+        console.log("File toggled public.");
+      },
+      console.error,
+    );
   };
 
   return (
@@ -110,8 +153,15 @@ const FileMenuBarMenu = ({
             Rename
           </MenubarItem>
           <MenubarItem onSelect={handleSave}>Save</MenubarItem>
+          <MenubarCheckboxItem
+            checked={isFilePublic}
+            onCheckedChange={handleFileIsPublic}
+          >
+            Public
+          </MenubarCheckboxItem>
         </MenubarContent>
       </MenubarMenu>
+
       <Dialog open={isFileNameDialogOpen} onOpenChange={setFileNameDialogOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>

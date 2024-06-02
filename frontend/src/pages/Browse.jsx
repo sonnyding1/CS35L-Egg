@@ -67,7 +67,7 @@ const Browse = () => {
           </form>
         </DialogContent>
       </Dialog>
-      <FileBrowser fileCreated={fileCreated} />
+      <FileBrowser onFileSelect={() => null} fileCreated={fileCreated} />
     </>
   );
 };
