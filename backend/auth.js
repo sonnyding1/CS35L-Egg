@@ -21,7 +21,6 @@ passport.use(
             name: profileJSON.given_name,
             email: profileJSON.email,
             username: profileJSON.sub, // username is set to Google ID by default, can change later
-            googleId: profileJSON.sub,
             password: "foo",
             dateCreated: Date.now(),
           });
@@ -55,11 +54,13 @@ const googleAuth = passport.authenticate("google", {
   scope: ["profile", "email"],
 });
 
-const googleAuthCallback = (req, res) => {
+const googleAuthCallback = async (req, res) => {
   // redirect to the backend root after login for now,
   // in the future send a response to the frontend
-  res.redirect("http://localhost:3000");
-  req.session.googleId = req.session.passport.user;
+  // res.redirect("http://localhost:3000");
+  newUser = await User.findOne({username: req.session.passport.user}).exec();
+  req.session.userId = newUser._id;
+  return res.json(req.session);
 };
 
 const logout = (req, res) => {
