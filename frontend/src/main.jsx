@@ -13,6 +13,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Browse from "./pages/Browse";
 import NotFoundPage from "./pages/NotFoundPage";
 import Profile from "./pages/Profile";
+import AuthCheck from "./components/AuthCheck";
 
 const router = createBrowserRouter([
   {
@@ -64,6 +65,7 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <AuthProvider>
+      <AuthCheck />
       <RouterProvider router={router} />
     </AuthProvider>
   </React.StrictMode>,

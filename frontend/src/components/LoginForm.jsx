@@ -1,12 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "./AuthContext";
+import { AuthContext } from "./AuthContext";
 import LoginField from "./LoginField";
 
 const LoginForm = ({ isSignUpPage }) => {
   const navigate = useNavigate();
-  const { login, signup } = useAuth();
+  const { login, signup } = useContext(AuthContext);
   const [formState, setFormState] = useState({
     name: "",
     email: "",

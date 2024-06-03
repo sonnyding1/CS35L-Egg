@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import MarkdownPreview from "@/components/MarkdownPreview";
 import {
   Card,
@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useParams } from "react-router-dom";
 import NotFoundPage from "./NotFoundPage";
-import { useAuth } from "@/components/AuthContext";
+import { AuthContext } from "@/components/AuthContext";
 import { Toggle } from "@/components/ui/toggle";
 
 const Post = () => {
@@ -23,7 +23,7 @@ const Post = () => {
   const [isLiked, setIsLiked] = useState(false);
 
   const { fileID } = useParams();
-  const { user } = useAuth();
+  const { isAuthenticated } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -170,7 +170,7 @@ const Post = () => {
         <CardHeader>
           <CardTitle>
             {post.fileName}
-            {user && (
+            {isAuthenticated && (
               <Toggle
                 variant="outline"
                 aria-label="Toggle Like"
@@ -191,7 +191,7 @@ const Post = () => {
         </CardContent>
       </Card>
       <div className="max-w-5xl mx-auto">
-        {user && (
+        {isAuthenticated && (
           <Card>
             <CardHeader>Write a comment</CardHeader>
             <CardContent>
