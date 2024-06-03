@@ -16,6 +16,13 @@ const Home = () => {
       <Button onClick={() => navigate("/posts/665c0b491909aa5f00b270b0")}>
         Sample Post
       </Button>
+      <Button
+        onClick={() => {
+          user && navigate("/profiles/" + user.username);
+        }}
+      >
+        Your Profile
+      </Button>
     </div>
   );
 };

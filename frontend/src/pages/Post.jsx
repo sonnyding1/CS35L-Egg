@@ -13,13 +13,17 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useParams } from "react-router-dom";
 import NotFoundPage from "./NotFoundPage";
+import { useAuth } from "@/components/AuthContext";
+import { Toggle } from "@/components/ui/toggle";
 
 const Post = () => {
   const [post, setPost] = useState(null);
   const [commentContent, setCommentContent] = useState("");
   const [comments, setComments] = useState([]);
+  const [isLiked, setIsLiked] = useState(false);
 
   const { fileID } = useParams();
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -70,8 +74,35 @@ const Post = () => {
       }
     };
 
+    const fetchLiked = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:3000/file/user-liked/all",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          },
+        );
+        if (response.ok) {
+          const data = await response.json();
+          const isFileIdLiked = data.likedFiles.some(
+            (likedFile) => likedFile._id === fileID,
+          );
+          setIsLiked(isFileIdLiked);
+        } else {
+          console.error("Error fetching liked files:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error fetching liked files:", error);
+      }
+    };
+
     fetchPost();
     fetchComments();
+    fetchLiked();
   }, [fileID]);
 
   const handleSubmitComment = async () => {
@@ -99,15 +130,58 @@ const Post = () => {
     }
   };
 
+  const handleLike = async () => {
+    try {
+      const response = isLiked
+        ? await fetch("http://localhost:3000/file/user-liked/remove", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ _id: fileID }),
+            credentials: "include",
+          })
+        : await fetch("http://localhost:3000/file/user-liked/add", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ _id: fileID }),
+            credentials: "include",
+          });
+
+      if (response.ok) {
+        setIsLiked(!isLiked);
+      } else {
+        console.error("Error updating like status:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error updating like status:", error);
+    }
+  };
+
   if (!post) {
     return <NotFoundPage />;
   }
 
   return (
-    <>
+    <div className="px-16">
       <Card className="m-4">
         <CardHeader>
-          <CardTitle>{post.fileName}</CardTitle>
+          <CardTitle>
+            {post.fileName}
+            {user && (
+              <Toggle
+                variant="outline"
+                aria-label="Toggle Like"
+                className="ml-4"
+                onPressedChange={handleLike}
+                pressed={isLiked}
+              >
+                👍
+              </Toggle>
+            )}
+          </CardTitle>
           <CardDescription>
             By {post.authorId.name} on {post.dateCreated}
           </CardDescription>
@@ -117,19 +191,21 @@ const Post = () => {
         </CardContent>
       </Card>
       <div className="max-w-5xl mx-auto">
-        <Card>
-          <CardHeader>Write a comment</CardHeader>
-          <CardContent>
-            <Textarea
-              value={commentContent}
-              onChange={(e) => setCommentContent(e.target.value)}
-            ></Textarea>
-          </CardContent>
-          <CardFooter className="justify-end space-x-2">
-            <Button variant="outline">Cancel</Button>
-            <Button onClick={handleSubmitComment}>Submit</Button>
-          </CardFooter>
-        </Card>
+        {user && (
+          <Card>
+            <CardHeader>Write a comment</CardHeader>
+            <CardContent>
+              <Textarea
+                value={commentContent}
+                onChange={(e) => setCommentContent(e.target.value)}
+              ></Textarea>
+            </CardContent>
+            <CardFooter className="justify-end space-x-2">
+              <Button variant="outline">Cancel</Button>
+              <Button onClick={handleSubmitComment}>Submit</Button>
+            </CardFooter>
+          </Card>
+        )}
 
         <div className="space-y-4 mt-4">
           {comments.map((comment, index) => (
@@ -142,7 +218,7 @@ const Post = () => {
           ))}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

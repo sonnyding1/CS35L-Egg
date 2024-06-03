@@ -12,6 +12,7 @@ import { AuthProvider } from "./components/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Browse from "./pages/Browse";
 import NotFoundPage from "./pages/NotFoundPage";
+import Profile from "./pages/Profile";
 
 const router = createBrowserRouter([
   {
@@ -49,6 +50,10 @@ const router = createBrowserRouter([
   {
     path: "/posts/:fileID",
     element: <Post />,
+  },
+  {
+    path: "/profiles/:usernameURL",
+    element: <Profile />,
   },
   {
     path: "*",
