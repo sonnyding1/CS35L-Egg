@@ -60,9 +60,9 @@ const MainBar = () => {
     fetchData();
   }, []);
 
-  const handleFileDoubleClick = (file) => {
-    const filePath = `/files/${file.folder}/${file.fileName}`;
-    navigate(filePath);
+  const handleFileDoubleClick = (id) => {
+    navigate("/edit", { state: { fileId: id } });
+
   };
 
   const formatDate = (dateString) => {
@@ -77,21 +77,35 @@ const MainBar = () => {
           "rounded-lg border shadow-lg col-span-6 grid-rows-[repeat(auto-fill,minmax(500px,1fr))] space-y-8",
         )}
       >
-        {files.map((file) => (
-          <Box variant="fileCommunity" key={file._id}>
-            <BoxFileName
-              fileName={file.fileName}
-              onDoubleClick={() => handleFileDoubleClick(file)}
-            ></BoxFileName>
-            <BoxAuthor author={file.author}></BoxAuthor>
-            <BoxDate date={formatDate(file.lastModified)}></BoxDate>
-            <BoxNumLikes numlikes="17"></BoxNumLikes>{" "}
-            {/*  NEEDS TO BE UPDATED*/}
-            <BoxLike> </BoxLike> {/*Replace with an appropriate immage*/}
-            <BoxLastComment lastComment="Hello world!"></BoxLastComment>{" "}
-            {/*  NEEDS TO BE UPDATED*/}
-          </Box>
-        ))}
+        {files.map((file) => {
+
+            if (file.public === true) {
+              return (
+                <>
+                  <Box variant="fileCommunity" key={file._id}>
+                    <BoxFileName
+                      fileName={file.fileName}
+                      onDoubleClick={() => handleFileDoubleClick(file._id)}
+                    ></BoxFileName>
+                    <BoxAuthor author={file.author}></BoxAuthor>
+                    <BoxDate date={formatDate(file.lastModified)}></BoxDate>
+                    <BoxNumLikes numlikes="17"></BoxNumLikes>{" "}
+                    {/*  NEEDS TO BE UPDATED*/}
+                    <BoxLike> </BoxLike> {/*Replace with an appropriate immage*/}
+                    <BoxLastComment lastComment="Hello world!"></BoxLastComment>{" "}
+                    {/*  NEEDS TO BE UPDATED*/}
+                  </Box>
+                </>
+              )
+
+            }
+            else {
+              // pasee
+            }
+          } 
+
+        )}
+
       </div>
     </>
   );
