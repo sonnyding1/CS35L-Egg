@@ -37,17 +37,17 @@ const UserSchema = new mongoose.Schema({
   username: { type: String, unique: true },
   googleId: { type: String, unique: true },
   password: { type: String, required: true },
-  dateCreated: { type: Date, required: true, immutable: true},
-  files: [{type: mongoose.Schema.Types.ObjectId, ref:"File"}],
+  dateCreated: { type: Date, required: true, immutable: true },
+  files: [{ type: mongoose.Schema.Types.ObjectId, ref: "File" }],
   likedFiles: {
     type: [{ type: mongoose.Schema.Types.ObjectId, ref: "File" }],
     validate: {
       validator: function (array) {
         return array.length === new Set(array.map(String)).size;
       },
-      message: 'likedFiles array contains duplicates'
-    }
-  }
+      message: "likedFiles array contains duplicates",
+    },
+  },
 });
 
 const User = mongoose.model("User", UserSchema);
