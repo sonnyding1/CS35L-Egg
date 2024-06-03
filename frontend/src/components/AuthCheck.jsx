@@ -2,8 +2,7 @@ import { useEffect, useContext } from "react";
 import { AuthContext } from "./AuthContext";
 
 const AuthCheck = () => {
-  const { setIsAuthenticated, setUser, loading, setLoading } =
-    useContext(AuthContext);
+  const { setIsAuthenticated, setUser, setLoading } = useContext(AuthContext);
 
   useEffect(() => {
     setLoading(true);
@@ -38,7 +37,7 @@ const AuthCheck = () => {
     };
 
     checkUserLoggedIn();
-  }, [setIsAuthenticated, setUser]);
+  }, [setIsAuthenticated, setUser, setLoading]);
 
   return null;
 };
