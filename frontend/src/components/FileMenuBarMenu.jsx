@@ -15,20 +15,27 @@ import {
   MenubarItem,
   MenubarShortcut,
   MenubarSeparator,
+  MenubarCheckboxItem,
 } from "@/components/ui/menubar";
 import FileBrowser from "@/pages/FileBrowser";
+import { useNavigate } from "react-router-dom";
 
 const FileMenuBarMenu = ({
+  fileID,
   fileName,
   onFileNameChange,
   onContentChange,
   isFileNameDialogOpen,
   setFileNameDialogOpen,
   content,
+  isFilePublic,
+  setFilePublic,
 }) => {
   const [isFileUploadDialogOpen, setFileUploadDialogOpen] = useState(false);
   const [isFileBrowserDialogOpen, setFileBrowserDialogOpen] = useState(false);
   const [uploadedFile, setUploadedFile] = useState(null);
+
+  const navigate = useNavigate();
 
   const handleOpenFile = () => {
     setFileBrowserDialogOpen(true);
@@ -60,39 +67,101 @@ const FileMenuBarMenu = ({
     URL.revokeObjectURL(url);
   };
 
-  const handleRename = (e) => {
-    e.preventDefault();
-    const newFileName = e.target.newFileName.value;
-    onFileNameChange(newFileName);
-    setFileNameDialogOpen(false);
-  };
-
-  const handleSave = async () => {
+  const updateFile = async (updatedFile, onSuccess, onError) => {
     try {
-      const newFile = {
-        fileName: fileName,
-        text: content,
-        description: "",
-      };
-
-      const response = await fetch("http://localhost:3000/file/create", {
+      const response = await fetch("http://localhost:3000/update/user/file", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         credentials: "include",
-        body: JSON.stringify(newFile),
+        body: JSON.stringify(updatedFile),
       });
 
       if (response.ok) {
-        console.log("File saved successfully.");
+        onSuccess();
       } else {
         const error = await response.json();
-        console.error(error);
+        onError(error);
       }
     } catch (error) {
-      console.error(error);
+      onError(error);
     }
+  };
+
+  const handleRename = async (e) => {
+    e.preventDefault();
+    const newFileName = e.target.newFileName.value;
+
+    const updatedFile = {
+      _id: fileID,
+      fileName: newFileName,
+    };
+
+    updateFile(
+      updatedFile,
+      () => {
+        onFileNameChange(newFileName);
+        setFileNameDialogOpen(false);
+        console.log("File renamed successfully.");
+      },
+      console.error,
+    );
+  };
+
+  const handleSave = async () => {
+    const updatedFile = {
+      _id: fileID,
+      fileName: fileName,
+      text: content,
+    };
+
+    updateFile(
+      updatedFile,
+      () => {
+        console.log("File saved successfully.");
+      },
+      console.error,
+    );
+  };
+
+  const handleDelete = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/delete/file", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ _id: fileID }),
+      });
+
+      if (response.ok) {
+        console.log("File deleted successfully.");
+        navigate("/browse");
+      } else {
+        const error = await response.json();
+        console.error("File deletion failed:", error);
+      }
+    } catch (error) {
+      console.error("File deletion failed:", error);
+    }
+  };
+
+  const handleFileIsPublic = async () => {
+    const updatedFile = {
+      _id: fileID,
+      public: !isFilePublic,
+    };
+
+    updateFile(
+      updatedFile,
+      () => {
+        setFilePublic(!isFilePublic);
+        console.log("File toggled public.");
+      },
+      console.error,
+    );
   };
 
   return (
@@ -110,8 +179,16 @@ const FileMenuBarMenu = ({
             Rename
           </MenubarItem>
           <MenubarItem onSelect={handleSave}>Save</MenubarItem>
+          <MenubarItem onSelect={handleDelete}>Delete</MenubarItem>
+          <MenubarCheckboxItem
+            checked={isFilePublic}
+            onCheckedChange={handleFileIsPublic}
+          >
+            Public
+          </MenubarCheckboxItem>
         </MenubarContent>
       </MenubarMenu>
+
       <Dialog open={isFileNameDialogOpen} onOpenChange={setFileNameDialogOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
@@ -130,6 +207,7 @@ const FileMenuBarMenu = ({
           </form>
         </DialogContent>
       </Dialog>
+
       <Dialog
         open={isFileUploadDialogOpen}
         onOpenChange={setFileUploadDialogOpen}
@@ -150,11 +228,12 @@ const FileMenuBarMenu = ({
           </div>
         </DialogContent>
       </Dialog>
+
       <Dialog
         open={isFileBrowserDialogOpen}
         onOpenChange={setFileBrowserDialogOpen}
       >
-        <DialogContent>
+        <DialogContent className="max-w-[720px]">
           <DialogHeader>
             <DialogTitle>Open File</DialogTitle>
           </DialogHeader>

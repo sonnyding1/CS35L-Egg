@@ -37,11 +37,6 @@ router.post("/user/info", async (req, res) => {
         .json({ error: "User not logged in!" });
     }
     const user = await User.findById(req.session.userId);
-    if (!user) {
-      return res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ error: "User not found!" });
-    }
 
     const { name, email, username } = req.body;
     const updateFields = {};
@@ -103,11 +98,6 @@ router.post("/user/password", async (req, res) => {
         .json({ error: "User not logged in!" });
     }
     const user = await User.findById(req.session.userId);
-    if (!user) {
-      return res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ error: "User not found!" });
-    }
 
     const { oldPassword, newPassword } = req.body;
     if (!oldPassword || !newPassword) {
@@ -165,12 +155,7 @@ router.post("/user/file", async (req, res) => {
         .status(StatusCodes.FORBIDDEN)
         .json({ error: "User not logged in!" });
     }
-    const user = await User.findById(req.session.userId);
-    if (!user) {
-      return res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ error: "User not found!" });
-    }
+
     const { _id, fileName, folder, public, description, text } = req.body;
     const file = await File.findOne({ _id, authorId: req.session.userId });
     if (!file) {
@@ -230,12 +215,7 @@ router.post("/user/comment", async (req, res) => {
         .status(StatusCodes.FORBIDDEN)
         .json({ error: "User not logged in!" });
     }
-    const user = await User.findById(req.session.userId);
-    if (!user) {
-      return res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ error: "User not found!" });
-    }
+
     const { _id, content } = req.body;
     const comment = await Comment.findOne({
       _id,

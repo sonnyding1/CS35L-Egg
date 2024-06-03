@@ -4,8 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Menubar } from "@/components/ui/menubar";
 import EditMenuBar from "@/components/EditMenuBarMenu";
-import FileMenuBar from "@/components/FileMenuBarMenu";
-import { Pencil1Icon } from "@radix-ui/react-icons";
+import FileMenuBarMenu from "@/components/FileMenuBarMenu";
 import MarkdownPreview from "@/components/MarkdownPreview";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -13,19 +12,23 @@ function Edit() {
   const [content, setContent] = useState("");
   const textareaRef = useRef(null);
   const [fileName, setFileName] = useState("");
+  const [isFilePublic, setFilePublic] = useState(false);
   const [isFileNameDialogOpen, setFileNameDialogOpen] = useState(false);
   const [past, setPast] = useState("");
   const [future, setFuture] = useState("");
+  const [fileId, setFileId] = useState(null);
+
   const timeoutRef = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchFileContent = async () => {
-      const fileId = location.state?.fileId;
-      if (!fileId) {
+      const fetchedFileId = location.state?.fileId;
+      setFileId(fetchedFileId);
+      if (!fetchedFileId) {
         // Handle case when fileId is not available
-        console.error("File ID not found", fileId);
+        console.error("File ID not found", fetchedFileId);
         navigate("/");
         return;
       }
@@ -37,13 +40,14 @@ function Edit() {
             "Content-Type": "application/json",
           },
           credentials: "include",
-          body: JSON.stringify({ _id: fileId }),
+          body: JSON.stringify({ _id: fetchedFileId }),
         });
 
         if (response.ok) {
           const data = await response.json();
           setFileName(data[0].fileName);
           setContent(data[0].text);
+          setFilePublic(data[0].public);
         } else if (response.status === 401) {
           console.error("Unauthorized access");
           navigate("/login");
@@ -78,25 +82,35 @@ function Edit() {
 
   return (
     <div className="mx-auto px-4 py-4 h-screen flex flex-col">
-      <div className="flex items-center justify-center mb-2">
-        <h1 className="text-xl font-bold text-center">{fileName}</h1>
+      <div className="flex items-center justify-between mb-2">
+        <div>
+          <Button variant="outline" onClick={() => navigate("/browse")}>
+            Browse
+          </Button>
+        </div>
+        <Button variant="link" onClick={() => setFileNameDialogOpen(true)}>
+          {fileName}
+        </Button>
         <Button
-          className="ml-2"
-          size="sm"
-          variant="outline"
-          onClick={() => setFileNameDialogOpen(true)}
+          onClick={() => {
+            navigate("/posts/" + fileId);
+          }}
+          disabled={!isFilePublic}
         >
-          <Pencil1Icon />
+          View Post
         </Button>
       </div>
       <Menubar className="mb-2">
-        <FileMenuBar
+        <FileMenuBarMenu
+          fileID={fileId}
           fileName={fileName}
           onFileNameChange={setFileName}
           onContentChange={setContent}
           isFileNameDialogOpen={isFileNameDialogOpen}
           setFileNameDialogOpen={setFileNameDialogOpen}
           content={content}
+          isFilePublic={isFilePublic}
+          setFilePublic={setFilePublic}
         />
         <EditMenuBar
           content={content}

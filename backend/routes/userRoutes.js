@@ -17,7 +17,7 @@ Implementing user functionality
  */
 
 /**
- * get all users from db, more for internal data than a user function.
+ * get all users from db
  * gets all information with no restrictions.
  */
 router.get("/all", async (req, res) => {
@@ -28,7 +28,7 @@ router.get("/all", async (req, res) => {
         .status(StatusCodes.NOT_FOUND)
         .json({ error: "User not found!" });
     }
-    return res.status(StatusCodes.SUCCESS).json(users);
+    return res.status(StatusCodes.OK).json(users);
   } catch (error) {
     console.error(error);
     return res
@@ -50,6 +50,16 @@ router.post("/", async (req, res) => {
   try {
     let user;
     const { name, username, email, _id } = req.body;
+
+    // Handle the case where the request body is an empty object
+    if (Object.keys(req.body).length === 0) {
+      const isUserLoggedIn = !!req.session.userId;
+      if (!isUserLoggedIn) {
+        return res.status(204).end();
+      }
+      user = await User.findById(req.session.userId);
+    }
+
     if (username || email || _id) {
       user = await User.findOne({
         $or: [{ username: username }, { email: email }, { _id: _id }],

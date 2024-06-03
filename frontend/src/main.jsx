@@ -11,49 +11,94 @@ import Post from "./pages/Post";
 import { AuthProvider } from "./components/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Browse from "./pages/Browse";
+import NotFoundPage from "./pages/NotFoundPage";
+import Profile from "./pages/Profile";
+import AuthCheck from "./components/AuthCheck";
+import Navbar from "./components/Navbar";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Home />,
+    element: (
+      <>
+        <Navbar />
+        <Home />
+      </>
+    ),
   },
   {
     path: "/community",
-    element: <Community />,
+    element: (
+      <>
+        <Navbar />
+        <Community />
+      </>
+    ),
   },
   {
     path: "/edit",
     element: (
       <ProtectedRoute>
+        <Navbar />
         <Edit />
       </ProtectedRoute>
     ),
   },
   {
     path: "/login",
-    element: <Login />,
+    element: (
+      <>
+        <Navbar />
+        <Login />
+      </>
+    ),
   },
   {
     path: "/signup",
-    element: <SignUp />,
+    element: (
+      <>
+        <Navbar />
+        <SignUp />
+      </>
+    ),
   },
   {
     path: "/browse",
     element: (
       <ProtectedRoute>
+        <Navbar />
         <Browse />
       </ProtectedRoute>
     ),
   },
   {
-    path: "/samplepost",
-    element: <Post />,
+    path: "/posts/:fileID",
+    element: (
+      <>
+        <Navbar />
+        <Post />,
+      </>
+    ),
+  },
+  {
+    path: "/profiles/:usernameURL",
+    element: (
+      <ProtectedRoute>
+        <Navbar />
+        <Profile />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "*",
+    element: <NotFoundPage />,
   },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <AuthProvider>
+      <AuthCheck />
       <RouterProvider router={router} />
     </AuthProvider>
   </React.StrictMode>,
