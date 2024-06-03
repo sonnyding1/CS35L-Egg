@@ -58,9 +58,13 @@ const googleAuthCallback = async (req, res) => {
   // redirect to the backend root after login for now,
   // in the future send a response to the frontend
   // res.redirect("http://localhost:3000");
-  newUser = await User.findOne({username: req.session.passport.user}).exec();
-  req.session.userId = newUser._id;
-  return res.json(req.session);
+  try {
+    newUser = await User.findOne({username: req.session.passport.user}).exec();
+    req.session.userId = newUser._id;
+    return res.json(req.session);
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const logout = (req, res) => {
