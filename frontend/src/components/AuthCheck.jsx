@@ -2,9 +2,11 @@ import { useEffect, useContext } from "react";
 import { AuthContext } from "./AuthContext";
 
 const AuthCheck = () => {
-  const { setIsAuthenticated, setUser } = useContext(AuthContext);
+  const { setIsAuthenticated, setUser, loading, setLoading } =
+    useContext(AuthContext);
 
   useEffect(() => {
+    setLoading(true);
     const checkUserLoggedIn = async () => {
       try {
         const response = await fetch("http://localhost:3000/user", {
@@ -30,6 +32,8 @@ const AuthCheck = () => {
         console.error("Error checking user login:", error);
         setUser(null);
         setIsAuthenticated(false);
+      } finally {
+        setLoading(false);
       }
     };
 

@@ -1,4 +1,3 @@
-import Navigation from "@/components/navigation";
 import { Button } from "@/components/ui/button";
 
 import { MainLayout, SideBar, MainBar } from "@/components/layout";
@@ -6,7 +5,6 @@ import { MainLayout, SideBar, MainBar } from "@/components/layout";
 function Community() {
   return (
     <div>
-      <Navigation />
       <MainLayout>
         <SideBar>
           <Button variant="sideButton">Create New</Button>
