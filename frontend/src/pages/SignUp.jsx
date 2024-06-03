@@ -1,7 +1,7 @@
 import { AuthContext } from "@/components/AuthContext";
 import LoginForm from "../components/LoginForm";
 import { useNavigate } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 
 const SignUp = () => {
   const { isAuthenticated } = useContext(AuthContext);

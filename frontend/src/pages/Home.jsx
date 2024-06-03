@@ -18,7 +18,7 @@ const Home = () => {
       )}
       <Button onClick={logout}>Log Out</Button>
       <Button onClick={() => navigate("/browse")}>Browse Files</Button>
-      <Button onClick={() => navigate("/posts/665c0b491909aa5f00b270b0")}>
+      <Button onClick={() => navigate("/posts/665d6405c449c8f4044139b5")}>
         Sample Post
       </Button>
       <Button

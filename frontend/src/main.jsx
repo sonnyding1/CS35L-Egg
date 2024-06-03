@@ -42,11 +42,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/browse",
-    element: (
-      <ProtectedRoute>
-        <Browse />
-      </ProtectedRoute>
-    ),
+    element: <Browse />,
   },
   {
     path: "/posts/:fileID",
