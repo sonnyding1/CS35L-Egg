@@ -10,14 +10,14 @@ import {
 } from "@/components/ui/table";
 import { AuthContext } from "@/components/AuthContext";
 
-const FileBrowser = ({ onFileSelect, fileCreated }) => {
+const FileBrowser = ({ onFileSelect, searchText = "", searchResults = [] }) => {
   const { user } = useContext(AuthContext);
   const [files, setFiles] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchFiles = async () => {
-      if (!user) {
+      if (!user || !Array.isArray(user.files) || user.files.length === 0) {
         setFiles([]);
         return;
       }
@@ -44,9 +44,27 @@ const FileBrowser = ({ onFileSelect, fileCreated }) => {
             return null;
           }
         });
+
         const fetchedFiles = await Promise.all(filePromises);
         const filteredFiles = fetchedFiles.filter((file) => file !== null);
-        setFiles(filteredFiles);
+
+        if (searchResults !== null) {
+          const searchFiles = searchResults.map((file) => ({
+            id: file._id,
+            name: file.fileName,
+          }));
+          const combinedResults = [
+            ...searchFiles,
+            ...filteredFiles.filter(
+              (file) =>
+                file.name.toLowerCase().includes(searchText.toLowerCase()) &&
+                !searchFiles.some((searchFile) => searchFile.id === file.id),
+            ),
+          ];
+          setFiles(combinedResults);
+        } else {
+          setFiles(filteredFiles);
+        }
       } catch (error) {
         console.error("Error fetching files:", error);
         setFiles([]);
@@ -54,7 +72,7 @@ const FileBrowser = ({ onFileSelect, fileCreated }) => {
     };
 
     fetchFiles();
-  }, [user]);
+  }, [user, searchText, searchResults]);
 
   return (
     <>

@@ -147,6 +147,7 @@ const FileMenuBarMenu = ({
       console.error("File deletion failed:", error);
     }
   };
+
   const handleFileIsPublic = async () => {
     const updatedFile = {
       _id: fileID,
@@ -206,6 +207,7 @@ const FileMenuBarMenu = ({
           </form>
         </DialogContent>
       </Dialog>
+
       <Dialog
         open={isFileUploadDialogOpen}
         onOpenChange={setFileUploadDialogOpen}
@@ -226,11 +228,12 @@ const FileMenuBarMenu = ({
           </div>
         </DialogContent>
       </Dialog>
+
       <Dialog
         open={isFileBrowserDialogOpen}
         onOpenChange={setFileBrowserDialogOpen}
       >
-        <DialogContent>
+        <DialogContent className="max-w-[720px]">
           <DialogHeader>
             <DialogTitle>Open File</DialogTitle>
           </DialogHeader>
