@@ -74,35 +74,35 @@ const Post = () => {
       }
     };
 
-    // const fetchLiked = async () => {
-    //   try {
-    //     const response = await fetch(
-    //       "http://localhost:3000/file/user-liked/all",
-    //       {
-    //         method: "GET",
-    //         headers: {
-    //           "Content-Type": "application/json",
-    //         },
-    //         credentials: "include",
-    //       },
-    //     );
-    //     if (response.ok) {
-    //       const data = await response.json();
-    //       const isFileIdLiked = data.likedFiles.some(
-    //         (likedFile) => likedFile._id === fileID,
-    //       );
-    //       setIsLiked(isFileIdLiked);
-    //     } else {
-    //       console.error("Error fetching liked files:", response.statusText);
-    //     }
-    //   } catch (error) {
-    //     console.error("Error fetching liked files:", error);
-    //   }
-    // };
+    const fetchLiked = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:3000/file/user-liked/all",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          },
+        );
+        if (response.ok) {
+          const data = await response.json();
+          const isFileIdLiked = data.likedFiles.some(
+            (likedFile) => likedFile._id === fileID,
+          );
+          setIsLiked(isFileIdLiked);
+        } else {
+          console.error("Error fetching liked files:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error fetching liked files:", error);
+      }
+    };
 
     fetchPost();
     fetchComments();
-    // fetchLiked();
+    fetchLiked();
   }, [fileID]);
 
   const handleSubmitComment = async () => {
@@ -130,35 +130,35 @@ const Post = () => {
     }
   };
 
-  // const handleLike = async () => {
-  //   try {
-  //     const response = isLiked
-  //       ? await fetch("http://localhost:3000/file/user-liked/remove", {
-  //           method: "POST",
-  //           headers: {
-  //             "Content-Type": "application/json",
-  //           },
-  //           body: JSON.stringify({ _id: fileID }),
-  //           credentials: "include",
-  //         })
-  //       : await fetch("http://localhost:3000/file/user-liked/add", {
-  //           method: "POST",
-  //           headers: {
-  //             "Content-Type": "application/json",
-  //           },
-  //           body: JSON.stringify({ _id: fileID }),
-  //           credentials: "include",
-  //         });
+  const handleLike = async () => {
+    try {
+      const response = isLiked
+        ? await fetch("http://localhost:3000/file/user-liked/remove", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ _id: fileID }),
+            credentials: "include",
+          })
+        : await fetch("http://localhost:3000/file/user-liked/add", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ _id: fileID }),
+            credentials: "include",
+          });
 
-  //     if (response.ok) {
-  //       setIsLiked(!isLiked);
-  //     } else {
-  //       console.error("Error updating like status:", response.statusText);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error updating like status:", error);
-  //   }
-  // };
+      if (response.ok) {
+        setIsLiked(!isLiked);
+      } else {
+        console.error("Error updating like status:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error updating like status:", error);
+    }
+  };
 
   if (!post) {
     return <NotFoundPage />;
