@@ -95,6 +95,7 @@ function Edit() {
           onClick={() => {
             navigate("/posts/" + fileId);
           }}
+          disabled={!isFilePublic}
         >
           View Post
         </Button>

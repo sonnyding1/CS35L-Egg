@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Table,
@@ -8,35 +8,71 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { AuthContext } from "@/components/AuthContext";
 
-const FileBrowser = ({ onFileSelect, fileCreated }) => {
+const FileBrowser = ({ onFileSelect, searchText = "", searchResults = [] }) => {
+  const { user } = useContext(AuthContext);
   const [files, setFiles] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchFiles = async () => {
+      if (!user || !Array.isArray(user.files) || user.files.length === 0) {
+        setFiles([]);
+        return;
+      }
+
       try {
-        const response = await fetch("http://localhost:3000/file/user-files", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
+        const filePromises = user.files.map(async (fileId) => {
+          const response = await fetch("http://localhost:3000/file/filename", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify({ _id: fileId }),
+          });
+
+          if (response.ok) {
+            const { fileName } = await response.json();
+            return { id: fileId, name: fileName };
+          } else if (response.status === 404) {
+            console.warn(`File with ID ${fileId} not found`);
+            return null;
+          } else {
+            console.error(`Failed to fetch file name for ID ${fileId}`);
+            return null;
+          }
         });
 
-        if (response.ok) {
-          const data = await response.json();
-          setFiles(data);
+        const fetchedFiles = await Promise.all(filePromises);
+        const filteredFiles = fetchedFiles.filter((file) => file !== null);
+
+        if (searchResults !== null) {
+          const searchFiles = searchResults.map((file) => ({
+            id: file._id,
+            name: file.fileName,
+          }));
+          const combinedResults = [
+            ...searchFiles,
+            ...filteredFiles.filter(
+              (file) =>
+                file.name.toLowerCase().includes(searchText.toLowerCase()) &&
+                !searchFiles.some((searchFile) => searchFile.id === file.id),
+            ),
+          ];
+          setFiles(combinedResults);
         } else {
-          console.error("Error loading file data:", response.statusText);
+          setFiles(filteredFiles);
         }
       } catch (error) {
-        console.error("Error loading file data:", error);
+        console.error("Error fetching files:", error);
+        setFiles([]);
       }
     };
 
-    fetchData();
-  }, [fileCreated]);
+    fetchFiles();
+  }, [user, searchText, searchResults]);
 
   return (
     <>
@@ -44,31 +80,19 @@ const FileBrowser = ({ onFileSelect, fileCreated }) => {
         <TableHeader>
           <TableRow>
             <TableHead>File Name</TableHead>
-            <TableHead>Description</TableHead>
-            <TableHead>Date Created</TableHead>
-            <TableHead>Last Modified</TableHead>
-            <TableHead>Public</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {files.map((file) => (
             <TableRow
-              key={file._id}
+              key={file.id}
               onDoubleClick={() => {
-                navigate("/edit", { state: { fileId: file._id } });
+                navigate("/edit", { state: { fileId: file.id } });
                 onFileSelect();
               }}
               className="cursor-pointer"
             >
-              <TableCell className="font-medium">{file.fileName}</TableCell>
-              <TableCell>{file.description}</TableCell>
-              <TableCell>
-                {new Date(file.dateCreated).toLocaleString()}
-              </TableCell>
-              <TableCell>
-                {new Date(file.lastModified).toLocaleString()}
-              </TableCell>
-              <TableCell>{file.public ? "Yes" : "No"}</TableCell>
+              <TableCell className="font-medium">{file.name}</TableCell>
             </TableRow>
           ))}
         </TableBody>

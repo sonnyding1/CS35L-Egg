@@ -8,10 +8,15 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { useNavigate } from "react-router-dom";
 
 const Browse = () => {
   const [isFileCreationDialogOpen, setFileCreationDialogOpen] = useState(false);
-  const [fileCreated, setFileCreated] = useState(false);
+  const [searchText, setSearchText] = useState("");
+  const [searchResults, setSearchResults] = useState(null);
+
+  const navigate = useNavigate();
+
   const handleCreateFile = async (e) => {
     e.preventDefault();
     try {
@@ -32,7 +37,8 @@ const Browse = () => {
 
       if (response.ok) {
         console.log("File created successfully.");
-        setFileCreated(true);
+        const file = await response.json();
+        navigate("/edit", { state: { fileId: file._id } });
       } else {
         const error = await response.json();
         console.error(error);
@@ -42,11 +48,36 @@ const Browse = () => {
       console.error(error);
     }
   };
+
+  const handleSearch = async () => {
+    if (!searchText) {
+      return;
+    }
+    try {
+      const response = await fetch("http://localhost:3000/file/search", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ text: searchText }),
+      });
+      if (response.ok) {
+        const files = await response.json();
+        setSearchResults(files);
+      } else {
+        const error = await response.json();
+        console.error(error);
+        setSearchResults([]);
+      }
+    } catch (error) {
+      console.error(error);
+      setSearchResults([]);
+    }
+  };
+
   return (
     <>
-      <Button className="m-4" onClick={() => setFileCreationDialogOpen(true)}>
-        Create File
-      </Button>
       <Dialog
         open={isFileCreationDialogOpen}
         onOpenChange={setFileCreationDialogOpen}
@@ -67,7 +98,27 @@ const Browse = () => {
           </form>
         </DialogContent>
       </Dialog>
-      <FileBrowser onFileSelect={() => null} fileCreated={fileCreated} />
+
+      <div className="flex space-x-4 p-4">
+        <Button onClick={() => setFileCreationDialogOpen(true)}>
+          Create File
+        </Button>
+        <Input
+          type="text"
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          placeholder="Search file content..."
+        />
+        <Button onClick={handleSearch}>Search Content</Button>
+      </div>
+
+      <div className="m-4 border rounded-md">
+        <FileBrowser
+          onFileSelect={() => null}
+          searchText={searchText}
+          searchResults={searchResults}
+        />
+      </div>
     </>
   );
 };
