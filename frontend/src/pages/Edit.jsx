@@ -7,6 +7,8 @@ import EditMenuBar from "@/components/EditMenuBarMenu";
 import FileMenuBarMenu from "@/components/FileMenuBarMenu";
 import MarkdownPreview from "@/components/MarkdownPreview";
 import { Card, CardContent } from "@/components/ui/card";
+import { Toaster } from "@/components/ui/sonner";
+import { toast } from "sonner";
 
 function Edit() {
   const [content, setContent] = useState("");
@@ -80,6 +82,10 @@ function Edit() {
     setFuture([]);
   };
 
+  const setSonnerMessage = (message) => {
+    toast(message);
+  };
+
   return (
     <div className="mx-auto px-4 py-4 h-screen flex flex-col">
       <div className="flex items-center justify-between mb-2">
@@ -111,6 +117,7 @@ function Edit() {
           content={content}
           isFilePublic={isFilePublic}
           setFilePublic={setFilePublic}
+          setSonnerMessage={setSonnerMessage}
         />
         <EditMenuBar
           content={content}
@@ -139,6 +146,7 @@ function Edit() {
           </Card>
         </div>
       </div>
+      <Toaster />
     </div>
   );
 }

@@ -30,6 +30,7 @@ const FileMenuBarMenu = ({
   content,
   isFilePublic,
   setFilePublic,
+  setSonnerMessage,
 }) => {
   const [isFileUploadDialogOpen, setFileUploadDialogOpen] = useState(false);
   const [isFileBrowserDialogOpen, setFileBrowserDialogOpen] = useState(false);
@@ -68,6 +69,7 @@ const FileMenuBarMenu = ({
     link.download = fileName;
     link.click();
     URL.revokeObjectURL(url);
+    setSonnerMessage("File downloaded successfully");
   };
 
   const updateFile = useCallback(async (updatedFile, onSuccess, onError) => {
@@ -126,7 +128,9 @@ const FileMenuBarMenu = ({
       },
       console.error,
     );
-  }, [content, fileName, fileID, updateFile]);
+
+    setSonnerMessage("File saved successfully");
+  }, [content, fileName, fileID, updateFile, setSonnerMessage]);
 
   const handleDelete = async () => {
     try {
@@ -162,6 +166,11 @@ const FileMenuBarMenu = ({
       () => {
         setFilePublic(!isFilePublic);
         console.log("File toggled public.");
+        if (isFilePublic) {
+          setSonnerMessage("File toggled to private");
+        } else {
+          setSonnerMessage("File toggled to public");
+        }
       },
       console.error,
     );
