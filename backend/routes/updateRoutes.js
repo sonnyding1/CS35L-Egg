@@ -139,7 +139,6 @@ router.post("/user/password", async (req, res) => {
  * -- fileName
  * -- folder
  * -- public
- * -- description
  * -- text
  *
  * can handle all the above inputs at the same time
@@ -155,8 +154,8 @@ router.post("/user/file", async (req, res) => {
         .status(StatusCodes.FORBIDDEN)
         .json({ error: "User not logged in!" });
     }
-
-    const { _id, fileName, folder, public, description, text } = req.body;
+   
+    const { _id, fileName, folder, public, text } = req.body;
     const file = await File.findOne({ _id, authorId: req.session.userId });
     if (!file) {
       return res
@@ -170,8 +169,6 @@ router.post("/user/file", async (req, res) => {
     if (folder && folder !== file.folder) updateFields.folder = folder;
     if (typeof public === "boolean" && public !== file.public)
       updateFields.public = public;
-    if (description && description !== file.description)
-      updateFields.description = description;
     if (text && text !== file.text) updateFields.text = text;
 
     if (Object.keys(updateFields).length > 0) {

@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 
 /**
- * @swagger
  * components:
  *   schemas:
  *     File:
@@ -31,9 +30,9 @@ const FileSchema = new mongoose.Schema({
   public: { type: Boolean, required: true, default: true },
   dateCreated: { type: Date, required: true, immutable: true },
   lastModified: { type: Date, required: true },
-  description: { type: String, default: "" },
   text: { type: String, default: "" },
   comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }],
+  likeCount: {type: Number, default: 0 }
 });
 
 // Ensure combination of authorId, folder, and filename are unique
