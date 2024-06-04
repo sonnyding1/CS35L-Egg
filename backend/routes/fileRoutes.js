@@ -11,34 +11,35 @@ const router = express.Router();
  * create, and get files/ comments
  * get folder
  * get liked files
-*/
+ */
 
 /**
  *  get all public files, no input necessary
-*/
+ */
 router.get("/all", async (req, res) => {
-    try {
-        const files = await File.find({public:true}).populate([
-            { path: 'authorId', model: 'User', select: 'name username' },
-            { path: 'comments',
-              model: 'Comment', 
-              populate: [
-                { path: 'authorId', model: 'User', select: 'name username' }, 
-                ]
-            }
-        ]);
-        if (files.length === 0) {
-        return res
-            .status(StatusCodes.NOT_FOUND)
-            .json({ error: "No files found!" });
-        }
-        return res.json(files);
-    } catch (error) {
-        console.error(error);
-        return res
-        .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .json({ error: "Internal Server Error" });
+  try {
+    const files = await File.find({ public: true }).populate([
+      { path: "authorId", model: "User", select: "name username" },
+      {
+        path: "comments",
+        model: "Comment",
+        populate: [
+          { path: "authorId", model: "User", select: "name username" },
+        ],
+      },
+    ]);
+    if (files.length === 0) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ error: "No files found!" });
     }
+    return res.json(files);
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: "Internal Server Error" });
+  }
 });
 
 /**
@@ -104,9 +105,9 @@ router.post("/user-files", async (req, res) => {
       file = await File.find({
         ...req.body,
         authorId: req.session.userId,
-      }).select('-text');
+      }).select("-text");
     } else {
-      file = await File.find({ authorId: req.session.userId }).select('-text');
+      file = await File.find({ authorId: req.session.userId }).select("-text");
     }
     if (file.length === 0) {
       return res
@@ -124,9 +125,9 @@ router.post("/user-files", async (req, res) => {
 
 /**
  * get the text of a certain file
- * input requires file _id 
+ * input requires file _id
  * will return file with all information if file exists
-*/
+ */
 router.post("/user-files/text", async (req, res) => {
   try {
     if (!req.session.userId) {
@@ -136,8 +137,11 @@ router.post("/user-files/text", async (req, res) => {
     }
     let file;
     if (req.body._id) {
-      file = await File.find({_id:req.body._id, authorId:req.session.userId});
-    } 
+      file = await File.find({
+        _id: req.body._id,
+        authorId: req.session.userId,
+      });
+    }
     if (file.length === 0) {
       return res
         .status(StatusCodes.NOT_FOUND)
@@ -158,119 +162,114 @@ router.post("/user-files/text", async (req, res) => {
  * no input necessary
  */
 router.get("/user-liked/all", async (req, res) => {
-    try {
-        if (!req.session.userId) {
-            return res
-              .status(StatusCodes.BAD_REQUEST)
-              .json({ error: "User not logged in" });
-        }
-
-        const liked = await User.findById(req.session.userId, 'likedFiles').populate('likedFiles');
-        if (liked.length === 0){
-            return res
-            .status(StatusCodes.NOT_FOUND)
-            .json({ error: "No file found!"});
-        }
-        return res
-        .status(StatusCodes.OK)
-        .json(liked);
-
-    } catch (error) {
-        console.error(error);
-        return res
-        .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .json({ error: "Internal Server Error, liked files fetch failed" });
+  try {
+    if (!req.session.userId) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ error: "User not logged in" });
     }
+
+    const liked = await User.findById(
+      req.session.userId,
+      "likedFiles",
+    ).populate("likedFiles");
+    if (liked.length === 0) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ error: "No file found!" });
+    }
+    return res.status(StatusCodes.OK).json(liked);
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: "Internal Server Error, liked files fetch failed" });
+  }
 });
 
 /**
  * add liked file
  * input must be file _id to be added to the liked array
  * the function will check if the file is already liked and returns error message
- * user must be logged in to work 
+ * user must be logged in to work
  * there is no restriction on liking your own files
-*/
+ */
 router.post("/user-liked/add", async (req, res) => {
-    try {
-      if (!req.session.userId) {
-        return res
-          .status(StatusCodes.UNAUTHORIZED)
-          .json({ error: "User not logged in" });
-      }
-      const user = await User.findById(req.session.userId);
-      const { _id } = req.body;
-      const file = await File.findById(_id);
-      if (!file) {
-        return res
-          .status(StatusCodes.BAD_REQUEST)
-          .json({ error: "File not found!" });
-      }
-  
-      if (user.likedFiles.includes(file._id)) {
-        return res
-          .status(StatusCodes.CONFLICT)
-          .json({ error: "File is already liked by the user" });
-      }
-
-      file.likeCount += 1; // Increment the like count
-      user.likedFiles.push(file._id); // Add the file to the user's liked files
-  
-      await file.save(); // Save the updated file document
-      await user.save(); // Save the updated user document
-
+  try {
+    if (!req.session.userId) {
       return res
-        .status(StatusCodes.OK)
-        .json(file);
-    } catch (error) {
-      console.error(error);
-      return res
-        .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .json({ error: "File like failed due to internal server error." });
+        .status(StatusCodes.UNAUTHORIZED)
+        .json({ error: "User not logged in" });
     }
+    const user = await User.findById(req.session.userId);
+    const { _id } = req.body;
+    const file = await File.findById(_id);
+    if (!file) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ error: "File not found!" });
+    }
+
+    if (user.likedFiles.includes(file._id)) {
+      return res
+        .status(StatusCodes.CONFLICT)
+        .json({ error: "File is already liked by the user" });
+    }
+
+    file.likeCount += 1; // Increment the like count
+    user.likedFiles.push(file._id); // Add the file to the user's liked files
+
+    await file.save(); // Save the updated file document
+    await user.save(); // Save the updated user document
+
+    return res.status(StatusCodes.OK).json(file);
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: "File like failed due to internal server error." });
+  }
 });
-  
+
 /**
  * remove file from liked files for a user (ie unlike a file)
  * input requires file _id to unlike
  * user has to be logged in to work
-*/
-router.post("/user-liked/remove", async(req, res) =>{
-
-    try{
-        if (!req.session.userId){
-            return res
-                .status(StatusCodes.UNAUTHORIZED)
-                .json({error: "User not logged in!"});
-        }
-        const user = await User.findById(req.session.userId);
-        const { _id } = req.body;
-        const file = await File.findById(_id);
-        if (!file) {
-            return res
-            .status(StatusCodes.BAD_REQUEST)
-            .json({ error: "File not found!" });
-        }
-
-        const likedFileIndex = user.likedFiles.indexOf(file._id);
-        if (likedFileIndex === -1) {
-          return res
-            .status(StatusCodes.CONFLICT)
-            .json({ error: "File not liked by the user" });
-        }
-        file.likeCount -= 1;
-        user.likedFiles.splice(likedFileIndex, 1);
-
-        await file.save();
-        await user.save();
-        return res
-            .status(StatusCodes.OK)
-            .json(file);
-    } catch (error){
-        console.log(error);
-        return res
-        .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .json({ error: "File unlike failed due to internal server error." });
+ */
+router.post("/user-liked/remove", async (req, res) => {
+  try {
+    if (!req.session.userId) {
+      return res
+        .status(StatusCodes.UNAUTHORIZED)
+        .json({ error: "User not logged in!" });
     }
+    const user = await User.findById(req.session.userId);
+    const { _id } = req.body;
+    const file = await File.findById(_id);
+    if (!file) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ error: "File not found!" });
+    }
+
+    const likedFileIndex = user.likedFiles.indexOf(file._id);
+    if (likedFileIndex === -1) {
+      return res
+        .status(StatusCodes.CONFLICT)
+        .json({ error: "File not liked by the user" });
+    }
+    file.likeCount -= 1;
+    user.likedFiles.splice(likedFileIndex, 1);
+
+    await file.save();
+    await user.save();
+    return res.status(StatusCodes.OK).json(file);
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: "File unlike failed due to internal server error." });
+  }
 });
 
 /**
@@ -325,7 +324,7 @@ router.post("/other-folder", async (req, res) => {
  *
  * inputs needed:
  * -- author username, email, or authorId --> need some unique identifier to find the user (name alone will not work)
- * -- fileName  
+ * -- fileName
  * -- folder (optional)
  * -- file _id
  *

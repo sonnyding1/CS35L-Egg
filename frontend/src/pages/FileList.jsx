@@ -59,7 +59,11 @@ const FileList = () => {
 
   useEffect(() => {
     const fetchLikedFiles = async () => {
-      if (!user || !Array.isArray(user.likedFiles) || user.likedFiles.length === 0) {
+      if (
+        !user ||
+        !Array.isArray(user.likedFiles) ||
+        user.likedFiles.length === 0
+      ) {
         setLikedFiles([]);
         return;
       }
@@ -88,7 +92,9 @@ const FileList = () => {
         });
 
         const fetchedLikedFiles = await Promise.all(likedFilePromises);
-        const filteredLikedFiles = fetchedLikedFiles.filter((file) => file !== null);
+        const filteredLikedFiles = fetchedLikedFiles.filter(
+          (file) => file !== null,
+        );
         setLikedFiles(filteredLikedFiles);
       } catch (error) {
         console.error("Error fetching liked files:", error);
