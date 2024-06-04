@@ -31,11 +31,41 @@ const Profile = () => {
     fetchUserData();
   }, [usernameURL]);
 
+  /*
   return (
     <>
       <Button onClick={() => console.log(userData)}>Log User Data</Button>
     </>
   );
+  */
+
+  // Profile Display Begin
+  return (
+    <div>
+      {userData ? (
+        <div>
+          <p><strong>Username:</strong> {userData.username}</p>
+          <p><strong>Email:</strong> {userData.email}</p>
+          <p><strong>Date Joined:</strong> {new Date(userData.dateCreated).toLocaleString()}</p>
+          <p><strong>My Files:</strong></p>
+          <ul>
+            {userData.files.map((file, index) => (
+              <li key={index}>{file}</li>
+            ))}
+          </ul>
+          <p><strong>Liked Files:</strong></p>
+          <ul>
+            {userData.likedFiles.map((file, index) => (
+              <li key={index}>{file}</li>
+            ))}
+          </ul>
+        </div>
+      ) : (
+        <p>Loading...</p>
+      )}
+    </div>
+  );
+  // Profile Display End
 };
 
 export default Profile;
