@@ -105,9 +105,9 @@ router.post("/user-files", async (req, res) => {
       file = await File.find({
         ...req.body,
         authorId: req.session.userId,
-      }).select("-text");
+      });
     } else {
-      file = await File.find({ authorId: req.session.userId }).select("-text");
+      file = await File.find({ authorId: req.session.userId });
     }
     if (file.length === 0) {
       return res
