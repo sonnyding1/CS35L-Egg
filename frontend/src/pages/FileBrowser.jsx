@@ -82,7 +82,7 @@ const FileBrowser = ({ onFileSelect, searchText = "", searchResults = [] }) => {
           {files.map((file) => (
             <TableRow
               key={file.id}
-              onDoubleClick={() => {
+              onClick={() => {
                 navigate("/edit", { state: { fileId: file.id } });
                 onFileSelect();
               }}
