@@ -9,12 +9,6 @@ const router = express.Router();
 Implementing user functionality 
 */
 
-/**
- * @swagger
- * tags:
- *   name: User
- *   description: User management
- */
 
 /**
  * get all users from db
@@ -50,21 +44,10 @@ router.post("/", async (req, res) => {
   try {
     let user;
     const { name, username, email, _id } = req.body;
-
-    // Handle the case where the request body is an empty object
-    if (Object.keys(req.body).length === 0) {
-      const isUserLoggedIn = !!req.session.userId;
-      if (!isUserLoggedIn) {
-        return res.status(204).end();
-      }
-      user = await User.findById(req.session.userId);
-    }
-
     if (username || email || _id) {
       user = await User.findOne({
         $or: [{ username: username }, { email: email }, { _id: _id }],
       });
-      req.session.otherUser = user._id;
     } else if (name && !username && !email) {
       user = await User.find({ name: name });
     } else if (req.session.userId && Object.keys(req.body).length === 0) {
@@ -79,7 +62,7 @@ router.post("/", async (req, res) => {
         .status(StatusCodes.NOT_FOUND)
         .json({ error: "User not found!" });
     }
-    return res.status(StatusCodes.SUCCESS).json(user);
+    return res.status(StatusCodes.OK).json(user);
   } catch (error) {
     console.error(error);
     return res
