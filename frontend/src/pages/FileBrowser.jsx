@@ -23,30 +23,26 @@ const FileBrowser = ({ onFileSelect, searchText = "", searchResults = [] }) => {
       }
 
       try {
-        const filePromises = user.files.map(async (fileId) => {
-          const response = await fetch("http://localhost:3000/file/filename", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            credentials: "include",
-            body: JSON.stringify({ _id: fileId }),
-          });
-
+        const rawFiles = await fetch("http://localhost:3000/file/user-files", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }).then(async (response) => {
           if (response.ok) {
-            const { fileName } = await response.json();
-            return { id: fileId, name: fileName };
-          } else if (response.status === 404) {
-            console.warn(`File with ID ${fileId} not found`);
-            return null;
+            const files = await response.json();
+            return files;
           } else {
-            console.error(`Failed to fetch file name for ID ${fileId}`);
+            console.error(`Failed to fetch files`);
             return null;
           }
         });
 
-        const fetchedFiles = await Promise.all(filePromises);
-        const filteredFiles = fetchedFiles.filter((file) => file !== null);
+        const processedFiles = rawFiles.map((file) => {
+          return { id: file._id, name: file.fileName };
+        });
+        const filteredFiles = processedFiles.filter((file) => file !== null);
 
         if (searchResults !== null) {
           const searchFiles = searchResults.map((file) => ({
@@ -86,7 +82,7 @@ const FileBrowser = ({ onFileSelect, searchText = "", searchResults = [] }) => {
           {files.map((file) => (
             <TableRow
               key={file.id}
-              onDoubleClick={() => {
+              onClick={() => {
                 navigate("/edit", { state: { fileId: file.id } });
                 onFileSelect();
               }}

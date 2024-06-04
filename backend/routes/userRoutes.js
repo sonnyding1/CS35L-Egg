@@ -9,7 +9,6 @@ const router = express.Router();
 Implementing user functionality 
 */
 
-
 /**
  * get all users from db
  * gets all information with no restrictions.

@@ -7,6 +7,8 @@ import EditMenuBar from "@/components/EditMenuBarMenu";
 import FileMenuBarMenu from "@/components/FileMenuBarMenu";
 import MarkdownPreview from "@/components/MarkdownPreview";
 import { Card, CardContent } from "@/components/ui/card";
+import { Toaster } from "@/components/ui/sonner";
+import { toast } from "sonner";
 
 function Edit() {
   const [content, setContent] = useState("");
@@ -14,8 +16,8 @@ function Edit() {
   const [fileName, setFileName] = useState("");
   const [isFilePublic, setFilePublic] = useState(false);
   const [isFileNameDialogOpen, setFileNameDialogOpen] = useState(false);
-  const [past, setPast] = useState("");
-  const [future, setFuture] = useState("");
+  const [past, setPast] = useState([]);
+  const [future, setFuture] = useState([]);
   const [fileId, setFileId] = useState(null);
 
   const timeoutRef = useRef(null);
@@ -48,6 +50,13 @@ function Edit() {
           setFileName(data[0].fileName);
           setContent(data[0].text);
           setFilePublic(data[0].public);
+          setPast([
+            {
+              content: data[0].text,
+              cursorStart: data[0].text.length,
+              cursorEnd: data[0].text.length,
+            },
+          ]);
         } else if (response.status === 401) {
           console.error("Unauthorized access");
           navigate("/login");
@@ -69,15 +78,23 @@ function Edit() {
     setContent(e.target.value);
     clearTimeout(timeoutRef.current);
     timeoutRef.current = setTimeout(() => {
-      setPast([...past, e.target.value]);
+      const cursorStart = textareaRef.current.selectionStart;
+      const cursorEnd = textareaRef.current.selectionEnd;
+      setPast([...past, { content: e.target.value, cursorStart, cursorEnd }]);
       setFuture([]);
     }, 500);
   };
 
   const onContentChange = (newContent) => {
     setContent(newContent);
-    setPast([...past, newContent]);
+    const cursorStart = textareaRef.current.selectionStart;
+    const cursorEnd = textareaRef.current.selectionEnd;
+    setPast([...past, { content: newContent, cursorStart, cursorEnd }]);
     setFuture([]);
+  };
+
+  const setSonnerMessage = (message) => {
+    toast(message);
   };
 
   return (
@@ -111,6 +128,7 @@ function Edit() {
           content={content}
           isFilePublic={isFilePublic}
           setFilePublic={setFilePublic}
+          setSonnerMessage={setSonnerMessage}
         />
         <EditMenuBar
           content={content}
@@ -139,6 +157,7 @@ function Edit() {
           </Card>
         </div>
       </div>
+      <Toaster />
     </div>
   );
 }

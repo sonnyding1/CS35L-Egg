@@ -32,7 +32,7 @@ const FileSchema = new mongoose.Schema({
   lastModified: { type: Date, required: true },
   text: { type: String, default: "" },
   comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }],
-  likeCount: {type: Number, default: 0 }
+  likeCount: { type: Number, default: 0 },
 });
 
 // Ensure combination of authorId, folder, and filename are unique

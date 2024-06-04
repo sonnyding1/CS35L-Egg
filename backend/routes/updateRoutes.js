@@ -154,7 +154,7 @@ router.post("/user/file", async (req, res) => {
         .status(StatusCodes.FORBIDDEN)
         .json({ error: "User not logged in!" });
     }
-   
+
     const { _id, fileName, folder, public, text } = req.body;
     const file = await File.findOne({ _id, authorId: req.session.userId });
     if (!file) {
