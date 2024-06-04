@@ -1,5 +1,3 @@
-import React from 'react';
-
 const NotFoundPage = () => {
   const ButtonGoBack = () => {
     window.history.back();
