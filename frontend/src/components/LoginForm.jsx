@@ -130,7 +130,11 @@ const LoginForm = ({ isSignUpPage }) => {
           <Separator className="h-px w-2/5 bg-gray-200 dark:text-gray-400 my-4" />
         </div>
         <div>
-          <Button variant="outline" className="w-full" onClick={handleGoogleLogin} >
+          <Button
+            variant="outline"
+            className="w-full"
+            onClick={handleGoogleLogin}
+          >
             <Icons.google className="mr-2 h-4 w-4" />
             Continue with Google
           </Button>

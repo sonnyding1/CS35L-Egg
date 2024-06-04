@@ -65,9 +65,9 @@ const googleAuthCallback = async (req, res) => {
     req.session.save((err) => {
       if (err) {
         console.error(err);
-        return res.status(500).json({ error: 'Internal Server Error' });
+        return res.status(500).json({ error: "Internal Server Error" });
       }
-      return res.redirect('http://localhost:5173/');
+      return res.redirect("http://localhost:5173/");
     });
   } catch (error) {
     console.log(error);
