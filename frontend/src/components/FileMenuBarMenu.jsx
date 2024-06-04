@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -35,11 +35,14 @@ const FileMenuBarMenu = ({
   const [isFileBrowserDialogOpen, setFileBrowserDialogOpen] = useState(false);
   const [uploadedFile, setUploadedFile] = useState(null);
 
+  const isMac = navigator.userAgent.includes("Macintosh");
+  const modKeySymbol = isMac ? "&#8984;" : "Ctrl+";
+
   const navigate = useNavigate();
 
-  const handleOpenFile = () => {
+  const handleOpenFile = useCallback(() => {
     setFileBrowserDialogOpen(true);
-  };
+  }, []);
 
   const handleUploadFile = () => {
     setFileUploadDialogOpen(true);
@@ -67,7 +70,7 @@ const FileMenuBarMenu = ({
     URL.revokeObjectURL(url);
   };
 
-  const updateFile = async (updatedFile, onSuccess, onError) => {
+  const updateFile = useCallback(async (updatedFile, onSuccess, onError) => {
     try {
       const response = await fetch("http://localhost:3000/update/user/file", {
         method: "POST",
@@ -87,7 +90,7 @@ const FileMenuBarMenu = ({
     } catch (error) {
       onError(error);
     }
-  };
+  }, []);
 
   const handleRename = async (e) => {
     e.preventDefault();
@@ -109,7 +112,7 @@ const FileMenuBarMenu = ({
     );
   };
 
-  const handleSave = async () => {
+  const handleSave = useCallback(async () => {
     const updatedFile = {
       _id: fileID,
       fileName: fileName,
@@ -123,7 +126,7 @@ const FileMenuBarMenu = ({
       },
       console.error,
     );
-  };
+  }, [content, fileName, fileID, updateFile]);
 
   const handleDelete = async () => {
     try {
@@ -164,13 +167,39 @@ const FileMenuBarMenu = ({
     );
   };
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      const isMac = navigator.userAgent.includes("Macintosh");
+      const modKey = isMac ? e.metaKey : e.ctrlKey;
+
+      if (modKey && e.key === "o" && !e.shiftKey) {
+        e.preventDefault();
+        handleOpenFile();
+      }
+
+      if (modKey && e.key === "s" && !e.shiftKey) {
+        e.preventDefault();
+        handleSave();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [handleOpenFile, handleSave]);
+
   return (
     <>
       <MenubarMenu>
         <MenubarTrigger>File</MenubarTrigger>
         <MenubarContent>
           <MenubarItem onSelect={handleOpenFile}>
-            Open <MenubarShortcut>⌘O</MenubarShortcut>
+            Open
+            <MenubarShortcut
+              dangerouslySetInnerHTML={{ __html: modKeySymbol + "O" }}
+            />
           </MenubarItem>
           <MenubarItem onSelect={handleUploadFile}>Upload</MenubarItem>
           <MenubarItem onSelect={handleDownload}>Download</MenubarItem>
@@ -178,7 +207,12 @@ const FileMenuBarMenu = ({
           <MenubarItem onSelect={() => setFileNameDialogOpen(true)}>
             Rename
           </MenubarItem>
-          <MenubarItem onSelect={handleSave}>Save</MenubarItem>
+          <MenubarItem onSelect={handleSave}>
+            Save
+            <MenubarShortcut
+              dangerouslySetInnerHTML={{ __html: modKeySymbol + "S" }}
+            />
+          </MenubarItem>
           <MenubarItem onSelect={handleDelete}>Delete</MenubarItem>
           <MenubarCheckboxItem
             checked={isFilePublic}
