@@ -36,9 +36,16 @@ const Profile = () => {
     <div>
       {userData ? (
         <div>
-          <p style={{ fontSize: "1.5rem" }}><strong>Username:</strong> {userData.username}</p>
-          <p style={{ fontSize: "1.5rem" }}><strong>Email:</strong> {userData.email}</p>
-          <p style={{ fontSize: "1.5rem" }}><strong>Date Joined:</strong> {new Date(userData.dateCreated).toLocaleString()}</p>
+          <p style={{ fontSize: "1.5rem" }}>
+            <strong>Username:</strong> {userData.username}
+          </p>
+          <p style={{ fontSize: "1.5rem" }}>
+            <strong>Email:</strong> {userData.email}
+          </p>
+          <p style={{ fontSize: "1.5rem" }}>
+            <strong>Date Joined:</strong>{" "}
+            {new Date(userData.dateCreated).toLocaleString()}
+          </p>
           <FileList files={userData.files} />
         </div>
       ) : (
@@ -46,7 +53,6 @@ const Profile = () => {
       )}
     </div>
   );
-
 };
 
 export default Profile;

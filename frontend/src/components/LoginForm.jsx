@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { AuthContext } from "./AuthContext";
 import LoginField from "./LoginField";
+import { Separator } from "@/components/ui/separator";
+import { Icons } from "@/components/ui/icons";
 
 const LoginForm = ({ isSignUpPage }) => {
   const navigate = useNavigate();
@@ -47,6 +49,10 @@ const LoginForm = ({ isSignUpPage }) => {
     } catch (error) {
       setFormState((prev) => ({ ...prev, errorMessage: error.message }));
     }
+  };
+
+  const handleGoogleLogin = () => {
+    window.location.href = "http://localhost:3000/auth/google";
   };
 
   return (
@@ -115,6 +121,19 @@ const LoginForm = ({ isSignUpPage }) => {
               {isSignUpPage ? "Log in" : "Sign up"}
             </Link>
           </p>
+        </div>
+        <div className="flex items-center justify-center ">
+          <Separator className="h-px w-2/5 bg-gray-200 my-4" />
+          <span className="mx-4 text-sm text-gray-500 dark:text-gray-400">
+            Or
+          </span>
+          <Separator className="h-px w-2/5 bg-gray-200 dark:text-gray-400 my-4" />
+        </div>
+        <div>
+          <Button variant="outline" className="w-full" onClick={handleGoogleLogin} >
+            <Icons.google className="mr-2 h-4 w-4" />
+            Continue with Google
+          </Button>
         </div>
       </div>
     </form>

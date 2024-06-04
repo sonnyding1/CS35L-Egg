@@ -82,22 +82,38 @@ const EditMenuBarMenu = ({
   );
 
   const handleUndo = useCallback(() => {
-    if (past.length === 0) return;
+    if (past.length <= 1) return;
     const newFuture = [past[past.length - 1], ...future];
     const newPast = past.slice(0, past.length - 1);
-    onContentChange(newPast[newPast.length - 1]);
+    onContentChange(newPast[newPast.length - 1].content);
+    setTimeout(() => {
+      const textarea = textareaRef.current;
+      textarea.focus();
+      textarea.setSelectionRange(
+        newPast[newPast.length - 1].cursorStart,
+        newPast[newPast.length - 1].cursorEnd,
+      );
+    }, 1);
     setPast(newPast);
     setFuture(newFuture);
-  }, [past, future, setPast, setFuture, onContentChange]);
+  }, [past, future, setPast, setFuture, onContentChange, textareaRef]);
 
   const handleRedo = useCallback(() => {
     if (future.length === 0) return;
     const newPast = [...past, future[0]];
     const newFuture = future.slice(1);
-    onContentChange(newPast[newPast.length - 1]);
+    onContentChange(newPast[newPast.length - 1].content);
+    setTimeout(() => {
+      const textarea = textareaRef.current;
+      textarea.focus();
+      textarea.setSelectionRange(
+        newPast[newPast.length - 1].cursorStart,
+        newPast[newPast.length - 1].cursorEnd,
+      );
+    }, 1);
     setPast(newPast);
     setFuture(newFuture);
-  }, [past, future, setPast, setFuture, onContentChange]);
+  }, [past, future, setPast, setFuture, onContentChange, textareaRef]);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
