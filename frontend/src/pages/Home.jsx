@@ -53,10 +53,11 @@ const Home = () => {
     <>
       <div className="flex flex-col w-screen px-8">
         {/* hero */}
-        <div className="items-center text-center">
-          <div className="text-4xl font-thin py-48">
+        <div className="flex flex-col items-center text-center">
+          <div className="text-4xl font-thin pt-48 pb-12">
             Egg Editor, a handy Markdown editor
           </div>
+          <img src="vite.svg" className="pb-24" />
         </div>
         {/* features */}
         <div className="grid grid-cols-3 gap-4">
