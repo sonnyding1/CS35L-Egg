@@ -57,11 +57,16 @@ const googleAuth = passport.authenticate("google", {
 const googleAuthCallback = async (req, res) => {
   // redirect to the backend root after login for now,
   // in the future send a response to the frontend
-  // res.redirect("http://localhost:3000");
   try {
     const newUser = await User.findOne({username: req.session.passport.user}).exec();
     req.session.userId = newUser._id;
-    return res.json(req.session);
+    req.session.save((err) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ error: 'Internal Server Error' });
+      }
+      return res.redirect('http://localhost:5173/');
+    });
   } catch (error) {
     console.log(error);
   }
