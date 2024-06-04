@@ -136,7 +136,7 @@ router.post("/user-files/text", async (req, res) => {
     }
     let file;
     if (req.body._id) {
-      file = await File.find({_id:req.body._id, authorId:req.session._id});
+      file = await File.find({_id:req.body._id, authorId:req.session.userId});
     } 
     if (file.length === 0) {
       return res
