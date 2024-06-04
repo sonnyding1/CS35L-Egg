@@ -47,7 +47,6 @@ function Edit() {
 
         if (response.ok) {
           const data = await response.json();
-          console.log(data[0]);
           setFileName(data[0].fileName);
           setContent(data[0].text);
           setFilePublic(data[0].public);
