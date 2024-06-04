@@ -5,11 +5,7 @@ const NotFoundPage = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
-      <img
-        src="https://seranking.com/blog/wp-content/uploads/2021/01/404_01-min.jpg"
-        alt="Not Found"
-        className="mb-4"
-      />
+      <p className="text-6xl mb-12"> Σ( ￣д￣；) ！！！</p>
       <p className="text-2xl mb-4">Oops, something went wrong!</p>
       <button
         onClick={ButtonGoBack}
