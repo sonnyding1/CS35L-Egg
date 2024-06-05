@@ -216,13 +216,10 @@ router.post("/user-liked/add", async (req, res) => {
         .status(StatusCodes.UNAUTHORIZED)
         .json({ error: "User not logged in" });
     }
-    console.log("testing");
     const user = await User.findById(req.session.userId);
     const { _id } = req.body;
     const file = await File.findById(_id);
     if (!file) {
-      // not here.
-      console.log("testing");
       return res
         .status(StatusCodes.BAD_REQUEST)
         .json({ error: "File not found!" });
@@ -534,7 +531,6 @@ router.post("/comment/all", async (req, res) => {
         .status(StatusCodes.BAD_REQUEST)
         .json({ error: "Missing file Id!" });
     }
-    console.log("test");
     const file = await File.findById(req.body._id).populate({
       path: "comments",
       populate: [
