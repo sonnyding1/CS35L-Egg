@@ -40,7 +40,11 @@ const FileBrowser = ({ onFileSelect, searchText = "", searchResults = [] }) => {
         });
 
         const processedFiles = rawFiles.map((file) => {
-          return { id: file._id, name: file.fileName };
+          return {
+            id: file._id,
+            name: file.fileName,
+            dateCreated: file.dateCreated,
+          };
         });
         const filteredFiles = processedFiles.filter((file) => file !== null);
 
@@ -48,6 +52,7 @@ const FileBrowser = ({ onFileSelect, searchText = "", searchResults = [] }) => {
           const searchFiles = searchResults.map((file) => ({
             id: file._id,
             name: file.fileName,
+            dateCreated: file.dateCreated,
           }));
           const combinedResults = [
             ...searchFiles,
@@ -76,6 +81,7 @@ const FileBrowser = ({ onFileSelect, searchText = "", searchResults = [] }) => {
         <TableHeader>
           <TableRow>
             <TableHead>File Name</TableHead>
+            <TableHead>Date Created</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -89,6 +95,9 @@ const FileBrowser = ({ onFileSelect, searchText = "", searchResults = [] }) => {
               className="cursor-pointer"
             >
               <TableCell className="font-medium">{file.name}</TableCell>
+              <TableCell>
+                {new Date(file.dateCreated).toLocaleString()}
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

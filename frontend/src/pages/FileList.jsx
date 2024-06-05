@@ -41,7 +41,11 @@ const FileList = () => {
 
           if (response.ok) {
             const file = await response.json();
-            return { id: fileId, name: file[0].fileName };
+            return {
+              id: fileId,
+              name: file[0].fileName,
+              dateCreated: file[0].dateCreated,
+            };
           } else if (response.status === 404) {
             console.warn(`File with ID ${fileId} not found`);
             return null;
@@ -90,7 +94,11 @@ const FileList = () => {
 
           if (response.ok) {
             const file = await response.json();
-            return { id: fileId, name: file[0].fileName };
+            return {
+              id: fileId,
+              name: file[0].fileName,
+              dateCreated: file[0].dateCreated,
+            };
           } else if (response.status === 404) {
             console.warn(`Liked file with ID ${fileId} not found`);
             return null;
@@ -116,50 +124,62 @@ const FileList = () => {
 
   return (
     <>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>My Files</TableHead>
-            <TableHead>ID</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {files.map((file) => (
-            <TableRow
-              key={file.id}
-              onClick={() => {
-                navigate("/posts/" + file.id);
-              }}
-              className="cursor-pointer"
-            >
-              <TableCell className="font-medium">{file.name}</TableCell>
-              <TableCell>{file.id}</TableCell>
+      <div className="border rounded-sm">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>My Files</TableHead>
+              <TableHead>ID</TableHead>
+              <TableHead>Date Created</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Liked Files</TableHead>
-            <TableHead>ID</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {likedFiles.map((file) => (
-            <TableRow
-              key={file.id}
-              onClick={() => {
-                navigate("/posts/" + file.id);
-              }}
-              className="cursor-pointer"
-            >
-              <TableCell className="font-medium">{file.name}</TableCell>
-              <TableCell>{file.id}</TableCell>
+          </TableHeader>
+          <TableBody>
+            {files.map((file) => (
+              <TableRow
+                key={file.id}
+                onClick={() => {
+                  navigate("/posts/" + file.id);
+                }}
+                className="cursor-pointer"
+              >
+                <TableCell className="font-medium">{file.name}</TableCell>
+                <TableCell>{file.id}</TableCell>
+                <TableCell>
+                  {new Date(file.dateCreated).toLocaleString()}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+      <div className="border rounded-sm mt-4">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Liked Files</TableHead>
+              <TableHead>ID</TableHead>
+              <TableHead>Date Created</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {likedFiles.map((file) => (
+              <TableRow
+                key={file.id}
+                onClick={() => {
+                  navigate("/posts/" + file.id);
+                }}
+                className="cursor-pointer"
+              >
+                <TableCell className="font-medium">{file.name}</TableCell>
+                <TableCell>{file.id}</TableCell>
+                <TableCell>
+                  {new Date(file.dateCreated).toLocaleString()}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </>
   );
 };
