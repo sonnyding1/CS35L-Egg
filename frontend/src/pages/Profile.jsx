@@ -109,7 +109,9 @@ const Profile = () => {
           <FileList files={userData.files} />
         </div>
       ) : (
-        <></>
+        <div className="flex items-center text-center justify-center h-screen">
+          Loading...
+        </div>
       )}
     </div>
   );
