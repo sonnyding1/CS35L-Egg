@@ -21,6 +21,7 @@ const Post = () => {
   const [commentContent, setCommentContent] = useState("");
   const [comments, setComments] = useState([]);
   const [isLiked, setIsLiked] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const { fileID } = useParams();
   const { isAuthenticated } = useContext(AuthContext);
@@ -49,6 +50,8 @@ const Post = () => {
       } catch (error) {
         console.error("Error fetching files:", error);
         setPost(null);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -159,6 +162,14 @@ const Post = () => {
       console.error("Error updating like status:", error);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center text-center justify-center h-screen">
+        Loading...
+      </div>
+    );
+  }
 
   if (!post) {
     return <NotFoundPage />;

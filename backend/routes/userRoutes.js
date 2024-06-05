@@ -187,4 +187,41 @@ router.get("/logout", async (req, res) => {
   }
 });
 
+/**
+ * edit user name function --> updates the name of the current user
+ *
+ * required inputs:
+ * -- name
+ */
+router.post("/edit-name", async (req, res) => {
+  const { name } = req.body;
+  if (!name) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ error: "Missing Required Field!" });
+  }
+  try {
+    const userId = req.session.userId;
+    if (!userId) {
+      return res
+        .status(StatusCodes.UNAUTHORIZED)
+        .json({ error: "User not logged in!" });
+    }
+    const user = await User.findById(userId);
+    if (!user) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ error: "User not found!" });
+    }
+    user.name = name;
+    await user.save();
+    return res.status(StatusCodes.SUCCESS).json(user);
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: "Internal server error, could not update name!" });
+  }
+});
+
 module.exports = router;
