@@ -80,12 +80,12 @@ const BoxDate = React.forwardRef(({ date, className, ...props }, ref) => (
     <div
       ref={ref}
       className={cn(
-        "col-start-8 col-end-9 row-start-1 row-end-2 border-2 shadow-lg p-1",
+        "col-start-8 col-end-9 row-start-1 row-end-2  p-1",
         className,
       )}
       {...props}
     >
-      <p> {date} </p>
+      <p className="text-slate-400"> {date} </p>
     </div>
   </>
 ));
@@ -111,15 +111,32 @@ const BoxNumLikes = React.forwardRef(
 BoxNumLikes.displayName = "BoxNumLikes";
 
 // Has to import an image as a button and an action.
-const BoxLike = React.forwardRef(({ className, ...props }, ref) => (
+const BoxLike = React.forwardRef(({ isLiked, className, ...props }, ref) => (
   <>
-    <div
-      ref={ref}
-      className={cn("col-start-3 row-start-2 row-end-3 p-1", className)}
-      {...props}
-    >
-      <Button variant="likeButton" size="none" aria-label="Like"></Button>
-    </div>
+  {(() => {
+    if(isLiked) {
+        return(
+          <div
+            ref={ref}
+            className={cn("col-start-3 row-start-2 row-end-3 p-1", className)}
+            {...props}
+          >
+            <Button variant="LikedButton" size="none" aria-label="Like"></Button>
+          </div>
+        );
+    }
+    else {
+      return(
+        <div
+          ref={ref}
+          className={cn("col-start-3 row-start-2 row-end-3 p-1", className)}
+          {...props}
+        >
+          <Button variant="NotLikedButton" size="none" aria-label="Like"></Button>
+        </div>
+     );
+    }
+  }) ()}
   </>
 ));
 BoxLike.displayName = "BoxLike";
