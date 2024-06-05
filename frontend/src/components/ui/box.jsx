@@ -101,11 +101,10 @@ const BoxNumLikes = React.forwardRef(
           "col-start-1 row-start-2 row-end-3 text-center p-1",
           className,
         )}
-
         {...props}
       >
         <div className>
-        <p> {numlikes} </p>
+          <p> {numlikes} </p>
         </div>
       </div>
     </>

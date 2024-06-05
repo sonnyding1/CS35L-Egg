@@ -80,24 +80,21 @@ const FileList = () => {
 
       try {
         const likedFilePromises = user.likedFiles.map(async (fileId) => {
-          const response = await fetch(
-            "http://localhost:3000/file/user-files",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              credentials: "include",
-              body: JSON.stringify({ _id: fileId }),
+          const response = await fetch("http://localhost:3000/file", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
             },
-          );
+            credentials: "include",
+            body: JSON.stringify({ _id: fileId }),
+          });
 
           if (response.ok) {
             const file = await response.json();
             return {
               id: fileId,
-              name: file[0].fileName,
-              dateCreated: file[0].dateCreated,
+              name: file.fileName,
+              dateCreated: file.dateCreated,
             };
           } else if (response.status === 404) {
             console.warn(`Liked file with ID ${fileId} not found`);

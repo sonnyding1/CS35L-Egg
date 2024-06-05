@@ -13,6 +13,21 @@ const router = express.Router();
  * get liked files
  */
 
+// POST endpoint at "/"
+router.post("/", async (req, res) => {
+  const { _id } = req.body;
+
+  try {
+    const file = await File.findById(_id);
+    if (!file) {
+      return res.status(404).json({ message: "File not found" });
+    }
+    res.json(file);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 /**
  *  get all public files, no input necessary
  */

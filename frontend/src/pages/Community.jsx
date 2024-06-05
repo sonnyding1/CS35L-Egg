@@ -1,5 +1,3 @@
-
-
 import { MainBar } from "@/components/layout";
 
 function Community() {
@@ -9,7 +7,7 @@ function Community() {
         <SideBar>
           <Button variant="sideButton">Create New</Button>
         </SideBar> */}
-        <MainBar></MainBar>
+      <MainBar></MainBar>
       {/* </MainLayout> */}
     </div>
   );
