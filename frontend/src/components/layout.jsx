@@ -1,17 +1,9 @@
 // import * as React from "react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  Box,
-  BoxAuthor,
-  BoxDate,
-  BoxFileName,
-  BoxLastComment,
-  BoxLike,
-  BoxNumLikes,
-} from "@/components/ui/box";
+import { Box } from "@/components/ui/box";
 
-import { cn } from "@/lib/utils";
+import { ThumbsUp } from "lucide-react";
 
 // MainLayout: The fundamental layout housing the two columns (side bar and contents)
 // Colspan size is 5 so that sidebar:content ratio would be 1:6
@@ -44,7 +36,7 @@ import { cn } from "@/lib/utils";
 // MainBar: Contents.
 const MainBar = () => {
   const [files, setFiles] = useState([]);
-  const [likedFiles, setLikedFiles] = useState([]);
+  // const [likedFiles, setLikedFiles] = useState([]);
   const [fileComments, setFileComments] = useState({}); // State to store comments for each file
 
   const navigate = useNavigate();
@@ -52,14 +44,9 @@ const MainBar = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [filesResponse, likedResponse] = await Promise.all([
-          fetch("http://localhost:3000/file/all", { method: "GET" }),
-          fetch("http://localhost:3000/file/user-liked/all", {
-            method: "GET",
-            headers: { "Content-Type": "application/json" },
-            credentials: "include",
-          }),
-        ]);
+        const filesResponse = await fetch("http://localhost:3000/file/all", {
+          method: "GET",
+        });
 
         if (filesResponse.ok) {
           const filesData = await filesResponse.json();
@@ -104,10 +91,10 @@ const MainBar = () => {
           setFileComments(commentsMap);
         }
 
-        if (likedResponse.ok) {
-          const likedData = await likedResponse.json();
-          setLikedFiles(likedData.likedFiles);
-        }
+        // if (likedResponse.ok) {
+        //   const likedData = await likedResponse.json();
+        //   setLikedFiles(likedData.likedFiles);
+        // }
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -116,9 +103,9 @@ const MainBar = () => {
     fetchData();
   }, []);
 
-  const handleFileDoubleClick = (id) => {
-    navigate("/edit", { state: { fileId: id } });
-  };
+  // const handleFileDoubleClick = (id) => {
+  //   navigate("/edit", { state: { fileId: id } });
+  // };
 
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "long", day: "numeric" };
@@ -142,72 +129,78 @@ const MainBar = () => {
   //*
   //*
 
-  const handleLike = async (fileId) => {
+  /* const handleLike = async (fileId) => {
     try {
-      const response = await fetch('http://localhost:3000/file/user-liked/add', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        "http://localhost:3000/file/user-liked/add",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({ _id: fileId }),
         },
-        credentials: 'include',
-        body: JSON.stringify({ _id: fileId }),
-      });
-  
+      );
+
       if (!response.ok) {
-        console.error('Error liking file:', response.statusText);
+        console.error("Error liking file:", response.statusText);
         return;
       }
-  
+
       const likedFile = await response.json();
       setLikedFiles((prevLikedFiles) => [...prevLikedFiles, likedFile]);
       setFiles((prevFiles) =>
         prevFiles.map((file) =>
-          file._id === fileId ? { ...file, likesCount: (file.likeCount || 0) + 1 } : file
-        )
+          file._id === fileId
+            ? { ...file, likesCount: (file.likeCount || 0) + 1 }
+            : file,
+        ),
       );
     } catch (error) {
-      console.error('Error liking file:', error);
-    }
-  };
-  
-  const handleUnlike = async (fileId) => {
-    try {
-      const response = await fetch('http://localhost:3000/file/user-liked/remove', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({ _id: fileId }),
-      });
-  
-      if (!response.ok) {
-        console.error('Error unliking file:', response.statusText);
-        return;
-      }
-  
-      // const unlikedFile = await response.json();
-      setLikedFiles((prevLikedFiles) =>
-        prevLikedFiles.filter((likedFile) => likedFile._id !== fileId)
-      );
-      setFiles((prevFiles) =>
-        prevFiles.map((file) =>
-          file._id === fileId ? { ...file, likesCount: (file.likeCount || 0) - 1 } : file
-        )
-      );
-    } catch (error) {
-      console.error('Error unliking file:', error);
+      console.error("Error liking file:", error);
     }
   };
   
 
+  const handleUnlike = async (fileId) => {
+    try {
+      const response = await fetch(
+        "http://localhost:3000/file/user-liked/remove",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({ _id: fileId }),
+        },
+      );
+
+      if (!response.ok) {
+        console.error("Error unliking file:", response.statusText);
+        return;
+      }
+
+      // const unlikedFile = await response.json();
+      setLikedFiles((prevLikedFiles) =>
+        prevLikedFiles.filter((likedFile) => likedFile._id !== fileId),
+      );
+      setFiles((prevFiles) =>
+        prevFiles.map((file) =>
+          file._id === fileId
+            ? { ...file, likesCount: (file.likeCount || 0) - 1 }
+            : file,
+        ),
+      );
+    } catch (error) {
+      console.error("Error unliking file:", error);
+    }
+  }; */
+
   return (
     <>
-      <div
-        className={cn(
-          "rounded-lg border shadow-lg w-full container space-y-8 mx-70",
-        )}
-      >
+      <div className="w-full container space-y-8 p-4">
         {files.map((file) => {
           if (
             file.public &&
@@ -219,45 +212,51 @@ const MainBar = () => {
             // const likeCount = likedFiles.filter(
             //   (likedFile) => likedFile._id === file._id,
             // ).length;
-            const isLiked = likedFiles.some(
-              (likedFile) => likedFile._id === file._id,
-            );
-            const fileName = String(file.fileName);
-            console.log("file details: ", file);
+            // const isLiked = likedFiles.some(
+            //   (likedFile) => likedFile._id === file._id,
+            // );
+            // const fileName = String(file.fileName);
+            // console.log("file details: ", file);
 
             // checks for the author
             //console.log("file name: ", fileName);
             //console.log("check: ",file.authorId);
 
-            const author =
-              file.authorId &&
-              typeof file.authorId === "object" &&
-              file.authorId.username
-                ? file.authorId.username
-                : "Unknown Author";
+            // const author =
+            //   file.authorId &&
+            //   typeof file.authorId === "object" &&
+            //   file.authorId.username
+            //     ? file.authorId.username
+            //     : "Unknown Author";
 
             return (
-              <Box variant="fileCommunity" key={file._id}>
-                <BoxFileName
-                  filename={fileName}
-                  onDoubleClick={() => handleFileDoubleClick(file._id)}
-                ></BoxFileName>
-                <BoxAuthor author={author}></BoxAuthor>
-                <BoxDate date={formatDate(file.lastModified)}></BoxDate>
-                <BoxNumLikes numlikes={file.likeCount ? file.likeCount : 0}></BoxNumLikes>
-                <BoxLike
-                  exists = {file.likeCount}
-                  isLiked={isLiked}
-                  onClick={() => isLiked ? handleUnlike(file._id) : handleLike(file._id)}
-                ></BoxLike>
-                <BoxLastComment
-                  lastComment={
-                    mostRecentComment
-                      ? mostRecentComment.content
-                      : "No comments yet"
-                  }
-                ></BoxLastComment>
-              </Box>
+              <div key={file._id}>
+                <div
+                  className="grid grid-cols-4 border rounded-sm p-4 transform transition duration-500 ease-in-out hover:scale-[1.02] hover:shadow-lg space-x-16 cursor-pointer"
+                  onClick={() => {
+                    navigate("/posts/" + file._id);
+                  }}
+                >
+                  <div className="col-span-1">
+                    <div className="font-bold">{file.fileName}</div>
+                  </div>
+                  <div className="col-span-1">
+                    <div>Author: {file.authorId.name}</div>
+                    <div>Date: {formatDate(file.lastModified)}</div>
+                    <div className="flex items-center space-x-1">
+                      <ThumbsUp size={16} /> <div>{file.likeCount}</div>
+                    </div>
+                  </div>
+                  <div className="col-span-2">
+                    <div>Latest comment: </div>
+                    <div className="border rounded-sm py-1 px-4">
+                      {mostRecentComment
+                        ? mostRecentComment.content
+                        : "No comments yet"}
+                    </div>
+                  </div>
+                </div>
+              </div>
             );
           } else {
             return null;
