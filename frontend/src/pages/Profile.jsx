@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import FileList from "./FileList";
 
 const Profile = () => {
   const { usernameURL } = useParams();
@@ -31,10 +31,27 @@ const Profile = () => {
     fetchUserData();
   }, [usernameURL]);
 
+  // Profile Display
   return (
-    <>
-      <Button onClick={() => console.log(userData)}>Log User Data</Button>
-    </>
+    <div>
+      {userData ? (
+        <div>
+          <p style={{ fontSize: "1.5rem" }}>
+            <strong>Username:</strong> {userData.username}
+          </p>
+          <p style={{ fontSize: "1.5rem" }}>
+            <strong>Email:</strong> {userData.email}
+          </p>
+          <p style={{ fontSize: "1.5rem" }}>
+            <strong>Date Joined:</strong>{" "}
+            {new Date(userData.dateCreated).toLocaleString()}
+          </p>
+          <FileList files={userData.files} />
+        </div>
+      ) : (
+        <p>Loading...</p>
+      )}
+    </div>
   );
 };
 

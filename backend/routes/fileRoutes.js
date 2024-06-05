@@ -102,7 +102,6 @@ router.post("/user-files", async (req, res) => {
     }
     let file;
     if (req.body) {
-      console.log(req.body);
       file = await File.find({
         ...req.body,
         authorId: req.session.userId,
@@ -121,6 +120,39 @@ router.post("/user-files", async (req, res) => {
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .json({ error: "Internal Server Error, file fetch failed" });
+  }
+});
+
+/**
+ * get the text of a certain file
+ * input requires file _id
+ * will return file with all information if file exists
+ */
+router.post("/user-files/text", async (req, res) => {
+  try {
+    if (!req.session.userId) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ error: "User not logged in" });
+    }
+    let file;
+    if (req.body._id) {
+      file = await File.find({
+        _id: req.body._id,
+        authorId: req.session.userId,
+      });
+    }
+    if (file.length === 0) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ error: "No file found!" });
+    }
+    return res.status(StatusCodes.SUCCESS).json(file);
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: "Internal Server Error, file text fetch failed" });
   }
 });
 
@@ -187,8 +219,11 @@ router.post("/user-liked/add", async (req, res) => {
         .json({ error: "File is already liked by the user" });
     }
 
-    user.likedFiles.push(file._id);
-    await user.save();
+    file.likeCount += 1; // Increment the like count
+    user.likedFiles.push(file._id); // Add the file to the user's liked files
+
+    await file.save(); // Save the updated file document
+    await user.save(); // Save the updated user document
 
     return res.status(StatusCodes.OK).json(file);
   } catch (error) {
@@ -226,8 +261,10 @@ router.post("/user-liked/remove", async (req, res) => {
         .status(StatusCodes.CONFLICT)
         .json({ error: "File not liked by the user" });
     }
-
+    file.likeCount -= 1;
     user.likedFiles.splice(likedFileIndex, 1);
+
+    await file.save();
     await user.save();
     return res.status(StatusCodes.OK).json(file);
   } catch (error) {
@@ -365,7 +402,7 @@ router.post("/other-files", async (req, res) => {
  *
  * will fetch username from session
  * defaults to public and "Main" folder unless changed
- * text and description will be blank unless input is provided
+ * text will be blank unless input is provided
  * comments will be empty
  *
  */
@@ -375,7 +412,7 @@ router.post("/create", async (req, res) => {
       .status(StatusCodes.BAD_REQUEST)
       .json({ error: "User not logged in" });
   }
-  const { fileName, public, folder, text, description } = req.body;
+  const { fileName, public, folder, text } = req.body;
   if (!fileName) {
     return res
       .status(StatusCodes.CREATION_FAILED)
@@ -388,7 +425,6 @@ router.post("/create", async (req, res) => {
       public: public,
       folder: folder,
       text: text,
-      description: description,
       dateCreated: new Date(),
       lastModified: new Date(),
       authorId: user._id,
@@ -416,43 +452,6 @@ router.post("/create", async (req, res) => {
     return res
       .status(StatusCodes.CREATION_FAILED)
       .json({ error: "File creation failed due to internal server error." });
-  }
-});
-
-/**
- * search for files that contain certain text
- */
-router.post("/search", async (req, res) => {
-  try {
-    if (!req.session.userId) {
-      return res
-        .status(StatusCodes.UNAUTHORIZED)
-        .json({ error: "User not logged in!" });
-    }
-
-    const searchText = req.body.text;
-    const files = await File.find({
-      text: { $regex: searchText, $options: "i" },
-      authorId: req.session.userId,
-    });
-    res.json(files);
-  } catch (err) {
-    res.status(500).send(err);
-  }
-});
-
-/**
- * return the filename of a file based on _id
- */
-router.post("/filename", async (req, res) => {
-  try {
-    const file = await File.findById(req.body._id);
-    if (!file) {
-      return res.status(404).send({ message: "File not found" });
-    }
-    return res.send({ fileName: file.fileName });
-  } catch (error) {
-    return res.status(500).send({ message: error.message });
   }
 });
 

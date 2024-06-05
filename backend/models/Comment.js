@@ -1,16 +1,5 @@
 const mongoose = require("mongoose");
 
-/**
- * @swagger
- * components:
- *   schemas:
- *     CommentSchema:
- *       type: object
- *       required:
- *         - file
- *         - content
- */
-
 const CommentSchema = new mongoose.Schema({
   file: {
     type: mongoose.Schema.Types.ObjectId,
