@@ -201,10 +201,13 @@ router.post("/user-liked/add", async (req, res) => {
         .status(StatusCodes.UNAUTHORIZED)
         .json({ error: "User not logged in" });
     }
+    console.log("testing");
     const user = await User.findById(req.session.userId);
     const { _id } = req.body;
     const file = await File.findById(_id);
     if (!file) {
+      // not here.
+      console.log("testing");
       return res
         .status(StatusCodes.BAD_REQUEST)
         .json({ error: "File not found!" });
@@ -516,6 +519,7 @@ router.post("/comment/all", async (req, res) => {
         .status(StatusCodes.BAD_REQUEST)
         .json({ error: "Missing file Id!" });
     }
+    console.log("test");
     const file = await File.findById(req.body._id).populate({
       path: "comments",
       populate: [
@@ -539,6 +543,23 @@ router.post("/comment/all", async (req, res) => {
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .json({ error: "Internal Server Error, comments fetch failed!" });
+  }
+});
+
+/**
+ * get the author name
+ * requires the authorId as input
+ */
+router.post("/author", async (req, res) => {
+  try {
+    const user = await User.findById(req.body._id);
+    if (!user) {
+      return res.status(404).send({ message: "User not found Zzz" });
+    }
+    const authorName = user.username;
+    return res.send({ authorName });
+  } catch (error) {
+    return res.status(500).send({ message: error.message });
   }
 });
 
