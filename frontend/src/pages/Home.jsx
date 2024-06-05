@@ -1,3 +1,4 @@
+import { AuthContext } from "@/components/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -8,9 +9,12 @@ import {
   ThumbsUp,
   Upload,
 } from "lucide-react";
+import { useContext } from "react";
 import { NavLink } from "react-router-dom";
 
 const Home = () => {
+  const { user } = useContext(AuthContext);
+
   const features = [
     {
       title: "Markdown Rendering",
@@ -76,21 +80,40 @@ const Home = () => {
           ))}
         </div>
         {/* call to action */}
+
         <div className="flex flex-col items-center text-center py-24">
           <div className="text-4xl font-thin p-16">
             Are you ready to get started?
           </div>
-          <NavLink to="/login">
-            <Button variant="outline" className="w-72">
-              Login
-            </Button>
-          </NavLink>
-          <NavLink to="/signup" className="mt-4">
-            <Button variant="default" className="w-72">
-              Sign Up
-            </Button>
-          </NavLink>
+          {user ? (
+            <div className="flex flex-col">
+              <NavLink to="/community">
+                <Button variant="outline" className="w-72">
+                  Community
+                </Button>
+              </NavLink>
+              <NavLink to="/browse" className="mt-4">
+                <Button variant="outline" className="w-72">
+                  Browse
+                </Button>
+              </NavLink>
+            </div>
+          ) : (
+            <div className="flex flex-col">
+              <NavLink to="/login">
+                <Button variant="outline" className="w-72">
+                  Login
+                </Button>
+              </NavLink>
+              <NavLink to="/signup" className="mt-4">
+                <Button variant="default" className="w-72">
+                  Sign Up
+                </Button>
+              </NavLink>
+            </div>
+          )}
         </div>
+
         {/* footer */}
         <footer className="flex justify-center items-center h-16 text-gray-400">
           <p>Made with &hearts; by Egg</p>
