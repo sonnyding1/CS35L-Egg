@@ -3,6 +3,14 @@ import { useParams } from "react-router-dom";
 import FileList from "./FileList";
 import { Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 
 const Profile = () => {
   const { usernameURL } = useParams();
@@ -33,6 +41,30 @@ const Profile = () => {
     fetchUserData();
   }, [usernameURL]);
 
+  const handleEditProfile = async (event) => {
+    const name = event.target.elements.newName.value;
+    try {
+      const response = await fetch("http://localhost:3000/user/edit-name", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ name: name }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setUserData(data);
+      } else {
+        const errorData = await response.json();
+        console.error("Error:", errorData.error);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
   // Profile Display
   return (
     <div className="p-8">
@@ -50,9 +82,28 @@ const Profile = () => {
               {new Date(userData.dateCreated).toLocaleString()}
             </p>
             <div className="absolute top-2 right-2">
-              <Button variant="outline" size="icon">
-                <Edit />
-              </Button>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="outline" size="icon">
+                    <Edit />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Edit profile</DialogTitle>
+                  </DialogHeader>
+                  <form onSubmit={handleEditProfile}>
+                    <div className="flex w-full items-center space-x-2">
+                      <Input
+                        type="text"
+                        name="newName"
+                        placeholder="Enter a new name"
+                      />
+                      <Button type="submit">Save</Button>
+                    </div>
+                  </form>
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
           <FileList files={userData.files} />
