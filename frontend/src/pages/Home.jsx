@@ -13,9 +13,8 @@ import { NavLink } from "react-router-dom";
 const Home = () => {
   const features = [
     {
-      title: "WYSIWYG",
-      description:
-        "What you see is what you get. The editor renders Markdown as you type.",
+      title: "Markdown Rendering",
+      description: "Write Markdown and see the rendered output in real-time.",
       icon: <Eye size={64} />,
     },
     {
