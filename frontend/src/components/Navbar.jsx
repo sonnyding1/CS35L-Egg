@@ -26,13 +26,13 @@ export default function Navbar() {
             </Button>
           )}
         </NavLink>
-        <NavLink to="/posts/665d6405c449c8f4044139b5">
+        {/* <NavLink to="/posts/665d6405c449c8f4044139b5">
           {({ isActive }) => (
             <Button variant={isActive ? "default" : "outline"}>
               Sample Post
             </Button>
           )}
-        </NavLink>
+        </NavLink> */}
       </div>
       <div className="flex space-x-2">
         {!loading && (
