@@ -47,12 +47,12 @@ const BoxFileName = React.forwardRef(
       <div
         ref={ref}
         className={cn(
-          "col-start-1 col-end-5 row-start-1 row-end-2 border-2 shadow-lg p-1",
+          "col-start-1 col-end-5 row-start-1 row-end-2 p-1 rounded-large border-b-2",
           className,
         )}
         {...props}
       >
-        <p> {filename} </p>
+        <p className="font-bold"> {filename} </p>
       </div>
     </>
   ),
@@ -64,12 +64,12 @@ const BoxAuthor = React.forwardRef(({ author, className, ...props }, ref) => (
     <div
       ref={ref}
       className={cn(
-        "col-start-5 col-end-7 row-start-1 row-end-2 border-2 shadow-lg p-1",
+        "col-start-5 col-end-7 row-start-1 row-end-2 p-1",
         className,
       )}
       {...props}
     >
-      <p> {author} </p>
+      <p className="text-slate-400"> By {author} </p>
     </div>
   </>
 ));
@@ -98,12 +98,15 @@ const BoxNumLikes = React.forwardRef(
       <div
         ref={ref}
         className={cn(
-          "col-start-2 row-start-2 row-end-3 text-right p-1",
+          "col-start-1 row-start-2 row-end-3 text-center p-1",
           className,
         )}
+
         {...props}
       >
+        <div className>
         <p> {numlikes} </p>
+        </div>
       </div>
     </>
   ),
@@ -113,30 +116,40 @@ BoxNumLikes.displayName = "BoxNumLikes";
 // Has to import an image as a button and an action.
 const BoxLike = React.forwardRef(({ isLiked, className, ...props }, ref) => (
   <>
-  {(() => {
-    if(isLiked) {
-        return(
+    {(() => {
+      // if (!exists){
+      //   return;
+      // }
+      if (isLiked) {
+        return (
           <div
             ref={ref}
-            className={cn("col-start-3 row-start-2 row-end-3 p-1", className)}
+            className={cn("col-start-1 row-start-2 row-end-3 p-1", className)}
             {...props}
           >
-            <Button variant="LikedButton" size="none" aria-label="Like"></Button>
+            <Button
+              variant="LikedButton"
+              size="none"
+              aria-label="Like"
+            ></Button>
           </div>
         );
-    }
-    else {
-      return(
-        <div
-          ref={ref}
-          className={cn("col-start-3 row-start-2 row-end-3 p-1", className)}
-          {...props}
-        >
-          <Button variant="NotLikedButton" size="none" aria-label="Like"></Button>
-        </div>
-     );
-    }
-  }) ()}
+      } else {
+        return (
+          <div
+            ref={ref}
+            className={cn("col-start-1 row-start-2 row-end-3 p-1", className)}
+            {...props}
+          >
+            <Button
+              variant="NotLikedButton"
+              size="none"
+              aria-label="Like"
+            ></Button>
+          </div>
+        );
+      }
+    })()}
   </>
 ));
 BoxLike.displayName = "BoxLike";
@@ -152,7 +165,7 @@ const BoxLastComment = React.forwardRef(
         )}
         {...props}
       >
-        <p> {lastComment} </p>
+        <p className="text-xs"> {lastComment} </p>
       </div>
     </>
   ),

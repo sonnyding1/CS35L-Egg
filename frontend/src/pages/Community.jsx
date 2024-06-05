@@ -1,17 +1,16 @@
-import { Button } from "@/components/ui/button";
 
-import { MainLayout, SideBar, MainBar } from "@/components/layout";
+
+import { MainBar } from "@/components/layout";
 
 function Community() {
   return (
     <div>
-      <MainLayout>
+      {/* <MainLayout>
         <SideBar>
           <Button variant="sideButton">Create New</Button>
-
-        </SideBar>
+        </SideBar> */}
         <MainBar></MainBar>
-      </MainLayout>
+      {/* </MainLayout> */}
     </div>
   );
 }

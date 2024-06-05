@@ -547,7 +547,6 @@ router.post("/comment/all", async (req, res) => {
   }
 });
 
-
 /**
  * get the author name
  * requires the authorId as input
@@ -564,7 +563,5 @@ router.post("/author", async (req, res) => {
     return res.status(500).send({ message: error.message });
   }
 });
-
-
 
 module.exports = router;
