@@ -201,6 +201,7 @@ const EditMenuBarMenu = ({
             }}
           />
         </MenubarItem>
+        <MenubarSeparator />
         <MenubarItem onSelect={() => handleFormatting((text) => `**${text}**`)}>
           Bold
           <MenubarShortcut
