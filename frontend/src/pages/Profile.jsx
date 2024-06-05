@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import FileList from "./FileList";
+import { Edit } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const Profile = () => {
   const { usernameURL } = useParams();
@@ -33,23 +35,30 @@ const Profile = () => {
 
   // Profile Display
   return (
-    <div>
+    <div className="p-8">
       {userData ? (
         <div>
-          <p style={{ fontSize: "1.5rem" }}>
-            <strong>Username:</strong> {userData.username}
-          </p>
-          <p style={{ fontSize: "1.5rem" }}>
-            <strong>Email:</strong> {userData.email}
-          </p>
-          <p style={{ fontSize: "1.5rem" }}>
-            <strong>Date Joined:</strong>{" "}
-            {new Date(userData.dateCreated).toLocaleString()}
-          </p>
+          <div className="relative border p-4 rounded-sm mb-12">
+            <p>
+              <strong>Name:</strong> {userData.name}
+            </p>
+            <p>
+              <strong>Email:</strong> {userData.email}
+            </p>
+            <p>
+              <strong>Date Joined:</strong>{" "}
+              {new Date(userData.dateCreated).toLocaleString()}
+            </p>
+            <div className="absolute top-2 right-2">
+              <Button variant="outline" size="icon">
+                <Edit />
+              </Button>
+            </div>
+          </div>
           <FileList files={userData.files} />
         </div>
       ) : (
-        <p>Loading...</p>
+        <></>
       )}
     </div>
   );

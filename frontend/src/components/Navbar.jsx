@@ -51,7 +51,7 @@ export default function Navbar() {
                 <NavLink to={`/profiles/${user.username}`}>
                   {({ isActive }) => (
                     <Button variant={isActive ? "default" : "outline"}>
-                      {user.username}&apos;s Profile
+                      {user.name}&apos;s Profile
                     </Button>
                   )}
                 </NavLink>
