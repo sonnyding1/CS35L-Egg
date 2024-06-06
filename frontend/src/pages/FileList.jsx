@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -7,11 +7,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { AuthContext } from "@/components/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 const FileList = () => {
-  const { user } = useContext(AuthContext);
   const [files, setFiles] = useState([]);
   const [likedFiles, setLikedFiles] = useState([]);
 
@@ -19,105 +17,53 @@ const FileList = () => {
 
   useEffect(() => {
     const fetchFiles = async () => {
-      if (!user || !Array.isArray(user.files) || user.files.length === 0) {
-        setFiles([]);
-        setLikedFiles([]);
-        return;
-      }
-
       try {
-        const filePromises = user.files.map(async (fileId) => {
-          const response = await fetch(
-            "http://localhost:3000/file/user-files",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              credentials: "include",
-              body: JSON.stringify({ _id: fileId }),
-            },
-          );
-
-          if (response.ok) {
-            const file = await response.json();
-            return {
-              id: fileId,
-              name: file[0].fileName,
-              dateCreated: file[0].dateCreated,
-            };
-          } else if (response.status === 404) {
-            console.warn(`File with ID ${fileId} not found`);
-            return null;
-          } else {
-            console.error(`Failed to fetch file name for ID ${fileId}`);
-            return null;
-          }
+        const response = await fetch("http://localhost:3000/file/user-files", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({}),
+          credentials: "include",
         });
-
-        const fetchedFiles = await Promise.all(filePromises);
-        const filteredFiles = fetchedFiles.filter((file) => file !== null);
-        setFiles(filteredFiles);
+        if (response.ok) {
+          const file = await response.json();
+          setFiles(file);
+        } else {
+          throw new Error("File fetch failed");
+        }
       } catch (error) {
-        console.error("Error fetching files:", error);
-        setFiles([]);
+        console.error("Error:", error);
+        throw error;
       }
     };
 
-    fetchFiles();
-  }, [user]);
-
-  useEffect(() => {
     const fetchLikedFiles = async () => {
-      if (
-        !user ||
-        !Array.isArray(user.likedFiles) ||
-        user.likedFiles.length === 0
-      ) {
-        setLikedFiles([]);
-        return;
-      }
-
       try {
-        const likedFilePromises = user.likedFiles.map(async (fileId) => {
-          const response = await fetch("http://localhost:3000/file", {
-            method: "POST",
+        const response = await fetch(
+          "http://localhost:3000/file/user-liked/all",
+          {
+            method: "GET",
             headers: {
               "Content-Type": "application/json",
             },
             credentials: "include",
-            body: JSON.stringify({ _id: fileId }),
-          });
-
-          if (response.ok) {
-            const file = await response.json();
-            return {
-              id: fileId,
-              name: file.fileName,
-              dateCreated: file.dateCreated,
-            };
-          } else if (response.status === 404) {
-            console.warn(`Liked file with ID ${fileId} not found`);
-            return null;
-          } else {
-            console.error(`Failed to fetch liked file name for ID ${fileId}`);
-            return null;
-          }
-        });
-
-        const fetchedLikedFiles = await Promise.all(likedFilePromises);
-        const filteredLikedFiles = fetchedLikedFiles.filter(
-          (file) => file !== null,
+          },
         );
-        setLikedFiles(filteredLikedFiles);
+        if (response.ok) {
+          const file = await response.json();
+          setLikedFiles(file.likedFiles);
+        } else {
+          throw new Error("Liked file fetch failed");
+        }
       } catch (error) {
-        console.error("Error fetching liked files:", error);
-        setLikedFiles([]);
+        console.error("Error:", error);
+        throw error;
       }
     };
-
+    fetchFiles();
     fetchLikedFiles();
-  }, [user]);
+  }, []);
 
   return (
     <>
@@ -133,14 +79,14 @@ const FileList = () => {
           <TableBody>
             {files.map((file) => (
               <TableRow
-                key={file.id}
+                key={file._id}
                 onClick={() => {
-                  navigate("/posts/" + file.id);
+                  navigate("/posts/" + file._id);
                 }}
                 className="cursor-pointer"
               >
-                <TableCell className="font-medium">{file.name}</TableCell>
-                <TableCell>{file.id}</TableCell>
+                <TableCell className="font-medium">{file.fileName}</TableCell>
+                <TableCell>{file._id}</TableCell>
                 <TableCell>
                   {new Date(file.dateCreated).toLocaleString()}
                 </TableCell>
@@ -161,14 +107,14 @@ const FileList = () => {
           <TableBody>
             {likedFiles.map((file) => (
               <TableRow
-                key={file.id}
+                key={file._id}
                 onClick={() => {
-                  navigate("/posts/" + file.id);
+                  navigate("/posts/" + file._id);
                 }}
                 className="cursor-pointer"
               >
-                <TableCell className="font-medium">{file.name}</TableCell>
-                <TableCell>{file.id}</TableCell>
+                <TableCell className="font-medium">{file.fileName}</TableCell>
+                <TableCell>{file._id}</TableCell>
                 <TableCell>
                   {new Date(file.dateCreated).toLocaleString()}
                 </TableCell>

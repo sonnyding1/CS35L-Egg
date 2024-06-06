@@ -116,13 +116,18 @@ router.post("/user-files", async (req, res) => {
         .json({ error: "User not logged in" });
     }
     let file;
+
+    // do not load text
     if (req.body) {
-      file = await File.find({
-        ...req.body,
-        authorId: req.session.userId,
-      });
+      file = await File.find(
+        {
+          ...req.body,
+          authorId: req.session.userId,
+        },
+        { text: "" },
+      );
     } else {
-      file = await File.find({ authorId: req.session.userId });
+      file = await File.find({ authorId: req.session.userId }, { text: "" });
     }
     if (file.length === 0) {
       return res

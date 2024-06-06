@@ -36,14 +36,17 @@ function Edit() {
       }
 
       try {
-        const response = await fetch(`http://localhost:3000/file/user-files`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
+        const response = await fetch(
+          `http://localhost:3000/file/user-files/text`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify({ _id: fetchedFileId }),
           },
-          credentials: "include",
-          body: JSON.stringify({ _id: fetchedFileId }),
-        });
+        );
 
         if (response.ok) {
           const data = await response.json();
