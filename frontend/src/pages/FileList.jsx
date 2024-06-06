@@ -7,12 +7,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { AuthContext } from "@/components/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 
 const FileList = () => {
-  const { user } = useContext(AuthContext);
   const [files, setFiles] = useState([]);
   const [likedFiles, setLikedFiles] = useState([]);
 
