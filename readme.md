@@ -1,6 +1,27 @@
-# CS35L Egg
+# CS35L Egg Editor
 
-This project is UCLA's CS35L final project.
+Egg Editor is a community based Markdown editor, built with the MERN stack.
+
+![alt text](/frontend/public/image.png)
+
+## Table of Contents
+
+- [Features](https://github.com/sonnyding1/CS35L-Egg/#features)
+- [Technologies](https://github.com/sonnyding1/CS35L-Egg/#technologies)
+- [Installation](https://github.com/sonnyding1/CS35L-Egg/#installation)
+- [Authors](https://github.com/sonnyding1/CS35L-Egg/#authors)
+
+## Features
+
+- **Profile page**: Users can create their accounts using either email password or Google OAuth. They can also view file created by the user, files like by the user, and edit user name.
+- **Edit page**: Users can edit markdown files with LaTeX support. There is also a menu bar at the top of the page, which contains many useful features and shortcut keys, such as undo/redo, bold, italics, math...
+- **File management**: Users can create new files, browse existing files, delete files, and search file content. Users can also toggle file visibility between public and private.
+- **Community interaction**: Users can like and comment on other users' files. They can also view the specifics of each file.
+
+## Technologies
+
+- **Frontend**: JavaScript, React, Tailwind CSS, ShadCN UI, React-Router, React-Markdown
+- **Backend**: Node.js, Express, MongoDB, Mongoose, Passport, Swagger
 
 ## Installation
 
@@ -63,6 +84,13 @@ For the frontend:
 npm run dev
 ```
 
-## Documentation
+## Authors
 
-Backend documentation is available at [http://localhost:3000/docs](http://localhost:3000/docs). Do note that Swagger is only served as documentation, it doesn't work very well as a testing tool, because our web app relies on sessions and Swagger doesn't support that.
+Egg Editor is developed by a group of UCLA students in CS35L Spring 2024. The contributors are:
+
+- Sonny Ding
+- Thiha Myat
+- Taha El-Halabi
+- Wai-Sann
+- Emily Pham
+- Gabriel Jiang
