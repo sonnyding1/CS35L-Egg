@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import FileBrowser from "./FileBrowser";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "@/components/AuthContext";
 
 const Browse = () => {
   const [isFileCreationDialogOpen, setFileCreationDialogOpen] = useState(false);
@@ -16,6 +17,13 @@ const Browse = () => {
   const [searchResults, setSearchResults] = useState(null);
 
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
+
+  useEffect(() => {
+    if (searchText.trim() === "") {
+      setSearchResults(null);
+    }
+  }, [searchText]);
 
   const handleCreateFile = async (e) => {
     e.preventDefault();
@@ -49,30 +57,46 @@ const Browse = () => {
     }
   };
 
-  const handleSearch = async () => {
-    if (!searchText) {
-      return;
-    }
+  const handleSearch = async (e) => {
+    e.preventDefault();
+
     try {
-      const response = await fetch("http://localhost:3000/file/search", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({ text: searchText }),
-      });
-      if (response.ok) {
+      const matchingFiles = [];
+      const fileIDs = user.files;
+
+      for (const fileID of fileIDs) {
+        const response = await fetch(
+          "http://localhost:3000/file/user-files/text",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify({ _id: fileID }),
+          },
+        );
+
+        if (!response.ok) {
+          console.error(`File search failed for fileID: ${fileID}`);
+          continue;
+        }
+
         const files = await response.json();
-        setSearchResults(files);
-      } else {
-        const error = await response.json();
-        console.error(error);
-        setSearchResults([]);
+        const file = files[0];
+        if (
+          (file.text &&
+            file.text.toLowerCase().includes(searchText.toLowerCase())) ||
+          (file.fileName &&
+            file.fileName.toLowerCase().includes(searchText.toLowerCase()))
+        ) {
+          matchingFiles.push(file);
+        }
       }
+
+      setSearchResults(matchingFiles);
     } catch (error) {
-      console.error(error);
-      setSearchResults([]);
+      console.error("Error:", error);
     }
   };
 
@@ -99,7 +123,17 @@ const Browse = () => {
         </DialogContent>
       </Dialog>
 
-      <div className="flex space-x-4 p-4">
+      <form className="flex space-x-4 p-4" onSubmit={handleSearch}>
+        <Input
+          type="text"
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          placeholder="Search files..."
+        />
+        <Button type="submit">Search Content</Button>
+      </form>
+
+      {/* <div className="flex space-x-4 p-4">
         <Button onClick={() => setFileCreationDialogOpen(true)}>
           Create File
         </Button>
@@ -107,10 +141,10 @@ const Browse = () => {
           type="text"
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
-          placeholder="Search file content..."
+          placeholder="Search files..."
         />
         <Button onClick={handleSearch}>Search Content</Button>
-      </div>
+      </div> */}
 
       <div className="m-4 border rounded-md">
         <FileBrowser

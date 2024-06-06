@@ -53,6 +53,8 @@
   padding: 1rem;
   overflow-x: auto;
   border-radius: 4px;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 
 .markdown code {
