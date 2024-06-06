@@ -61,6 +61,10 @@ const googleAuthCallback = async (req, res) => {
     const newUser = await User.findOne({
       username: req.session.passport.user,
     }).exec();
+    if (!newUser) {
+      console.error("User not found!");
+      return res.redirect("http://localhost:5173/login");
+    }
     req.session.userId = newUser._id;
     req.session.save((err) => {
       if (err) {
