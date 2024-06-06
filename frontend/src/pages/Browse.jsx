@@ -124,16 +124,6 @@ const Browse = () => {
       </Dialog>
 
       <form className="flex space-x-4 p-4" onSubmit={handleSearch}>
-        <Input
-          type="text"
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-          placeholder="Search files..."
-        />
-        <Button type="submit">Search Content</Button>
-      </form>
-
-      {/* <div className="flex space-x-4 p-4">
         <Button onClick={() => setFileCreationDialogOpen(true)}>
           Create File
         </Button>
@@ -143,8 +133,8 @@ const Browse = () => {
           onChange={(e) => setSearchText(e.target.value)}
           placeholder="Search files..."
         />
-        <Button onClick={handleSearch}>Search Content</Button>
-      </div> */}
+        <Button type="submit">Search Content</Button>
+      </form>
 
       <div className="m-4 border rounded-md">
         <FileBrowser
