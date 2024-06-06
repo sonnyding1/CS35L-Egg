@@ -117,17 +117,13 @@ router.post("/user-files", async (req, res) => {
     }
     let file;
 
-    // do not load text
     if (req.body) {
-      file = await File.find(
-        {
-          ...req.body,
-          authorId: req.session.userId,
-        },
-        { text: "" },
-      );
+      file = await File.find({
+        ...req.body,
+        authorId: req.session.userId,
+      }).select("-text");
     } else {
-      file = await File.find({ authorId: req.session.userId }, { text: "" });
+      file = await File.find({ authorId: req.session.userId }).select("-text");
     }
     if (file.length === 0) {
       return res
