@@ -24,7 +24,7 @@ const Post = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const { fileID } = useParams();
-  const { isAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated, user } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -130,6 +130,25 @@ const Post = () => {
       }
     } catch (error) {
       console.error("Error creating comment:", error);
+    }
+    try {
+      const response = await fetch("http://localhost:3000/file/comment/all", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ _id: fileID }),
+        credentials: "include",
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setComments(data);
+      } else {
+        setComments([]);
+      }
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+      setComments([]);
     }
   };
 
