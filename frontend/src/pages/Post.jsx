@@ -24,7 +24,7 @@ const Post = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const { fileID } = useParams();
-  const { isAuthenticated, user } = useContext(AuthContext);
+  const { isAuthenticated } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchPost = async () => {
